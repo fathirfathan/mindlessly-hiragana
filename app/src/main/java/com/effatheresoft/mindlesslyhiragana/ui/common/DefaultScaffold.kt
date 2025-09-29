@@ -18,8 +18,8 @@ import androidx.compose.ui.Modifier
 @Composable
 fun DefaultScaffold(
     modifier: Modifier = Modifier,
-    appBarTitle: String,
-    onNavigationIconClicked: () -> Unit,
+    appBarTitle: String = "",
+    onNavigationIconClicked: () -> Unit = {},
     content: @Composable ( (PaddingValues) -> Unit)
 ) {
     val isAtHome = appBarTitle == "Mindlessly Hiragana"

@@ -1,23 +1,34 @@
 package com.effatheresoft.mindlesslyhiragana.ui.details
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.effatheresoft.mindlesslyhiragana.data.Hiragana
 import com.effatheresoft.mindlesslyhiragana.data.HiraganaRepository
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
+
+data class DetailsUiState(
+    val appBarTitle: String = ""
+)
 
 class DetailsViewModel : ViewModel() {
-    private val _id = MutableStateFlow("")
-    private val _appBarTitle = MutableStateFlow("")
+    private var id = ""
+    private var appBarTitle by mutableStateOf("")
 
-    fun setId(id: String) {
-        _id.update { id }
-    }
+    private var hiraganaList by mutableStateOf(listOf<Hiragana>())
+    var uiState by mutableStateOf(DetailsUiState())
+        private set
 
-    fun getAppBarTitle(): StateFlow<String> {
-        _appBarTitle.update {
-            HiraganaRepository.getHiraganaCategoryById(_id.value)?.hiraganaRomaji ?: ""
-        }
-        return _appBarTitle
+    fun initializeWithId(id: String) {
+        this.id = id
+        hiraganaList = HiraganaRepository.getHiraganaCategoryById(id).hiraganaList
+
+        val hiraganaString = hiraganaList.joinToString("") { it.hiragana }
+        val romajiString = hiraganaList.joinToString(" ") { it.romaji.uppercase() }
+        appBarTitle = "$hiraganaString $romajiString"
+
+        uiState = uiState.copy(
+            appBarTitle = appBarTitle
+        )
     }
 }

@@ -1,34 +1,27 @@
-package com.effatheresoft.mindlesslyhiragana.ui.details
+package com.effatheresoft.mindlesslyhiragana.ui.results
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.effatheresoft.mindlesslyhiragana.ui.common.DefaultScaffold
+import com.effatheresoft.mindlesslyhiragana.ui.learntrain.QuizResult
+import com.effatheresoft.mindlesslyhiragana.ui.learntrain.getCorrectAnswersCount
+import com.effatheresoft.mindlesslyhiragana.ui.learntrain.getIncorrectAnswersCount
 
 @Composable
-fun DetailsScreen(
-    id: String,
+fun ResultsScreen(
     modifier: Modifier = Modifier,
-    viewModel: DetailsViewModel = viewModel(),
     onNavigationIconClicked: () -> Unit = {},
-    onNavigateToLearn: () -> Unit = {}
+    viewModel: ResultsViewModel = viewModel(),
+    quizResults: List<QuizResult>
 ) {
-    LaunchedEffect(Unit){
-        viewModel.initializeWithId(id)
-    }
-    val uiState = viewModel.uiState
-
     DefaultScaffold(
-        appBarTitle = uiState.appBarTitle,
         onNavigationIconClicked = onNavigationIconClicked
     ) { innerPadding ->
         Column(
@@ -39,17 +32,8 @@ fun DetailsScreen(
                 .padding(horizontal = 32.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Button(onClick = onNavigateToLearn) {
-                Text("Learn")
-            }
+            Text("Correct answers: ${quizResults.getCorrectAnswersCount()}")
+            Text("Incorrect answers: ${quizResults.getIncorrectAnswersCount()}")
         }
     }
-}
-
-@Preview
-@Composable
-fun DetailsScreenPreview() {
-    DetailsScreen(
-        id = "0"
-    )
 }
