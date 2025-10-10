@@ -22,13 +22,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.effatheresoft.mindlesslyhiragana.data.Hiragana
 import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory
+import com.effatheresoft.mindlesslyhiragana.ui.DefaultViewModelProvider
 import com.effatheresoft.mindlesslyhiragana.ui.common.DefaultScaffold
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    viewModel: HomeViewModel = viewModel(),
+    viewModel: HomeViewModel = viewModel(factory = DefaultViewModelProvider.Factory),
     onNavigationIconClicked: () -> Unit = {},
     onNavigateToDetails: (String) -> Unit = {}
 ) {
@@ -44,7 +45,7 @@ fun HomeScreen(
 @Composable
 fun HomeScreenContent(
     modifier: Modifier = Modifier,
-    uiState: HomeUiState,
+    uiState: HomeUiState = HomeUiState.Loading,
     onNavigationIconClicked: () -> Unit = {},
     onNavigateToDetails: (String) -> Unit = {}
 ) {
