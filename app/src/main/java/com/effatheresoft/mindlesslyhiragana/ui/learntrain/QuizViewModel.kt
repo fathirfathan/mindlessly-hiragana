@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.effatheresoft.mindlesslyhiragana.data.Hiragana
 import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.data.HiraganaRepository
+import com.effatheresoft.mindlesslyhiragana.ui.results.QuizResult
 import com.effatheresoft.mindlesslyhiragana.util.Result
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,29 +21,10 @@ sealed class QuizUiState {
         val appBarTitle: String,
         val currentQuestion: String,
         val remainingQuestionsCount: String,
-        val possibleAnswers: List<Hiragana>
+        val possibleAnswers: List<Hiragana>,
+        val selectedAnswersHistory: Map<Hiragana, Boolean>
     ): QuizUiState()
     data class Error(val exception: Throwable): QuizUiState()
-}
-
-@Serializable
-data class QuizResult(
-    val question: Hiragana,
-    val answer: Hiragana,
-)
-
-fun List<QuizResult>.getCorrectAnswersCount(): Int {
-    var count = 0
-    for (quizResult in this) {
-        if (quizResult.question == quizResult.answer) {
-            count++
-        }
-    }
-    return count
-}
-
-fun List<QuizResult>.getIncorrectAnswersCount(): Int {
-    return size - getCorrectAnswersCount()
 }
 
 class QuizViewModel(private val repository: HiraganaRepository): ViewModel() {
@@ -54,6 +36,7 @@ class QuizViewModel(private val repository: HiraganaRepository): ViewModel() {
     private var questionList = listOf<Hiragana>()
     private val quizResults = mutableListOf<QuizResult>()
     private var remainingQuestionsCount = -1
+    private var selectedAnswersHistory = mapOf<Hiragana, Boolean>()
 
     private lateinit var hiraganaCategory: Flow<Result<HiraganaCategory>>
 
@@ -73,7 +56,8 @@ class QuizViewModel(private val repository: HiraganaRepository): ViewModel() {
             appBarTitle = appBarTitle,
             currentQuestion = currentQuestion?.hiragana ?: "",
             remainingQuestionsCount = remainingQuestionsCount.toString(),
-            possibleAnswers = possibleAnswers
+            possibleAnswers = possibleAnswers,
+            selectedAnswersHistory = selectedAnswersHistory
         )
     }
 
@@ -113,6 +97,7 @@ class QuizViewModel(private val repository: HiraganaRepository): ViewModel() {
                     currentQuestion = questionList.firstOrNull()
                     remainingQuestionsCount = questionList.size - 1
                     possibleAnswers = hiraganaList
+                    selectedAnswersHistory = hiraganaList.associateWith { false }
 
                     setUiStateSuccess()
                 }
@@ -126,7 +111,15 @@ class QuizViewModel(private val repository: HiraganaRepository): ViewModel() {
         selectedAnswer: Hiragana,
         onNavigateToResults: (quizResults: List<QuizResult>) -> Unit = {}
     ) {
-        quizResults.add(QuizResult(currentQuestion!!, selectedAnswer))
+        selectedAnswersHistory = selectedAnswersHistory + (selectedAnswer to true)
+        if (selectedAnswer != currentQuestion) {
+            setUiStateSuccess()
+            return
+        }
+        quizResults.add(QuizResult(
+            question = currentQuestion!!,
+            attemptedAnswers = selectedAnswersHistory
+        ))
 
         if (remainingQuestionsCount == 0) {
             onNavigateToResults(quizResults)
@@ -135,6 +128,7 @@ class QuizViewModel(private val repository: HiraganaRepository): ViewModel() {
 
         currentQuestion = questionList[remainingQuestionsCount]
         remainingQuestionsCount--
+        selectedAnswersHistory = hiraganaList.associateWith { false }
 
         setUiStateSuccess()
     }
