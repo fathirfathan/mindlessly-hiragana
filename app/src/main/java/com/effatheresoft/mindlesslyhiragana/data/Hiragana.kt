@@ -74,4 +74,26 @@ enum class Hiragana(val hiragana: String, val romaji: String) {
     PU("ぷ", "pu"),
     PE("ぺ", "pe"),
     PO("ぽ", "po");
+
+    companion object {
+        val categories: List<HiraganaCategory> = listOf(
+            HiraganaCategory("0", listOf(HI, MI, KA, SE)),
+            HiraganaCategory("1", listOf(FU, WO, YA)),
+            HiraganaCategory("2", listOf(A, O, E, N)),
+            HiraganaCategory("3", listOf(U, TSU, KU, HE)),
+            HiraganaCategory("4", listOf(KE, RI, KO, NI)),
+            HiraganaCategory("5", listOf(SU, MU, NA, TA, RU, RO)),
+            HiraganaCategory("6", listOf(SHI, I, MO)),
+            HiraganaCategory("7", listOf(TO, TE, SO)),
+            HiraganaCategory("8", listOf(NE, WA, RE)),
+            HiraganaCategory("9", listOf(NU, ME, NO, YU)),
+            HiraganaCategory("10", listOf(HA, HO, YO, MA)),
+            HiraganaCategory("11", listOf(KI, SA, CHI, RA))
+        )
+    }
 }
+
+data class HiraganaCategory(
+    val id: String,
+    val hiraganaList: List<Hiragana>
+)
