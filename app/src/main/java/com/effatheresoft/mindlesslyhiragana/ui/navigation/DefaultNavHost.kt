@@ -32,7 +32,9 @@ fun DefaultNavHost(
                     factory = DefaultViewModelProvider.getFactoryWithStringData(details.id)
                 ),
                 onNavigationIconClicked = { navController.popBackStack() },
-                onNavigateToLearn = { navController.navigate(Route.Quiz(details.id)) }
+                onNavigateToLearn = { learningSetsCount ->
+                    navController.navigate(Route.Quiz(details.id, learningSetsCount))
+                }
             )
         }
 
@@ -40,7 +42,7 @@ fun DefaultNavHost(
             val quiz: Route.Quiz = backStackEntry.toRoute()
             QuizScreen(
                 viewModel = viewModel(
-                    factory = DefaultViewModelProvider.getFactoryWithStringData(quiz.id)
+                    factory = DefaultViewModelProvider.getFactoryWithRouteParameter(quiz)
                 ),
                 onNavigationIconClicked = { navController.popBackStack() },
                 onNavigateToResults = { quizResults ->

@@ -11,7 +11,10 @@ sealed class Route {
     data class Details(val id: String): Route()
 
     @Serializable
-    data class Quiz(val id: String): Route()
+    data class Quiz(
+        val id: String,
+        val learningSetsCount: Int
+    ): Route()
 
     @Serializable
     data class Results(

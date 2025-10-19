@@ -19,6 +19,7 @@ import kotlin.collections.listOf
 
 class QuizViewModel(
     private val categoryId: String,
+    private val learningSetsCount: Int,
     private val userRepository: UserRepository
 ): ViewModel() {
     private var appBarTitle = ""
@@ -35,7 +36,7 @@ class QuizViewModel(
 
     init {
         hiraganaList = Hiragana.categories.getCategoryById(categoryId)?.apply {
-            questionList = generateQuestions(2)
+            questionList = generateQuestions(learningSetsCount)
             currentQuestion = questionList.firstOrNull()
             remainingQuestionsCount = questionList.size - 1
 

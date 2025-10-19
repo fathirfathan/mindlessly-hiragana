@@ -9,6 +9,7 @@ import com.effatheresoft.mindlesslyhiragana.DefaultApplication
 import com.effatheresoft.mindlesslyhiragana.ui.details.DetailsViewModel
 import com.effatheresoft.mindlesslyhiragana.ui.home.HomeViewModel
 import com.effatheresoft.mindlesslyhiragana.ui.learntrain.QuizViewModel
+import com.effatheresoft.mindlesslyhiragana.ui.navigation.Route
 import com.effatheresoft.mindlesslyhiragana.ui.results.QuizResult
 import com.effatheresoft.mindlesslyhiragana.ui.results.ResultsViewModel
 import kotlinx.serialization.json.Json
@@ -28,6 +29,30 @@ object DefaultViewModelProvider {
             userRepository = application().userRepository
         ) }
         initializer { DetailsViewModel(data, application().userRepository) }
-        initializer { QuizViewModel(data, application().userRepository) }
+    }
+
+    fun getFactoryWithRouteParameter(routeParameter: Route) = viewModelFactory {
+        initializer {
+            val quizResults = Json.decodeFromString<List<QuizResult>>(
+                (routeParameter as Route.Results).quizResultsJson
+            )
+            ResultsViewModel(
+                quizResults,
+                application().userRepository
+            )
+        }
+        initializer {
+            DetailsViewModel(
+                (routeParameter as Route.Details).id,
+                application().userRepository
+            )
+        }
+        initializer {
+            QuizViewModel(
+                categoryId = (routeParameter as Route.Quiz).id,
+                learningSetsCount = routeParameter.learningSetsCount,
+                userRepository = application().userRepository
+            )
+        }
     }
 }
