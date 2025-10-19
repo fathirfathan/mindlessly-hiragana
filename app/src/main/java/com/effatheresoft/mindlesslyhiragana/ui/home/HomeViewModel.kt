@@ -26,7 +26,7 @@ class HomeViewModel(
     val uiState = _uiState.asStateFlow()
 
     fun createDefaultUser() {
-        userRepository.insertUser(User(id = "1", highestCategoryId = "0")).onEach {
+        userRepository.insertUser(User(id = "1", highestCategoryId = "0", learningSetsCount = 3)).onEach {
             when (it) {
                 is Result.Loading -> {}
                 is Result.Success -> _uiState.value = Success(highestCategoryId = "0")

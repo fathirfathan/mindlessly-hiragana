@@ -19,6 +19,10 @@ class UserRepository(private val userDataSource: UserLocalDataSource) {
     fun insertUser(user: User): Flow<Result<Boolean>> = Result.flowWithResult {
         userDataSource.insertUser(user)
     }
+
+    fun updateUser(user: User): Flow<Result<Boolean>> = Result.flowWithResult {
+        userDataSource.updateUser(user)
+    }
 }
 
 class UserLocalDataSource(private val userDao: UserDao) {
@@ -32,6 +36,12 @@ class UserLocalDataSource(private val userDao: UserDao) {
         val insertedUserId = userDao.insert(user.toUserEntity())
         return insertedUserId != -1L
     }
+
+    suspend fun updateUser(user: User): Boolean {
+        delay(simulatedDelay)
+        val updatedRowsCount = userDao.update(user.toUserEntity())
+        return updatedRowsCount > 0
+    }
 }
 
 data class UserInteractionHistory(
@@ -41,8 +51,8 @@ data class UserInteractionHistory(
 data class User(
     val id: String,
     val highestCategoryId: String,
-//    val trainingSetCountsPreference: Int,
+    val learningSetsCount: Int,
 //    val interactionHistory: UserInteractionHistory
 )
 
-fun User.toUserEntity(): UserEntity = UserEntity(id, highestCategoryId)
+fun User.toUserEntity(): UserEntity = UserEntity(id, highestCategoryId, learningSetsCount)

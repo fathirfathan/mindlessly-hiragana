@@ -27,7 +27,7 @@ fun DetailsScreen(
         modifier = modifier,
         uiState = uiState,
         onNavigationIconClicked = onNavigationIconClicked,
-        onNavigateToLearn = onNavigateToLearn,
+        onNavigateToLearn = { viewModel.onNavigateToLearn(onNavigateToLearn) },
         onLearningSetsCountChange = viewModel::onLearningSetsCountChange
     )
 }
@@ -37,13 +37,13 @@ fun DetailsScreenContent(
     modifier: Modifier = Modifier,
     uiState: DetailsUiState,
     onNavigationIconClicked: () -> Unit = {},
-    onNavigateToLearn: (Int) -> Unit = {},
+    onNavigateToLearn: () -> Unit = {},
     onLearningSetsCountChange: (Int) -> Unit = {}
 ) {
-    var appBarTitle = ""
+    var appBarTitle: String
     var learningSetsCount = 3
-    var learningSetsSliderLabel = ""
-    var isStateSuccess = true
+    var learningSetsSliderLabel: String
+    var isStateSuccess: Boolean
 
     when (uiState) {
         is DetailsUiState.Success -> {
@@ -89,7 +89,7 @@ fun DetailsScreenContent(
             )
 
             Button(
-                onClick = { onNavigateToLearn(learningSetsCount) },
+                onClick = onNavigateToLearn,
                 enabled = isStateSuccess
             ) {
                 Text("Learn")
