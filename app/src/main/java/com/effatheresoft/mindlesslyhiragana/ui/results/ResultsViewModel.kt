@@ -2,7 +2,7 @@ package com.effatheresoft.mindlesslyhiragana.ui.results
 
 import androidx.lifecycle.ViewModel
 import com.effatheresoft.mindlesslyhiragana.data.Hiragana
-import com.effatheresoft.mindlesslyhiragana.data.HiraganaRepository
+import com.effatheresoft.mindlesslyhiragana.data.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.serialization.Serializable
@@ -13,15 +13,15 @@ sealed class ResultsUiState() {
     data class Error(val exception: Throwable): ResultsUiState()
 }
 
-class ResultsViewModel(private val repository: HiraganaRepository): ViewModel() {
-    val quizResults = mutableListOf<QuizResult>()
-
+class ResultsViewModel(
+    private val quizResults: List<QuizResult>,
+    private val userRepository: UserRepository
+): ViewModel() {
     private val _uiState = MutableStateFlow<ResultsUiState>(ResultsUiState.Loading)
     val uiState = _uiState.asStateFlow()
 
-    fun initializeWithQuizResults(quizResults: List<QuizResult>) {
-        this.quizResults.addAll(quizResults)
-        _uiState.value = ResultsUiState.Success(this.quizResults)
+    init {
+        _uiState.value = ResultsUiState.Success(quizResults)
     }
 }
 
