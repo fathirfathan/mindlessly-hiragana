@@ -19,21 +19,23 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.effatheresoft.mindlesslyhiragana.data.Hiragana
+import com.effatheresoft.mindlesslyhiragana.data.Hiragana.HI
+import com.effatheresoft.mindlesslyhiragana.data.Hiragana.KA
+import com.effatheresoft.mindlesslyhiragana.data.Hiragana.MI
+import com.effatheresoft.mindlesslyhiragana.data.Hiragana.SE
+import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory
+import com.effatheresoft.mindlesslyhiragana.data.getCategoryById
 import com.effatheresoft.mindlesslyhiragana.ui.DefaultViewModelProvider
 import com.effatheresoft.mindlesslyhiragana.ui.common.DefaultScaffold
 import com.effatheresoft.mindlesslyhiragana.ui.results.QuizResult
 
 @Composable
 fun QuizScreen(
-    id: String,
+    viewModel: QuizViewModel,
     modifier: Modifier = Modifier,
-    viewModel: QuizViewModel = viewModel(factory = DefaultViewModelProvider.Factory),
     onNavigationIconClicked: () -> Unit = {},
     onNavigateToResults: (quizResults: List<QuizResult>) -> Unit = {}
 ) {
-    LaunchedEffect(Unit) {
-        viewModel.initializeWithId(id)
-    }
     val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
 
     QuizScreenContent(
@@ -108,18 +110,19 @@ fun QuizScreenContent(
     }
 }
 
-//@Preview
-//@Composable
-//fun QuizScreenContentSuccessPreview() {
-//    QuizScreenContent(
-//        uiState = QuizUiState.Success(
-//            appBarTitle = "HI MI KA SE",
-//            currentQuestion = "ひ",
-//            remainingQuestionsCount = "20",
-//            possibleAnswers = listOf(Hiragana.HI, Hiragana.MI, Hiragana.KA, Hiragana.SE)
-//        )
-//    )
-//}
+@Preview
+@Composable
+fun QuizScreenContentSuccessPreview() {
+    QuizScreenContent(
+        uiState = QuizUiState.Success(
+            appBarTitle = "HI MI KA SE",
+            currentQuestion = "ひ",
+            remainingQuestionsCount = 20,
+            possibleAnswers = listOf(HI, MI, KA, SE),
+            selectedAnswersHistory = mapOf()
+        )
+    )
+}
 
 @Preview
 @Composable
