@@ -13,6 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.effatheresoft.mindlesslyhiragana.data.Hiragana
+import com.effatheresoft.mindlesslyhiragana.data.getLearnedHiraganaUpToId
 import com.effatheresoft.mindlesslyhiragana.ui.common.DefaultScaffold
 
 @Composable
@@ -40,32 +42,12 @@ fun DetailsScreenContent(
     onNavigateToLearn: () -> Unit = {},
     onLearningSetsCountChange: (Int) -> Unit = {}
 ) {
-    var appBarTitle: String
-    var learningSetsCount = 3
-    var learningSetsSliderLabel: String
-    var isStateSuccess: Boolean
-
-    when (uiState) {
-        is DetailsUiState.Success -> {
-            learningSetsCount = uiState.learningSetsCount
-            learningSetsSliderLabel = "Learning Sets: $learningSetsCount Sets"
-            appBarTitle = uiState.appBarTitle
-            isStateSuccess = true
-        }
-        is DetailsUiState.Loading -> {
-            learningSetsSliderLabel = "Learning Sets: Loading..."
-            appBarTitle = "Loading..."
-            isStateSuccess = false
-        }
-        is DetailsUiState.Error -> {
-            learningSetsSliderLabel = "Learning Sets: "
-            appBarTitle = "Error"
-            isStateSuccess = false
-        }
-    }
-
     DefaultScaffold(
-        appBarTitle = appBarTitle,
+        appBarTitle = when (uiState) {
+            is DetailsUiState.Success -> uiState.appBarTitle
+            is DetailsUiState.Loading -> "Loading..."
+            is DetailsUiState.Error -> "Error"
+        },
         onNavigationIconClicked = onNavigationIconClicked
     ) { innerPadding ->
         Column(
@@ -77,22 +59,40 @@ fun DetailsScreenContent(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Text(learningSetsSliderLabel)
+            when (uiState) {
+                is DetailsUiState.Success -> {
+                    if (uiState.isTest) {
+                        Text(text = "Questions: ${uiState.testHiraganaList.size}")
+                        Text(
+                            uiState.testHiraganaList.map { it.hiragana }
+                                .chunked(5)
+                                .joinToString("\n") { it.joinToString(" ") }
+                        )
+                        Button(onClick = onNavigateToLearn) {
+                            Text("Test All Learned")
+                        }
+                    } else {
+                        Text(text = "Learning Sets: ${uiState.learningSetsCount} Sets")
 
-            Slider(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                enabled = isStateSuccess,
-                value = learningSetsCount.toFloat(),
-                onValueChange = { onLearningSetsCountChange(it.toInt()) },
-                steps = 3,
-                valueRange = 1f..5f
-            )
+                        Slider(
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            value = uiState.learningSetsCount.toFloat(),
+                            onValueChange = { onLearningSetsCountChange(it.toInt()) },
+                            steps = 3,
+                            valueRange = 1f..5f
+                        )
 
-            Button(
-                onClick = onNavigateToLearn,
-                enabled = isStateSuccess
-            ) {
-                Text("Learn")
+                        Button(onClick = onNavigateToLearn) {
+                            Text("Learn")
+                        }
+                    }
+                }
+                is DetailsUiState.Loading -> {
+                    Text("App is loading...")
+                }
+                is DetailsUiState.Error -> {
+                    Text("An error occurred.")
+                }
             }
         }
     }
@@ -102,7 +102,25 @@ fun DetailsScreenContent(
 @Composable
 fun DetailsScreenSuccessPreview() {
     DetailsScreenContent(
-        uiState = DetailsUiState.Success("ひみかせ HI MI KA SE", 3)
+        uiState = DetailsUiState.Success(
+            appBarTitle = "ひみかせ HI MI KA SE",
+            learningSetsCount = 3,
+            isTest = false,
+            testHiraganaList = listOf()
+        )
+    )
+}
+
+@Preview
+@Composable
+fun DetailsScreenSuccessTestPreview() {
+    DetailsScreenContent(
+        uiState = DetailsUiState.Success(
+            appBarTitle = "Test All Learned",
+            learningSetsCount = 3,
+            isTest = true,
+            testHiraganaList = Hiragana.categories.getLearnedHiraganaUpToId("2")
+        )
     )
 }
 

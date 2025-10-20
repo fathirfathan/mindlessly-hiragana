@@ -118,3 +118,9 @@ fun HiraganaCategory.generateQuestions(setCount: Int): List<Hiragana> {
 fun List<HiraganaCategory>.getCategoryById(id: String): HiraganaCategory? {
     return this.find { it.id == id }
 }
+
+fun List<HiraganaCategory>.getLearnedHiraganaUpToId(id: String): List<Hiragana> {
+    val categoryIndex = indexOfFirst { it.id == id }
+    if (categoryIndex == -1) return emptyList()
+    return this.take(categoryIndex + 1).flatMap { it.hiraganaList }
+}

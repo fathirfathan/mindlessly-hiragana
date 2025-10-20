@@ -1,10 +1,13 @@
 package com.effatheresoft.mindlesslyhiragana.ui.results
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.effatheresoft.mindlesslyhiragana.data.Hiragana
 import com.effatheresoft.mindlesslyhiragana.data.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.serialization.Serializable
 
 sealed class ResultsUiState() {
@@ -21,7 +24,30 @@ class ResultsViewModel(
     val uiState = _uiState.asStateFlow()
 
     init {
-        _uiState.value = ResultsUiState.Success(quizResults)
+        if (quizResults.incorrectAnswersCount == 0) {
+            userRepository.getDefaultUser().onEach {
+                when(it) {
+                    is com.effatheresoft.mindlesslyhiragana.util.Result.Success -> {
+                        it.data?.run{
+                            val newHighestCategoryId = highestCategoryId.toInt().run {
+                                if (this == 11) 11 else this + 1
+                            }.toString()
+
+                            userRepository.updateUser(
+                                copy(highestCategoryId = newHighestCategoryId)
+                            ).onEach { result ->
+                                if (result is com.effatheresoft.mindlesslyhiragana.util.Result.Success)
+                                    _uiState.value = ResultsUiState.Success(quizResults)
+                            }.launchIn(viewModelScope)
+                        }
+                    }
+                    is com.effatheresoft.mindlesslyhiragana.util.Result.Error -> {}
+                    is com.effatheresoft.mindlesslyhiragana.util.Result.Loading -> {}
+                }
+            }.launchIn(viewModelScope)
+        } else {
+            _uiState.value = ResultsUiState.Success(quizResults)
+        }
     }
 }
 

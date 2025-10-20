@@ -10,22 +10,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.effatheresoft.mindlesslyhiragana.data.Hiragana
 import com.effatheresoft.mindlesslyhiragana.data.Hiragana.HI
 import com.effatheresoft.mindlesslyhiragana.data.Hiragana.KA
 import com.effatheresoft.mindlesslyhiragana.data.Hiragana.MI
 import com.effatheresoft.mindlesslyhiragana.data.Hiragana.SE
-import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory
-import com.effatheresoft.mindlesslyhiragana.data.getCategoryById
-import com.effatheresoft.mindlesslyhiragana.ui.DefaultViewModelProvider
+import com.effatheresoft.mindlesslyhiragana.data.getLearnedHiraganaUpToId
 import com.effatheresoft.mindlesslyhiragana.ui.common.DefaultScaffold
 import com.effatheresoft.mindlesslyhiragana.ui.results.QuizResult
 
@@ -85,16 +81,28 @@ fun QuizScreenContent(
                         "Remaining Questions: ${uiState.remainingQuestionsCount}",
                         Modifier.padding(bottom = 16.dp)
                     )
-                    Row(
-                        Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceAround
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        for (answer in uiState.possibleAnswers) {
-                            Button(
-                                onClick = { onAnswerSelected(answer, onNavigateToResults) },
-                                enabled = uiState.selectedAnswersHistory[answer] == false
+                        uiState.possibleAnswers.chunked(4).forEach { rowAnswers ->
+                            Row(
+                                Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                Text(answer.romaji.uppercase())
+                                for (answer in rowAnswers) {
+                                    Button(
+                                        modifier = Modifier.weight(1f),
+                                        onClick = { onAnswerSelected(answer, onNavigateToResults) },
+                                        enabled = uiState.selectedAnswersHistory[answer] == false
+                                    ) {
+                                        Text(answer.romaji.uppercase())
+                                    }
+                                }
+                                val spacersNeeded = 4 - rowAnswers.size
+                                repeat(spacersNeeded) {
+                                    Spacer(modifier = Modifier.weight(1f))
+                                }
                             }
                         }
                     }
@@ -119,6 +127,20 @@ fun QuizScreenContentSuccessPreview() {
             currentQuestion = "ひ",
             remainingQuestionsCount = 19,
             possibleAnswers = listOf(HI, MI, KA, SE),
+            selectedAnswersHistory = mapOf()
+        )
+    )
+}
+
+@Preview
+@Composable
+fun QuizScreenContentSuccessTestPreview() {
+    QuizScreenContent(
+        uiState = QuizUiState.Success(
+            appBarTitle = "Test All Learned",
+            currentQuestion = "ひ",
+            remainingQuestionsCount = 19,
+            possibleAnswers = Hiragana.categories.getLearnedHiraganaUpToId("11"),
             selectedAnswersHistory = mapOf()
         )
     )

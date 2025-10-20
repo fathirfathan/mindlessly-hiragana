@@ -6,6 +6,7 @@ import com.effatheresoft.mindlesslyhiragana.data.Hiragana
 import com.effatheresoft.mindlesslyhiragana.data.User
 import com.effatheresoft.mindlesslyhiragana.data.UserRepository
 import com.effatheresoft.mindlesslyhiragana.data.getCategoryById
+import com.effatheresoft.mindlesslyhiragana.data.getLearnedHiraganaUpToId
 import com.effatheresoft.mindlesslyhiragana.util.Result
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,16 +20,28 @@ class DetailsViewModel(
     private var user: User? = null
     private var appBarTitle = ""
     private var learningSetsCount = 3
+    private val isTest: Boolean
+    private var testHiraganaList = listOf<Hiragana>()
     private val _uiState = MutableStateFlow<DetailsUiState>(DetailsUiState.Loading)
 
     val uiState = _uiState.asStateFlow()
     init {
+        if (categoryId == "12") {
+            isTest = true
+            setUiStateSuccess()
+        } else {
+            isTest = false
+            setUiStateSuccess()
+        }
+        _uiState.value = DetailsUiState.Loading
+
         userRepository.getDefaultUser().onEach {
             when (it) {
                 is Result.Success -> {
                     it.data?.let { user ->
                         this.user = user
                         appBarTitle = getAppBarTitle(categoryId)
+                        testHiraganaList = Hiragana.categories.getLearnedHiraganaUpToId(user.highestCategoryId)
                         learningSetsCount = user.learningSetsCount
                         setUiStateSuccess()
                     }
@@ -40,6 +53,7 @@ class DetailsViewModel(
     }
 
     fun getAppBarTitle(categoryId: String): String {
+        if (categoryId == "12") return "Test All Learned"
         val hiraganaCategory = Hiragana.categories.getCategoryById(categoryId)
         val hiraganaString =
             hiraganaCategory?.hiraganaList?.joinToString("") { it.hiragana } ?: ""
@@ -56,11 +70,13 @@ class DetailsViewModel(
     fun setUiStateSuccess() {
         _uiState.value = DetailsUiState.Success(
             appBarTitle = appBarTitle,
-            learningSetsCount = learningSetsCount
+            learningSetsCount = learningSetsCount,
+            isTest = isTest,
+            testHiraganaList = testHiraganaList
         )
     }
 
-    fun onNavigateToLearn( onNavigateToLearn: (Int) -> Unit ) {
+    fun onNavigateToLearn(onNavigateToLearn: (Int) -> Unit) {
         user?.let { user ->
             userRepository.updateUser(user.copy(learningSetsCount = learningSetsCount)).onEach {
                 when(it) {
@@ -83,6 +99,8 @@ sealed class DetailsUiState {
     data class Success(
         val appBarTitle: String,
         val learningSetsCount: Int,
+        val isTest: Boolean,
+        val testHiraganaList: List<Hiragana>
     ): DetailsUiState()
     data class Error(val exception: Throwable): DetailsUiState()
 }
