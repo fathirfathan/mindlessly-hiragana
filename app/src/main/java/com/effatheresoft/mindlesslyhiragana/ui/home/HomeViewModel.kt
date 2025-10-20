@@ -25,19 +25,6 @@ class HomeViewModel(
     private val _uiState = MutableStateFlow<HomeUiState>(Loading)
     val uiState = _uiState.asStateFlow()
 
-    fun createDefaultUser() {
-        userRepository.insertUser(User(id = "1", highestCategoryId = "0", learningSetsCount = 3)).onEach {
-            when (it) {
-                is Result.Loading -> {}
-                is Result.Success -> _uiState.value = Success(highestCategoryId = "0")
-                is Result.Error -> {
-                    _uiState.value = Error(it.exception)
-                    Log.d("HomeViewModel", "Error: ${it.exception}")
-                }
-            }
-        }.launchIn(viewModelScope)
-    }
-
     init {
         viewModelScope.launch {
             userRepository.getDefaultUser().collect {
@@ -57,6 +44,26 @@ class HomeViewModel(
                 }
             }
         }
+    }
+
+    fun createDefaultUser() {
+        userRepository.insertUser(User(id = "1", highestCategoryId = "0", learningSetsCount = 3)).onEach {
+            when (it) {
+                is Result.Loading -> {}
+                is Result.Success -> _uiState.value = Success(highestCategoryId = "0")
+                is Result.Error -> {
+                    _uiState.value = Error(it.exception)
+                    Log.d("HomeViewModel", "Error: ${it.exception}")
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    fun restartProgress() {
+        viewModelScope.launch {
+            _uiState.value = Loading
+            userRepository.restartProgress()
+        }.invokeOnCompletion { _uiState.value = Success(highestCategoryId = "0") }
     }
 }
 
