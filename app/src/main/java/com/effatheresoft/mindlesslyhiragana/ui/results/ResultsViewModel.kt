@@ -6,8 +6,7 @@ import com.effatheresoft.mindlesslyhiragana.data.Hiragana
 import com.effatheresoft.mindlesslyhiragana.data.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 
 sealed class ResultsUiState() {
@@ -25,26 +24,31 @@ class ResultsViewModel(
 
     init {
         if (quizResults.incorrectAnswersCount == 0) {
-            userRepository.getDefaultUser().onEach {
-                when(it) {
-                    is com.effatheresoft.mindlesslyhiragana.util.Result.Success -> {
-                        it.data?.run{
-                            val newHighestCategoryId = highestCategoryId.toInt().run {
-                                if (this == 11) 11 else this + 1
-                            }.toString()
-
-                            userRepository.updateUser(
-                                copy(highestCategoryId = newHighestCategoryId)
-                            ).onEach { result ->
-                                if (result is com.effatheresoft.mindlesslyhiragana.util.Result.Success)
-                                    _uiState.value = ResultsUiState.Success(quizResults)
-                            }.launchIn(viewModelScope)
+            viewModelScope.launch {
+                var isUpdated = false
+                userRepository.getDefaultUser().collect {
+                    when(it) {
+                        is com.effatheresoft.mindlesslyhiragana.util.Result.Success -> {
+                            it.data?.run{
+                                val newHighestCategoryId = highestCategoryId.toInt().run {
+                                    if (this == 11) 11 else this + 1
+                                }.toString()
+                                if (!isUpdated) {
+                                    isUpdated = true
+                                    userRepository.updateUser(
+                                        copy(highestCategoryId = newHighestCategoryId)
+                                    ).collect { result ->
+                                        if (result is com.effatheresoft.mindlesslyhiragana.util.Result.Success)
+                                            _uiState.value = ResultsUiState.Success(quizResults)
+                                    }
+                                }
+                            }
                         }
+                        is com.effatheresoft.mindlesslyhiragana.util.Result.Error -> {}
+                        is com.effatheresoft.mindlesslyhiragana.util.Result.Loading -> {}
                     }
-                    is com.effatheresoft.mindlesslyhiragana.util.Result.Error -> {}
-                    is com.effatheresoft.mindlesslyhiragana.util.Result.Loading -> {}
                 }
-            }.launchIn(viewModelScope)
+            }
         } else {
             _uiState.value = ResultsUiState.Success(quizResults)
         }

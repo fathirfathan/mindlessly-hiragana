@@ -11,8 +11,7 @@ import com.effatheresoft.mindlesslyhiragana.ui.results.QuizResult
 import com.effatheresoft.mindlesslyhiragana.util.Result
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import kotlin.collections.listOf
 
 class QuizViewModel(
@@ -34,26 +33,28 @@ class QuizViewModel(
 
     init {
         if (categoryId == "12") {
-            userRepository.getDefaultUser().onEach { result ->
-                when (result) {
-                    is Result.Error -> setUiStateError(result.exception)
-                    is Result.Success -> {
-                        result.data?.apply {
-                            hiraganaList = Hiragana.categories.getLearnedHiraganaUpToId(highestCategoryId)
-                            questionList = hiraganaList.shuffled()
-                            currentQuestion = questionList.firstOrNull()
-                            remainingQuestionsCount = questionList.size - 1
+            viewModelScope.launch {
+                userRepository.getDefaultUser().collect { result ->
+                    when (result) {
+                        is Result.Error -> setUiStateError(result.exception)
+                        is Result.Success -> {
+                            result.data?.apply {
+                                hiraganaList = Hiragana.categories.getLearnedHiraganaUpToId(highestCategoryId)
+                                questionList = hiraganaList.shuffled()
+                                currentQuestion = questionList.firstOrNull()
+                                remainingQuestionsCount = questionList.size - 1
 
-                            appBarTitle = "Test All Learned"
-                            possibleAnswers = hiraganaList.sortedBy { it.romaji }
-                            selectedAnswersHistory = hiraganaList.associateWith { false }
+                                appBarTitle = "Test All Learned"
+                                possibleAnswers = hiraganaList.sortedBy { it.romaji }
+                                selectedAnswersHistory = hiraganaList.associateWith { false }
 
-                            setUiStateSuccess()
+                                setUiStateSuccess()
+                            }
                         }
+                        is Result.Loading -> setUiStateLoading()
                     }
-                    is Result.Loading -> setUiStateLoading()
                 }
-            }.launchIn(viewModelScope)
+            }
         } else {
             hiraganaList = Hiragana.categories.getCategoryById(categoryId)?.apply {
                 questionList = generateQuestions(learningSetsCount)

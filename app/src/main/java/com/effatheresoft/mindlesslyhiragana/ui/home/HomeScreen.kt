@@ -22,7 +22,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.effatheresoft.mindlesslyhiragana.R
 import com.effatheresoft.mindlesslyhiragana.data.Hiragana
 import com.effatheresoft.mindlesslyhiragana.ui.DefaultViewModelProvider
-import com.effatheresoft.mindlesslyhiragana.ui.common.DefaultScaffold
+import com.effatheresoft.mindlesslyhiragana.ui.common.HomeScaffoldWithDrawer
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 
 @Composable
@@ -48,12 +48,11 @@ fun HomeScreenContent(
     onNavigationIconClicked: () -> Unit = {},
     onNavigateToDetails: (String) -> Unit = {}
 ) {
-    DefaultScaffold(
+    HomeScaffoldWithDrawer(
         appBarTitle = "Mindlessly Hiragana",
         onNavigationIconClicked = onNavigationIconClicked
-    ) { innerPadding ->
+    ) {
         Column(modifier
-            .padding(innerPadding)
             .padding(horizontal = 16.dp)) {
             when(uiState) {
                 is HomeUiState.Loading -> {
@@ -100,7 +99,6 @@ fun HomeScreenContent(
             }
         }
     }
-
 }
 
 @Composable
