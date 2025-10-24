@@ -1,5 +1,6 @@
 package com.effatheresoft.mindlesslyhiragana.data
 
+import android.util.Log
 import com.effatheresoft.mindlesslyhiragana.data.local.UserDao
 import com.effatheresoft.mindlesslyhiragana.data.local.UserEntity
 import com.effatheresoft.mindlesslyhiragana.data.local.toUser
@@ -7,6 +8,7 @@ import com.effatheresoft.mindlesslyhiragana.util.Result
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.serialization.Serializable
 
 private const val simulatedDelay = 1_000L
 
@@ -36,6 +38,10 @@ class UserRepository(private val userDataSource: UserLocalDataSource) {
     fun updateUser(user: User): Flow<Result<Boolean>> = Result.flowWithResult {
         userDataSource.updateUser(user)
     }
+
+    fun recordInteraction(interaction: UserInteraction) {
+        Log.d("UserRepository", "$interaction")
+    }
 }
 
 class UserLocalDataSource(private val userDao: UserDao) {
@@ -57,15 +63,20 @@ class UserLocalDataSource(private val userDao: UserDao) {
     }
 }
 
-data class UserInteractionHistory(
-    val resetCount: Int
+@Serializable
+data class UserInteraction(
+    val timestamp: String,
+    val event: String,
+    val target: String
 )
 
 data class User(
     val id: String,
-    val highestCategoryId: String,
-    val learningSetsCount: Int,
-//    val interactionHistory: UserInteractionHistory
+    val highestCategoryId: String = "0",
+    val learningSetsCount: Int = 3,
+    val userInteractions: List<UserInteraction> = emptyList()
 )
 
-fun User.toUserEntity(): UserEntity = UserEntity(id, highestCategoryId, learningSetsCount)
+fun User.toUserEntity(): UserEntity = UserEntity(
+    id = id, highestCategoryId =  highestCategoryId, learningSetsCount =  learningSetsCount
+)
