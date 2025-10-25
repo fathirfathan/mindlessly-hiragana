@@ -4,14 +4,15 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
-import com.effatheresoft.mindlesslyhiragana.data.UserInteraction
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface UserDao {
+    @Transaction
     @Query("SELECT * FROM user WHERE id = :id")
-    fun getUserById(id: String): Flow<UserEntity?>
+    fun getUserById(id: String): Flow<UserWithInteractions?>
 
     @Insert
     suspend fun insert(user: UserEntity): Long
@@ -22,6 +23,9 @@ interface UserDao {
     @Delete
     suspend fun delete(user: UserEntity)
 
-    @Query("UPDATE user SET user_interactions = :interactions WHERE id = :id")
-    suspend fun updateUserInteractions(id: String, interactions: List<UserInteraction>)
+    @Insert
+    suspend fun insertInteraction(interaction: UserInteractionEntity)
+
+    @Query("DELETE FROM user_interaction WHERE user_id = :userId")
+    suspend fun clearInteractions(userId: String)
 }

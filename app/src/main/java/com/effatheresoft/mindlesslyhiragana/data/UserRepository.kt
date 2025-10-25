@@ -3,11 +3,12 @@ package com.effatheresoft.mindlesslyhiragana.data
 import android.util.Log
 import com.effatheresoft.mindlesslyhiragana.data.local.UserDao
 import com.effatheresoft.mindlesslyhiragana.data.local.UserEntity
+import com.effatheresoft.mindlesslyhiragana.data.local.UserInteractionEntity
+import com.effatheresoft.mindlesslyhiragana.data.local.UserWithInteractions
 import com.effatheresoft.mindlesslyhiragana.data.local.toUser
 import com.effatheresoft.mindlesslyhiragana.util.Result
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
 
@@ -45,19 +46,12 @@ class UserRepository(private val userDataSource: UserLocalDataSource) {
 
     suspend fun recordInteraction(interaction: UserInteraction) {
         Log.d("UserRepository", "$interaction")
-        val userResult = getDefaultUser().first()
-        if (userResult is Result.Success) {
-            val user = userResult.data
-            if (user != null) {
-                val updatedInteractions = user.userInteractions + interaction
-                userDataSource.updateUserInteractions(user.id, updatedInteractions)
-            }
-        }
+        userDataSource.insertInteraction(interaction.toUserInteractionEntity("1"))
     }
 }
 
 class UserLocalDataSource(private val userDao: UserDao) {
-    suspend fun fetchUserById(id: String): Flow<UserEntity?> {
+    suspend fun fetchUserById(id: String): Flow<UserWithInteractions?> {
         delay(simulatedDelay)
         return userDao.getUserById(id)
     }
@@ -74,8 +68,12 @@ class UserLocalDataSource(private val userDao: UserDao) {
         return updatedRowsCount > 0
     }
 
-    suspend fun updateUserInteractions(id: String, interactions: List<UserInteraction>) {
-        userDao.updateUserInteractions(id, interactions)
+    suspend fun insertInteraction(interaction: UserInteractionEntity) {
+        userDao.insertInteraction(interaction)
+    }
+
+    suspend fun clearInteractions(userId: String) {
+        userDao.clearInteractions(userId)
     }
 }
 
@@ -85,6 +83,10 @@ data class UserInteraction(
     val event: String,
     val target: String
 )
+
+fun UserInteraction.toUserInteractionEntity(userId: String): UserInteractionEntity {
+    return UserInteractionEntity(userId = userId, timestamp = timestamp, event = event, target = target)
+}
 
 data class User(
     val id: String,
@@ -97,5 +99,4 @@ fun User.toUserEntity(): UserEntity = UserEntity(
     id = id,
     highestCategoryId = highestCategoryId,
     learningSetsCount = learningSetsCount,
-    userInteractions = userInteractions
 )
