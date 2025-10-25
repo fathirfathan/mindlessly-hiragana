@@ -7,7 +7,6 @@ import com.effatheresoft.mindlesslyhiragana.data.local.toUser
 import com.effatheresoft.mindlesslyhiragana.util.Result
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
 
@@ -25,14 +24,11 @@ class UserRepository(private val userDataSource: UserLocalDataSource) {
     }
 
     suspend fun restartProgress() {
-        userDataSource.updateUser(
-            User(
-                id = "1",
-                highestCategoryId = "0",
-                learningSetsCount = 3,
-                userInteractions = emptyList()
-            )
-        )
+        userDataSource.updateUser(User(
+            id = "1",
+            highestCategoryId = "0",
+            learningSetsCount = 3
+        ))
     }
 
     fun insertUser(user: User): Flow<Result<Boolean>> = Result.flowWithResult {
@@ -43,16 +39,8 @@ class UserRepository(private val userDataSource: UserLocalDataSource) {
         userDataSource.updateUser(user)
     }
 
-    suspend fun recordInteraction(interaction: UserInteraction) {
+    fun recordInteraction(interaction: UserInteraction) {
         Log.d("UserRepository", "$interaction")
-        val userResult = getDefaultUser().first()
-        if (userResult is Result.Success) {
-            val user = userResult.data
-            if (user != null) {
-                val updatedInteractions = user.userInteractions + interaction
-                userDataSource.updateUserInteractions(user.id, updatedInteractions)
-            }
-        }
     }
 }
 
@@ -73,10 +61,6 @@ class UserLocalDataSource(private val userDao: UserDao) {
         val updatedRowsCount = userDao.update(user.toUserEntity())
         return updatedRowsCount > 0
     }
-
-    suspend fun updateUserInteractions(id: String, interactions: List<UserInteraction>) {
-        userDao.updateUserInteractions(id, interactions)
-    }
 }
 
 @Serializable
@@ -94,8 +78,5 @@ data class User(
 )
 
 fun User.toUserEntity(): UserEntity = UserEntity(
-    id = id,
-    highestCategoryId = highestCategoryId,
-    learningSetsCount = learningSetsCount,
-    userInteractions = userInteractions
+    id = id, highestCategoryId =  highestCategoryId, learningSetsCount =  learningSetsCount
 )

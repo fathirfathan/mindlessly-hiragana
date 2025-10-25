@@ -30,10 +30,6 @@ sealed class HomeUiState {
 class HomeViewModel(
     private val userRepository: UserRepository
 ): ViewModel() {
-    var highestCategoryId = "0"
-    var isDrawerOpen = false
-    var isRestartDialogShown = false
-
     private val _uiState = MutableStateFlow<HomeUiState>(Loading)
     val uiState = _uiState.asStateFlow()
 
@@ -46,8 +42,11 @@ class HomeViewModel(
                         if (it.data == null) {
                             createDefaultUser()
                         } else {
-                            highestCategoryId = it.data.highestCategoryId
-                            setUiStateSuccess()
+                            _uiState.value = Success(
+                                highestCategoryId = it.data.highestCategoryId,
+                                isDrawerOpen = false,
+                                isRestartDialogShown = false
+                            )
                         }
                     }
                     is Result.Error -> {
@@ -59,22 +58,15 @@ class HomeViewModel(
         }
     }
 
-    fun setUiStateSuccess() {
-        _uiState.value = Success(
-            highestCategoryId = highestCategoryId,
-            isDrawerOpen = isDrawerOpen,
-            isRestartDialogShown = isRestartDialogShown
-        )
-    }
-
     fun createDefaultUser() {
         userRepository.insertUser(User(id = "1", highestCategoryId = "0", learningSetsCount = 3)).onEach {
             when (it) {
                 is Result.Loading -> {}
-                is Result.Success -> {
-                    highestCategoryId = "0"
-                    setUiStateSuccess()
-                }
+                is Result.Success -> _uiState.value = Success(
+                    highestCategoryId = "0",
+                    isDrawerOpen = false,
+                    isRestartDialogShown = false
+                )
                 is Result.Error -> {
                     _uiState.value = Error(it.exception)
                     Log.d("HomeViewModel", "Error: ${it.exception}")
@@ -87,8 +79,11 @@ class HomeViewModel(
         if (_uiState.value is Success) {
             recordInteraction("Click", "Home:Drawer:Restart:${if ((_uiState.value as Success).isRestartDialogShown) "Closed" else "Open"}")
 
-            isRestartDialogShown = !isRestartDialogShown
-            setUiStateSuccess()
+            _uiState.value = Success(
+                highestCategoryId = (_uiState.value as Success).highestCategoryId,
+                isDrawerOpen = (_uiState.value as Success).isDrawerOpen,
+                isRestartDialogShown = !(_uiState.value as Success).isRestartDialogShown
+            )
         }
     }
 
@@ -96,8 +91,11 @@ class HomeViewModel(
         if (_uiState.value is Success) {
             recordInteraction("Click Swipe", "Home:Drawer:${if ((_uiState.value as Success).isDrawerOpen) "Closed" else "Open"}")
 
-            isDrawerOpen = !isDrawerOpen
-            setUiStateSuccess()
+            _uiState.value = Success(
+                highestCategoryId = (_uiState.value as Success).highestCategoryId,
+                isDrawerOpen = !(_uiState.value as Success).isDrawerOpen,
+                isRestartDialogShown = (_uiState.value as Success).isRestartDialogShown
+            )
         }
     }
 
@@ -108,10 +106,11 @@ class HomeViewModel(
         }.invokeOnCompletion {
             recordInteraction("Click", "Home:Drawer:Restart:Dialog:Confirm")
 
-            highestCategoryId = "0"
-            isDrawerOpen = false
-            isRestartDialogShown = false
-            setUiStateSuccess()
+            _uiState.value = Success(
+                highestCategoryId = "0",
+                isDrawerOpen = false,
+                isRestartDialogShown = false
+            )
         }
     }
 
@@ -123,15 +122,13 @@ class HomeViewModel(
 
     fun recordInteraction(event: String, target: String) {
         val formatter = SimpleDateFormat("yyyy:MM:dd:HH:mm:ss", Locale.getDefault())
-        viewModelScope.launch {
-            userRepository.recordInteraction(
-                UserInteraction(
-                    formatter.format(Date()),
-                    event,
-                    target
-                )
+        userRepository.recordInteraction(
+            UserInteraction(
+                formatter.format(Date()),
+                event,
+                target
             )
-        }
+        )
     }
 }
 
