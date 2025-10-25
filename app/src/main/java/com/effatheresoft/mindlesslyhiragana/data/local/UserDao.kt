@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
+import com.effatheresoft.mindlesslyhiragana.data.UserInteraction
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -20,4 +21,7 @@ interface UserDao {
 
     @Delete
     suspend fun delete(user: UserEntity)
+
+    @Query("UPDATE user SET user_interactions = :interactions WHERE id = :id")
+    suspend fun updateUserInteractions(id: String, interactions: List<UserInteraction>)
 }
