@@ -7,8 +7,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.effatheresoft.mindlesslyhiragana.ui.details.DetailsScreen
 import com.effatheresoft.mindlesslyhiragana.ui.home.HomeScreen
+import com.effatheresoft.mindlesslyhiragana.ui.learntrain.QuizResult
 import com.effatheresoft.mindlesslyhiragana.ui.learntrain.QuizScreen
-import com.effatheresoft.mindlesslyhiragana.ui.results.QuizResult
 import com.effatheresoft.mindlesslyhiragana.ui.results.ResultsScreen
 import kotlinx.serialization.json.Json
 

@@ -8,18 +8,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.effatheresoft.mindlesslyhiragana.data.Hiragana
 import com.effatheresoft.mindlesslyhiragana.ui.DefaultViewModelProvider
 import com.effatheresoft.mindlesslyhiragana.ui.common.DefaultScaffold
-import kotlin.text.append
+import com.effatheresoft.mindlesslyhiragana.ui.learntrain.QuizResult
+import com.effatheresoft.mindlesslyhiragana.ui.learntrain.getCorrectAnswersCount
+import com.effatheresoft.mindlesslyhiragana.ui.learntrain.getIncorrectAnswersCount
 
 @Composable
 fun ResultsScreen(
@@ -60,14 +58,15 @@ fun ResultsScreenContent(
         ) {
             when(uiState) {
                 is ResultsUiState.Success -> {
-                    Text("Correct answers: ${uiState.quizResults.correctAnswersCount}")
-                    Text("Incorrect answers: ${uiState.quizResults.incorrectAnswersCount}")
+                    Text("Correct answers: ${uiState.quizResults.getCorrectAnswersCount()}")
+                    Text("Incorrect answers: ${uiState.quizResults.getIncorrectAnswersCount()}")
                     Column {
                         for ((index, result) in uiState.quizResults.withIndex()) {
-                            if (!result.isCorrect) {
-                                IncorrectAnswerRow(
-                                    questionIndex = index + 1,
-                                    result = result
+                            if (result.question != result.answer) {
+                                Text(
+                                    "Q${index + 1}: ${result.question.hiragana} -> " +
+                                            "${result.question.romaji.uppercase()}, not " +
+                                            result.answer.romaji.uppercase()
                                 )
                             }
                         }
@@ -84,36 +83,21 @@ fun ResultsScreenContent(
     }
 }
 
+@Preview(showBackground = true, name = "Results Screen Success")
 @Composable
-private fun IncorrectAnswerRow(
-    questionIndex: Int,
-    result: QuizResult
-) {
-    Text(
-        text = buildAnnotatedString {
-            append("Q${questionIndex}: ${result.question.hiragana} -> ")
-            append(result.question.romaji.uppercase())
-            append(", not ")
-            append(result.incorrectAttempts.joinToString(", ") { it.romaji.uppercase() }) },
-        modifier = Modifier.padding(vertical = 4.dp)
+fun ResultsScreenSuccessPreview() {
+    ResultsScreenContent(
+        uiState = ResultsUiState.Success(
+            listOf(
+                QuizResult(question = Hiragana.HI, answer = Hiragana.HI),
+                QuizResult(question = Hiragana.MI, answer = Hiragana.HI),
+                QuizResult(question = Hiragana.KA, answer = Hiragana.KA),
+                QuizResult(question = Hiragana.SE, answer = Hiragana.KA),
+                QuizResult(question = Hiragana.HI, answer = Hiragana.HI),
+            )
+        )
     )
 }
-
-//@Preview(showBackground = true, name = "Results Screen Success")
-//@Composable
-//fun ResultsScreenSuccessPreview() {
-//    ResultsScreenContent(
-//        uiState = ResultsUiState.Success(
-//            listOf(
-//                QuizResult(question = Hiragana.HI, attemptedAnswers = Hiragana.HI),
-//                QuizResult(question = Hiragana.MI, attemptedAnswers = Hiragana.HI),
-//                QuizResult(question = Hiragana.KA, attemptedAnswers = Hiragana.KA),
-//                QuizResult(question = Hiragana.SE, attemptedAnswers = Hiragana.KA),
-//                QuizResult(question = Hiragana.HI, attemptedAnswers = Hiragana.HI),
-//            )
-//        )
-//    )
-//}
 
 @Preview(showBackground = true, name = "Results Screen Loading")
 @Composable

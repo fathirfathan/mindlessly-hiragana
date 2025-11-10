@@ -21,7 +21,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.effatheresoft.mindlesslyhiragana.data.Hiragana
 import com.effatheresoft.mindlesslyhiragana.ui.DefaultViewModelProvider
 import com.effatheresoft.mindlesslyhiragana.ui.common.DefaultScaffold
-import com.effatheresoft.mindlesslyhiragana.ui.results.QuizResult
 
 @Composable
 fun QuizScreen(
@@ -88,10 +87,7 @@ fun QuizScreenContent(
                         horizontalArrangement = Arrangement.SpaceAround
                     ) {
                         for (answer in uiState.possibleAnswers) {
-                            Button(
-                                onClick = { onAnswerSelected(answer, onNavigateToResults) },
-                                enabled = uiState.selectedAnswersHistory[answer] == false
-                            ) {
+                            Button({ onAnswerSelected(answer, onNavigateToResults) }) {
                                 Text(answer.romaji.uppercase())
                             }
                         }
@@ -108,18 +104,18 @@ fun QuizScreenContent(
     }
 }
 
-//@Preview
-//@Composable
-//fun QuizScreenContentSuccessPreview() {
-//    QuizScreenContent(
-//        uiState = QuizUiState.Success(
-//            appBarTitle = "HI MI KA SE",
-//            currentQuestion = "ひ",
-//            remainingQuestionsCount = "20",
-//            possibleAnswers = listOf(Hiragana.HI, Hiragana.MI, Hiragana.KA, Hiragana.SE)
-//        )
-//    )
-//}
+@Preview
+@Composable
+fun QuizScreenContentSuccessPreview() {
+    QuizScreenContent(
+        uiState = QuizUiState.Success(
+            appBarTitle = "HI MI KA SE",
+            currentQuestion = "ひ",
+            remainingQuestionsCount = "20",
+            possibleAnswers = listOf(Hiragana.HI, Hiragana.MI, Hiragana.KA, Hiragana.SE)
+        )
+    )
+}
 
 @Preview
 @Composable
