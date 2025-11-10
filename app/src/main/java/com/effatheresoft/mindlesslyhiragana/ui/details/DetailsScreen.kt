@@ -11,44 +11,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.effatheresoft.mindlesslyhiragana.ui.DefaultViewModelProvider
 import com.effatheresoft.mindlesslyhiragana.ui.common.DefaultScaffold
 
 @Composable
 fun DetailsScreen(
     id: String,
     modifier: Modifier = Modifier,
-    viewModel: DetailsViewModel = viewModel(factory = DefaultViewModelProvider.Factory),
+    viewModel: DetailsViewModel = viewModel(),
     onNavigationIconClicked: () -> Unit = {},
     onNavigateToLearn: () -> Unit = {}
 ) {
     LaunchedEffect(Unit){
         viewModel.initializeWithId(id)
     }
-    val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
-    DetailsScreenContent(
-        modifier = modifier,
-        uiState = uiState,
-        onNavigationIconClicked = onNavigationIconClicked,
-        onNavigateToLearn = onNavigateToLearn
-    )
-}
+    val uiState = viewModel.uiState
 
-@Composable
-fun DetailsScreenContent(
-    modifier: Modifier = Modifier,
-    uiState: DetailsUiState,
-    onNavigationIconClicked: () -> Unit = {},
-    onNavigateToLearn: () -> Unit = {}
-) {
     DefaultScaffold(
-        appBarTitle = when (uiState) {
-            is DetailsUiState.Success -> uiState.appBarTitle
-            is DetailsUiState.Loading -> "Loading"
-            is DetailsUiState.Error -> "Error"
-        },
+        appBarTitle = uiState.appBarTitle,
         onNavigationIconClicked = onNavigationIconClicked
     ) { innerPadding ->
         Column(
@@ -59,14 +39,7 @@ fun DetailsScreenContent(
                 .padding(horizontal = 32.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Button(
-                onClick = onNavigateToLearn,
-                enabled = when (uiState) {
-                    is DetailsUiState.Success -> true
-                    is DetailsUiState.Loading -> false
-                    is DetailsUiState.Error -> false
-                }
-            ) {
+            Button(onClick = onNavigateToLearn) {
                 Text("Learn")
             }
         }
@@ -75,24 +48,8 @@ fun DetailsScreenContent(
 
 @Preview
 @Composable
-fun DetailsScreenSuccessPreview() {
-    DetailsScreenContent(
-        uiState = DetailsUiState.Success("ひみかせ HI MI KA SE")
-    )
-}
-
-@Preview
-@Composable
-fun DetailsScreenLoadingPreview() {
-    DetailsScreenContent(
-        uiState = DetailsUiState.Loading
-    )
-}
-
-@Preview
-@Composable
-fun DetailsScreenErrorPreview() {
-    DetailsScreenContent(
-        uiState = DetailsUiState.Error(Exception("Error"))
+fun DetailsScreenPreview() {
+    DetailsScreen(
+        id = "0"
     )
 }

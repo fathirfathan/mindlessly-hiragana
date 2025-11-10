@@ -1,43 +1,36 @@
 package com.effatheresoft.mindlesslyhiragana.data
 
-import com.effatheresoft.mindlesslyhiragana.util.Result
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
+
+object HiraganaRepository {
+    fun getHiraganaCategories() = HiraganaDataSource.fetchHiraganaCategories()
+
+    fun getHiraganaCategoryById(id: String): HiraganaCategory {
+        return HiraganaDataSource.hiraganaCategories.first { it.id == id }
+    }
+}
+
+sealed class Result<out T> {
+    data object Loading : Result<Nothing>()
+    data class Success<out T>(val data: T) : Result<T>()
+    data class Error(val exception: Throwable) : Result<Nothing>()
+}
 
 data class HiraganaCategory(
     val id: String,
     val hiraganaList: List<Hiragana>
 )
 
-class HiraganaRepository(private val hiraganaDataSource: HiraganaDataSource) {
-    fun getHiraganaCategories(): Flow<Result<List<HiraganaCategory>>> = flow {
+object HiraganaDataSource {
+    fun fetchHiraganaCategories(): Flow<Result<List<HiraganaCategory>>> = flow {
         emit(Result.Loading)
-        val hiraganaCategories = hiraganaDataSource.fetchHiraganaCategories()
+        delay(2000)
         emit(Result.Success(hiraganaCategories))
     }.catch { e ->
         emit(Result.Error(e))
-    }
-
-    fun getHiraganaCategoryById(id: String): Flow<Result<HiraganaCategory>> = flow {
-        emit(Result.Loading)
-        val hiraganaCategory = hiraganaDataSource.fetchHiraganaCategoryById(id)
-        emit(Result.Success(hiraganaCategory))
-    }.catch { e ->
-        emit(Result.Error(e))
-    }
-}
-
-class HiraganaDataSource() {
-    suspend fun fetchHiraganaCategories(): List<HiraganaCategory> {
-        delay(2000)
-        return hiraganaCategories
-    }
-
-    suspend fun fetchHiraganaCategoryById(id: String): HiraganaCategory {
-        delay(1000)
-        return hiraganaCategories.first { it.id == id }
     }
 
     val hiraganaCategories = listOf(

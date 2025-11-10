@@ -1,7 +1,5 @@
 package com.effatheresoft.mindlesslyhiragana.data
 
-
-
 enum class Hiragana(val hiragana: String, val romaji: String) {
     A("あ", "a"),
     I("い", "i"),

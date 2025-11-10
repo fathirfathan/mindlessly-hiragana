@@ -1,29 +1,21 @@
 package com.effatheresoft.mindlesslyhiragana.ui.learntrain
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.effatheresoft.mindlesslyhiragana.data.Hiragana
-import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.data.HiraganaRepository
-import com.effatheresoft.mindlesslyhiragana.util.Result
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.serialization.Serializable
 import kotlin.collections.listOf
 
-sealed class QuizUiState {
-    data object Loading: QuizUiState()
-    data class Success(
-        val appBarTitle: String,
-        val currentQuestion: String,
-        val remainingQuestionsCount: String,
-        val possibleAnswers: List<Hiragana>
-    ): QuizUiState()
-    data class Error(val exception: Throwable): QuizUiState()
-}
+data class LearnTrainUiState(
+    val appBarTitle: String = "",
+    val currentQuestion: String = "",
+    val remainingQuestionsCount: String = "",
+    val possibleAnswers: List<Hiragana> = listOf()
+)
 
 @Serializable
 data class QuizResult(
@@ -45,37 +37,18 @@ fun List<QuizResult>.getIncorrectAnswersCount(): Int {
     return size - getCorrectAnswersCount()
 }
 
-class QuizViewModel(private val repository: HiraganaRepository): ViewModel() {
-    private var appBarTitle = ""
-    private var currentQuestion: Hiragana? = null
-    private var hiraganaList = listOf<Hiragana>()
+class QuizViewModel: ViewModel() {
     private var id = ""
-    private var possibleAnswers = listOf<Hiragana>()
-    private var questionList = listOf<Hiragana>()
+    private var hiraganaList by mutableStateOf(listOf<Hiragana>())
+    private var appBarTitle by mutableStateOf("")
+    private var questionList by mutableStateOf(listOf<Hiragana>())
+    private var currentQuestion by mutableStateOf<Hiragana?>(null)
+    private var remainingQuestionsCount by mutableIntStateOf(-1)
+    private var possibleAnswers by mutableStateOf(listOf<Hiragana>())
     private val quizResults = mutableListOf<QuizResult>()
-    private var remainingQuestionsCount = -1
 
-    private lateinit var hiraganaCategory: Flow<Result<HiraganaCategory>>
-
-    private val _uiState = MutableStateFlow<QuizUiState>(QuizUiState.Loading)
-    val uiState = _uiState.asStateFlow()
-
-    fun setUiStateError(exception: Throwable) {
-        _uiState.value = QuizUiState.Error(exception)
-    }
-
-    fun setUiStateLoading() {
-        _uiState.value = QuizUiState.Loading
-    }
-
-    fun setUiStateSuccess() {
-        _uiState.value = QuizUiState.Success(
-            appBarTitle = appBarTitle,
-            currentQuestion = currentQuestion?.hiragana ?: "",
-            remainingQuestionsCount = remainingQuestionsCount.toString(),
-            possibleAnswers = possibleAnswers
-        )
-    }
+    var uiState by mutableStateOf(LearnTrainUiState())
+        private set
 
     fun List<Hiragana>.generateQuestions(): List<Hiragana> {
         if (isEmpty()) {
@@ -99,27 +72,20 @@ class QuizViewModel(private val repository: HiraganaRepository): ViewModel() {
     }
 
     fun initializeWithId(id: String) {
-        if (id == this.id) return
-
         this.id = id
-        hiraganaCategory = repository.getHiraganaCategoryById(id)
-        hiraganaCategory.onEach {
-            when (it) {
-                is Result.Success -> {
-                    hiraganaList = it.data.hiraganaList
-                    questionList = hiraganaList.generateQuestions()
+        hiraganaList = HiraganaRepository.getHiraganaCategoryById(id).hiraganaList
+        appBarTitle = hiraganaList.joinToString(" ") { it.romaji.uppercase() }
+        questionList = hiraganaList.generateQuestions()
+        currentQuestion = questionList.firstOrNull()
+        remainingQuestionsCount = questionList.size - 1
+        possibleAnswers = hiraganaList
 
-                    appBarTitle = hiraganaList.joinToString(" ") { it.romaji.uppercase() }
-                    currentQuestion = questionList.firstOrNull()
-                    remainingQuestionsCount = questionList.size - 1
-                    possibleAnswers = hiraganaList
-
-                    setUiStateSuccess()
-                }
-                is Result.Loading -> setUiStateLoading()
-                is Result.Error -> setUiStateError(it.exception)
-            }
-        }.launchIn(viewModelScope)
+        uiState = uiState.copy(
+            appBarTitle = appBarTitle,
+            currentQuestion = currentQuestion?.hiragana ?: "",
+            remainingQuestionsCount = remainingQuestionsCount.toString(),
+            possibleAnswers = possibleAnswers
+        )
     }
 
     fun onAnswerSelected(
@@ -136,6 +102,9 @@ class QuizViewModel(private val repository: HiraganaRepository): ViewModel() {
         currentQuestion = questionList[remainingQuestionsCount]
         remainingQuestionsCount--
 
-        setUiStateSuccess()
+        uiState = uiState.copy(
+            currentQuestion = currentQuestion?.hiragana ?: "",
+            remainingQuestionsCount = remainingQuestionsCount.toString()
+        )
     }
 }
