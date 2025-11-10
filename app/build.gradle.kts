@@ -3,7 +3,6 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     kotlin("plugin.serialization") version "2.0.21"
-    id("com.google.devtools.ksp")
 }
 
 android {
@@ -46,9 +45,6 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
 //    implementation("androidx.compose.material3:material3:1.5.0-alpha04")
     implementation(libs.androidx.compose.material.icons.core)
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    ksp(libs.androidx.room.compiler)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
