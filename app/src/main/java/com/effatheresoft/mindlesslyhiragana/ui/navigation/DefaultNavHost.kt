@@ -10,6 +10,7 @@ import com.effatheresoft.mindlesslyhiragana.ui.DefaultViewModelProvider
 import com.effatheresoft.mindlesslyhiragana.ui.details.DetailsScreen
 import com.effatheresoft.mindlesslyhiragana.ui.home.HomeScreen
 import com.effatheresoft.mindlesslyhiragana.ui.learntrain.QuizScreen
+import com.effatheresoft.mindlesslyhiragana.ui.results.QuizResult
 import com.effatheresoft.mindlesslyhiragana.ui.results.ResultsScreen
 import kotlinx.serialization.json.Json
 
@@ -29,7 +30,7 @@ fun DefaultNavHost(
             val details: Route.Details = backStackEntry.toRoute()
             DetailsScreen(
                 viewModel = viewModel(
-                    factory = DefaultViewModelProvider.getFactoryWithStringData(details.id)
+                    factory = DefaultViewModelProvider.getFactoryWithCategoryId(details.id)
                 ),
                 onNavigationIconClicked = { navController.popBackStack() },
                 onNavigateToLearn = { navController.navigate(Route.Quiz(details.id)) }
@@ -40,7 +41,7 @@ fun DefaultNavHost(
             val quiz: Route.Quiz = backStackEntry.toRoute()
             QuizScreen(
                 viewModel = viewModel(
-                    factory = DefaultViewModelProvider.getFactoryWithStringData(quiz.id)
+                    factory = DefaultViewModelProvider.getFactoryWithCategoryId(quiz.id)
                 ),
                 onNavigationIconClicked = { navController.popBackStack() },
                 onNavigateToResults = { quizResults ->
@@ -56,17 +57,15 @@ fun DefaultNavHost(
 
         composable<Route.Results> { backStackEntry ->
             val results: Route.Results = backStackEntry.toRoute()
+            val quizResults = Json.decodeFromString<List<QuizResult>>(results.quizResultsJson)
             ResultsScreen(
-                viewModel = viewModel(
-                    factory = DefaultViewModelProvider
-                        .getFactoryWithStringData(results.quizResultsJson)
-                ),
                 onNavigationIconClicked = {
                     navController.popBackStack(
                         route = Route.Details(results.id),
                         inclusive = false
                     )
-                }
+                },
+                quizResults = quizResults
             )
         }
     }
