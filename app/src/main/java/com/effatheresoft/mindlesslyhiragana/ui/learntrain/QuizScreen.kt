@@ -82,7 +82,7 @@ fun QuizScreenContent(
                     )
                     Spacer(Modifier.weight(1f))
                     Text(
-                        "Remaining Questions: ${uiState.remainingQuestionsCount}",
+                        "Remaining: ${uiState.remainingQuestionsCount}",
                         Modifier.padding(bottom = 16.dp)
                     )
                     Row(
@@ -117,7 +117,7 @@ fun QuizScreenContentSuccessPreview() {
         uiState = QuizUiState.Success(
             appBarTitle = "HI MI KA SE",
             currentQuestion = "ひ",
-            remainingQuestionsCount = 19,
+            remainingQuestionsCount = 20,
             possibleAnswers = listOf(HI, MI, KA, SE),
             selectedAnswersHistory = mapOf()
         )
