@@ -21,6 +21,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.effatheresoft.mindlesslyhiragana.R
 import com.effatheresoft.mindlesslyhiragana.data.Hiragana
+import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.ui.DefaultViewModelProvider
 import com.effatheresoft.mindlesslyhiragana.ui.common.DefaultScaffold
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
@@ -74,12 +75,7 @@ fun HomeScreenContent(
                                 )
                             }
                         }
-                        item {
-                            HomeListItem(
-                                text = "Test All Learned",
-                                onClick = { onNavigateToDetails("12") }
-                            )
-                        }
+                        item { HomeListItem(text = "Test All Learned") }
                         items(items = Hiragana.categories) { item ->
                             if (item.id.toInt() > uiState.highestCategoryId.toInt()) {
                                 HomeListItem(

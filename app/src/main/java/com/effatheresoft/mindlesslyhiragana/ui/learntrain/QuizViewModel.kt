@@ -3,12 +3,14 @@ package com.effatheresoft.mindlesslyhiragana.ui.learntrain
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.effatheresoft.mindlesslyhiragana.data.Hiragana
+import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory
+import com.effatheresoft.mindlesslyhiragana.data.HiraganaRepository
 import com.effatheresoft.mindlesslyhiragana.data.UserRepository
 import com.effatheresoft.mindlesslyhiragana.data.generateQuestions
 import com.effatheresoft.mindlesslyhiragana.data.getCategoryById
-import com.effatheresoft.mindlesslyhiragana.data.getLearnedHiraganaUpToId
 import com.effatheresoft.mindlesslyhiragana.ui.results.QuizResult
 import com.effatheresoft.mindlesslyhiragana.util.Result
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -33,40 +35,18 @@ class QuizViewModel(
     val uiState = _uiState.asStateFlow()
 
     init {
-        if (categoryId == "12") {
-            userRepository.getDefaultUser().onEach { result ->
-                when (result) {
-                    is Result.Error -> setUiStateError(result.exception)
-                    is Result.Success -> {
-                        result.data?.apply {
-                            hiraganaList = Hiragana.categories.getLearnedHiraganaUpToId(highestCategoryId)
-                            questionList = hiraganaList.shuffled()
-                            currentQuestion = questionList.firstOrNull()
-                            remainingQuestionsCount = questionList.size - 1
+        hiraganaList = Hiragana.categories.getCategoryById(categoryId)?.apply {
+            questionList = generateQuestions(learningSetsCount)
+            currentQuestion = questionList.firstOrNull()
+            remainingQuestionsCount = questionList.size - 1
 
-                            appBarTitle = "Test All Learned"
-                            possibleAnswers = hiraganaList.sortedBy { it.romaji }
-                            selectedAnswersHistory = hiraganaList.associateWith { false }
+            appBarTitle = hiraganaList.joinToString(" ") { it.romaji.uppercase() }
+            possibleAnswers = hiraganaList
+            selectedAnswersHistory = hiraganaList.associateWith { false }
 
-                            setUiStateSuccess()
-                        }
-                    }
-                    is Result.Loading -> setUiStateLoading()
-                }
-            }.launchIn(viewModelScope)
-        } else {
-            hiraganaList = Hiragana.categories.getCategoryById(categoryId)?.apply {
-                questionList = generateQuestions(learningSetsCount)
-                currentQuestion = questionList.firstOrNull()
-                remainingQuestionsCount = questionList.size - 1
+            setUiStateSuccess()
+        }?.hiraganaList ?: listOf()
 
-                appBarTitle = hiraganaList.joinToString(" ") { it.romaji.uppercase() }
-                possibleAnswers = hiraganaList.sortedBy { it.romaji }
-                selectedAnswersHistory = hiraganaList.associateWith { false }
-
-                setUiStateSuccess()
-            }?.hiraganaList ?: listOf()
-        }
     }
 
     fun setUiStateError(exception: Throwable) {
