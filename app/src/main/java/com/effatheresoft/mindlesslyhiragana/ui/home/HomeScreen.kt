@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -30,13 +29,14 @@ import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = viewModel(factory = DefaultViewModelProvider.Factory),
+    onNavigationIconClicked: () -> Unit = {},
     onNavigateToDetails: (String) -> Unit = {}
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
     HomeScreenContent(
         modifier = modifier,
         uiState = uiState,
-        onRestartProgressConfirmed = viewModel::restartProgress,
+        onNavigationIconClicked = onNavigationIconClicked,
         onNavigateToDetails = onNavigateToDetails
     )
 }
@@ -45,20 +45,25 @@ fun HomeScreen(
 fun HomeScreenContent(
     modifier: Modifier = Modifier,
     uiState: HomeUiState = HomeUiState.Loading,
-    onRestartProgressConfirmed: () -> Unit = {},
-    onNavigateToDetails: (String) -> Unit = {},
+    onNavigationIconClicked: () -> Unit = {},
+    onNavigateToDetails: (String) -> Unit = {}
 ) {
     HomeScaffoldWithDrawer(
         appBarTitle = "Mindlessly Hiragana",
-        onRestartProgressConfirmed = onRestartProgressConfirmed
+        onNavigationIconClicked = onNavigationIconClicked
     ) {
-        Column {
+        Column(modifier
+            .padding(horizontal = 16.dp)) {
             when(uiState) {
                 is HomeUiState.Loading -> {
-                    LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+                    Text(
+                        text = "Loading",
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
                 }
                 is HomeUiState.Success -> {
-                    LazyColumn(modifier.padding(horizontal = 16.dp)) {
+                    LazyColumn {
                         items(items = Hiragana.categories) { item ->
                             if (item.id.toInt() <= uiState.highestCategoryId.toInt()) {
                                 HomeListItem(

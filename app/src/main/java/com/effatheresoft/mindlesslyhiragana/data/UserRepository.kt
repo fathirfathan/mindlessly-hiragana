@@ -20,15 +20,6 @@ class UserRepository(private val userDataSource: UserLocalDataSource) {
             Result.Success(null)
         }
     }
-
-    suspend fun restartProgress() {
-        userDataSource.updateUser(User(
-            id = "1",
-            highestCategoryId = "0",
-            learningSetsCount = 3
-        ))
-    }
-
     fun insertUser(user: User): Flow<Result<Boolean>> = Result.flowWithResult {
         userDataSource.insertUser(user)
     }

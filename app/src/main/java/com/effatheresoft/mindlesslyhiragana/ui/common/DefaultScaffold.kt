@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -21,7 +20,6 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -70,10 +68,10 @@ fun DefaultScaffold(
 fun HomeScaffoldWithDrawer(
     modifier: Modifier = Modifier,
     appBarTitle: String = "",
-    onRestartProgressConfirmed: () -> Unit = {},
+    onNavigationIconClicked: () -> Unit = {},
     content: @Composable ( () -> Unit)
 ) {
-    var isRestartConfirmationDialogShown by remember { mutableStateOf(false) }
+    var isShown by remember { mutableStateOf(false) }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
@@ -93,7 +91,7 @@ fun HomeScaffoldWithDrawer(
                     NavigationDrawerItem(
                         label = { Text("Restart Progress") },
                         selected = false,
-                        onClick = { isRestartConfirmationDialogShown = true }
+                        onClick = { /* Handle click */ }
                     )
                 }
             }
@@ -106,6 +104,7 @@ fun HomeScaffoldWithDrawer(
                     title = { Text(appBarTitle) },
                     navigationIcon = {
                         IconButton(onClick = {
+                            isShown = !isShown
                             scope.launch {
                                 drawerState.apply { if (isClosed) open() else close() }
                             }
@@ -121,34 +120,6 @@ fun HomeScaffoldWithDrawer(
         ) { innerPadding ->
             Box(modifier = Modifier.padding(innerPadding)) {
                 content()
-                if (isRestartConfirmationDialogShown) {
-                    AlertDialog(
-                        icon = {},
-                        title = { Text("Restart Progress") },
-                        text = { Text("Are you sure you want to restart your progress?") },
-                        onDismissRequest = {
-                            isRestartConfirmationDialogShown = false
-                        },
-                        confirmButton = {
-                            TextButton(onClick = {
-                                isRestartConfirmationDialogShown = false
-                                scope.launch {
-                                    drawerState.apply { if (isClosed) open() else close() }
-                                }
-                                onRestartProgressConfirmed()
-                            }) {
-                                Text("Restart")
-                            }
-                        },
-                        dismissButton = {
-                            TextButton(onClick = {
-                                isRestartConfirmationDialogShown = false
-                            }) {
-                                Text("Cancel")
-                            }
-                        }
-                    )
-                }
             }
         }
     }
