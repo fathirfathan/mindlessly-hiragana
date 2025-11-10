@@ -5,12 +5,11 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface UserDao {
     @Query("SELECT * FROM user WHERE id = :id")
-    fun getUserById(id: String): Flow<UserEntity?>
+    suspend fun getUserById(id: String): UserEntity?
 
     @Insert
     suspend fun insert(user: UserEntity): Long

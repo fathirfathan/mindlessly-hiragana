@@ -6,20 +6,16 @@ import com.effatheresoft.mindlesslyhiragana.data.local.toUser
 import com.effatheresoft.mindlesslyhiragana.util.Result
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 
 private const val simulatedDelay = 1_000L
 
 class UserRepository(private val userDataSource: UserLocalDataSource) {
-    suspend fun getDefaultUser() = getUserById("1")
+    fun getDefaultUser() = getUserById("1")
 
-    suspend fun getUserById(id: String): Flow<Result<User?>> = userDataSource.fetchUserById(id).map {
-        if (it != null) {
-            Result.Success(it.toUser())
-        } else {
-            Result.Success(null)
-        }
+    fun getUserById(id: String): Flow<Result<User?>> = Result.flowWithResult {
+        userDataSource.fetchUserById(id)
     }
+
     fun insertUser(user: User): Flow<Result<Boolean>> = Result.flowWithResult {
         userDataSource.insertUser(user)
     }
@@ -30,9 +26,9 @@ class UserRepository(private val userDataSource: UserLocalDataSource) {
 }
 
 class UserLocalDataSource(private val userDao: UserDao) {
-    suspend fun fetchUserById(id: String): Flow<UserEntity?> {
+    suspend fun fetchUserById(id: String): User? {
         delay(simulatedDelay)
-        return userDao.getUserById(id)
+        return userDao.getUserById(id)?.toUser()
     }
 
     suspend fun insertUser(user: User): Boolean {

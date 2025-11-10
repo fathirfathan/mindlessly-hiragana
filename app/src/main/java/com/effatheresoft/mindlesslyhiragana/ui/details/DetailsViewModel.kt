@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 
 class DetailsViewModel(
     private val categoryId: String,
@@ -36,23 +35,21 @@ class DetailsViewModel(
         }
         _uiState.value = DetailsUiState.Loading
 
-        viewModelScope.launch {
-            userRepository.getDefaultUser().collect {
-                when (it) {
-                    is Result.Success -> {
-                        it.data?.let { user ->
-                            this@DetailsViewModel.user = user
-                            appBarTitle = getAppBarTitle(categoryId)
-                            testHiraganaList = Hiragana.categories.getLearnedHiraganaUpToId(user.highestCategoryId)
-                            learningSetsCount = user.learningSetsCount
-                            setUiStateSuccess()
-                        }
+        userRepository.getDefaultUser().onEach {
+            when (it) {
+                is Result.Success -> {
+                    it.data?.let { user ->
+                        this.user = user
+                        appBarTitle = getAppBarTitle(categoryId)
+                        testHiraganaList = Hiragana.categories.getLearnedHiraganaUpToId(user.highestCategoryId)
+                        learningSetsCount = user.learningSetsCount
+                        setUiStateSuccess()
                     }
-                    is Result.Loading -> {}
-                    is Result.Error -> { _uiState.value = DetailsUiState.Error(it.exception) }
                 }
+                is Result.Loading -> {}
+                is Result.Error -> { _uiState.value = DetailsUiState.Error(it.exception) }
             }
-        }
+        }.launchIn(viewModelScope)
     }
 
     fun getAppBarTitle(categoryId: String): String {

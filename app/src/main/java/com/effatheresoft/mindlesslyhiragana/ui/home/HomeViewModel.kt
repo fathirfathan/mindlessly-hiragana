@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 
 sealed class HomeUiState {
     data object Loading: HomeUiState()
@@ -22,6 +21,7 @@ sealed class HomeUiState {
 class HomeViewModel(
     private val userRepository: UserRepository
 ): ViewModel() {
+    private val user = userRepository.getDefaultUser()
     private val _uiState = MutableStateFlow<HomeUiState>(Loading)
     val uiState = _uiState.asStateFlow()
 
@@ -39,24 +39,22 @@ class HomeViewModel(
     }
 
     init {
-        viewModelScope.launch {
-            userRepository.getDefaultUser().collect {
-                when (it) {
-                    is Result.Loading -> _uiState.value = Loading
-                    is Result.Success -> {
-                        if (it.data == null) {
-                            createDefaultUser()
-                        } else {
-                            _uiState.value = Success(it.data.highestCategoryId)
-                        }
-                    }
-                    is Result.Error -> {
-                        _uiState.value = Error(it.exception)
-                        Log.d("HomeViewModel", "Error: ${it.exception}")
+        user.onEach {
+            when (it) {
+                is Result.Loading -> _uiState.value = Loading
+                is Result.Success -> {
+                    if (it.data == null) {
+                        createDefaultUser()
+                    } else {
+                        _uiState.value = Success(it.data.highestCategoryId)
                     }
                 }
+                is Result.Error -> {
+                    _uiState.value = Error(it.exception)
+                    Log.d("HomeViewModel", "Error: ${it.exception}")
+                }
             }
-        }
+        }.launchIn(viewModelScope)
     }
 }
 
