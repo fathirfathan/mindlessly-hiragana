@@ -1,12 +1,10 @@
 package com.effatheresoft.mindlesslyhiragana.ui.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import com.effatheresoft.mindlesslyhiragana.ui.DefaultViewModelProvider
 import com.effatheresoft.mindlesslyhiragana.ui.details.DetailsScreen
 import com.effatheresoft.mindlesslyhiragana.ui.home.HomeScreen
 import com.effatheresoft.mindlesslyhiragana.ui.learntrain.QuizScreen
@@ -29,9 +27,7 @@ fun DefaultNavHost(
         composable<Route.Details> { backStackEntry ->
             val details: Route.Details = backStackEntry.toRoute()
             DetailsScreen(
-                viewModel = viewModel(
-                    factory = DefaultViewModelProvider.getFactoryWithCategoryId(details.id)
-                ),
+                details.id,
                 onNavigationIconClicked = { navController.popBackStack() },
                 onNavigateToLearn = { navController.navigate(Route.Quiz(details.id)) }
             )
@@ -40,9 +36,7 @@ fun DefaultNavHost(
         composable<Route.Quiz> { backStackEntry ->
             val quiz: Route.Quiz = backStackEntry.toRoute()
             QuizScreen(
-                viewModel = viewModel(
-                    factory = DefaultViewModelProvider.getFactoryWithCategoryId(quiz.id)
-                ),
+                quiz.id,
                 onNavigationIconClicked = { navController.popBackStack() },
                 onNavigateToResults = { quizResults ->
                     val quizResultsJson = Json.encodeToString(quizResults)

@@ -97,24 +97,3 @@ data class HiraganaCategory(
     val id: String,
     val hiraganaList: List<Hiragana>
 )
-
-fun HiraganaCategory.generateQuestions(setCount: Int): List<Hiragana> {
-    val multipliedList = mutableListOf<Hiragana>().apply {
-        repeat(setCount) {
-            addAll(hiraganaList)
-        }
-    }
-
-    repeat(1000) {
-        val questions = multipliedList.shuffled()
-        if (questions.zipWithNext().all { it.first != it.second }) {
-            return questions
-        }
-    }
-
-    return multipliedList
-}
-
-fun List<HiraganaCategory>.getCategoryById(id: String): HiraganaCategory? {
-    return this.find { it.id == id }
-}

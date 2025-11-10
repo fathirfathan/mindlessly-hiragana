@@ -14,15 +14,12 @@ import com.effatheresoft.mindlesslyhiragana.ui.results.ResultsViewModel
 object DefaultViewModelProvider {
     val Factory: ViewModelProvider.Factory = viewModelFactory {
         initializer { HomeViewModel(application().userRepository) }
+        initializer { DetailsViewModel(application().hiraganaRepository) }
+        initializer { QuizViewModel(application().hiraganaRepository) }
         initializer { ResultsViewModel(application().hiraganaRepository) }
     }
 
     fun CreationExtras.application(): DefaultApplication {
         return (this[APPLICATION_KEY] as DefaultApplication)
-    }
-
-    fun getFactoryWithCategoryId(id: String) = viewModelFactory {
-        initializer { DetailsViewModel(id, application().userRepository) }
-        initializer { QuizViewModel(id, application().userRepository) }
     }
 }

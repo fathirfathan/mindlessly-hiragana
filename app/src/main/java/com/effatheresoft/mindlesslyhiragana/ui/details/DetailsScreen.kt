@@ -6,20 +6,27 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.effatheresoft.mindlesslyhiragana.ui.DefaultViewModelProvider
 import com.effatheresoft.mindlesslyhiragana.ui.common.DefaultScaffold
 
 @Composable
 fun DetailsScreen(
-    viewModel: DetailsViewModel,
+    id: String,
     modifier: Modifier = Modifier,
+    viewModel: DetailsViewModel = viewModel(factory = DefaultViewModelProvider.Factory),
     onNavigationIconClicked: () -> Unit = {},
     onNavigateToLearn: () -> Unit = {}
 ) {
+    LaunchedEffect(Unit){
+        viewModel.initializeWithId(id)
+    }
     val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
     DetailsScreenContent(
         modifier = modifier,
