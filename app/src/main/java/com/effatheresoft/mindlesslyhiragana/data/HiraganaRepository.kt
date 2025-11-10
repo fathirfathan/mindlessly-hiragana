@@ -1,50 +1,48 @@
 package com.effatheresoft.mindlesslyhiragana.data
 
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
-
-object HiraganaRepository {
-    fun getHiraganaCategories() = HiraganaDataSource.fetchHiraganaCategories()
-
-    fun getHiraganaCategoryById(id: String): HiraganaCategory {
-        return HiraganaDataSource.hiraganaCategories.first { it.id == id }
-    }
-}
-
-sealed class Result<out T> {
-    data object Loading : Result<Nothing>()
-    data class Success<out T>(val data: T) : Result<T>()
-    data class Error(val exception: Throwable) : Result<Nothing>()
-}
-
 data class HiraganaCategory(
     val id: String,
-    val hiraganaList: List<Hiragana>
+    val hiragana: String,
+    val hiraganaRomaji: String
 )
 
-object HiraganaDataSource {
-    fun fetchHiraganaCategories(): Flow<Result<List<HiraganaCategory>>> = flow {
-        emit(Result.Loading)
-        delay(2000)
-        emit(Result.Success(hiraganaCategories))
-    }.catch { e ->
-        emit(Result.Error(e))
+object HiraganaRepository {
+    private val hiraganaCategories = listOf(
+        HiraganaCategory("0", "ひみかせ", "ひみかせ Hi Mi Ka Se"),
+        HiraganaCategory("1", "ふをや", "ふをや Fu Wo Ya"),
+        HiraganaCategory("2", "あお・えん", "あお・えん A O E N"),
+        HiraganaCategory("3", "うつ・くへ", "うつ・くへ U Tsu Ku He"),
+        HiraganaCategory("4", "けり・こに", "けり・こに Ke Ri Ko Ni"),
+        HiraganaCategory("5", "すむ・なた・るろ", "すむ・なた・るろ Su Mu Na Ta Ru Ro"),
+        HiraganaCategory("6", "しいも", "しいも Shi I Mo"),
+        HiraganaCategory("7", "とてそ", "とてそ To Te So"),
+        HiraganaCategory("8", "ねわれ", "ねわれ Ne Wa Re"),
+        HiraganaCategory("9", "ぬめのゆ", "ぬめのゆ Nu Me No Yu"),
+        HiraganaCategory("10", "はほよま", "はほよま Ha Ho Yo Ma"),
+        HiraganaCategory("11", "きさちら", "きさちら Ki Sa Chi Ra"),
+        HiraganaCategory("12", "Test All Learned", "Test All Learned")
+    )
+
+    fun getHiraganaCategories(): List<HiraganaCategory> {
+        return hiraganaCategories
     }
 
-    val hiraganaCategories = listOf(
-        HiraganaCategory("0", listOf(Hiragana.HI, Hiragana.MI, Hiragana.KA, Hiragana.SE)),
-        HiraganaCategory("1", listOf(Hiragana.FU, Hiragana.WO, Hiragana.YA)),
-        HiraganaCategory("2", listOf(Hiragana.A, Hiragana.O, Hiragana.E, Hiragana.N)),
-        HiraganaCategory("3", listOf(Hiragana.U, Hiragana.TSU, Hiragana.KU, Hiragana.HE)),
-        HiraganaCategory("4", listOf(Hiragana.KE, Hiragana.RI, Hiragana.KO, Hiragana.NI)),
-        HiraganaCategory("5", listOf(Hiragana.SU, Hiragana.MU, Hiragana.NA, Hiragana.TA, Hiragana.RU, Hiragana.RO)),
-        HiraganaCategory("6", listOf(Hiragana.SHI, Hiragana.I, Hiragana.MO)),
-        HiraganaCategory("7", listOf(Hiragana.TO, Hiragana.TE, Hiragana.SO)),
-        HiraganaCategory("8", listOf(Hiragana.NE, Hiragana.WA, Hiragana.RE)),
-        HiraganaCategory("9", listOf(Hiragana.NU, Hiragana.ME, Hiragana.NO, Hiragana.YU)),
-        HiraganaCategory("10", listOf(Hiragana.HA, Hiragana.HO, Hiragana.YO, Hiragana.MA)),
-        HiraganaCategory("11", listOf(Hiragana.KI, Hiragana.SA, Hiragana.CHI, Hiragana.RA))
-    )
+    fun getHiraganaCategoryById(id: String): HiraganaCategory? {
+        return when(id) {
+            "0" -> HiraganaCategory("0", "ひみかせ", "ひみかせ Hi Mi Ka Se")
+            "1" -> HiraganaCategory("1", "ふをや", "ふをや Fu Wo Ya")
+            "2" -> HiraganaCategory("2", "あお・えん", "あお・えん A O E N")
+            "3" -> HiraganaCategory("3", "うつ・くへ", "うつ・くへ U Tsu Ku He")
+            "4" -> HiraganaCategory("4", "けり・こに", "けり・こに Ke Ri Ko Ni")
+            "5" -> HiraganaCategory("5", "すむ・なた・るろ", "すむ・なた・るろ Su Mu Na Ta Ru Ro")
+            "6" -> HiraganaCategory("6", "しいも", "しいも Shi I Mo")
+            "7" -> HiraganaCategory("7", "とてそ", "とてそ To Te So")
+            "8" -> HiraganaCategory("8", "ねわれ", "ねわれ Ne Wa Re")
+            "9" -> HiraganaCategory("9", "ぬめのゆ", "ぬめのゆ Nu Me No Yu")
+            "10" -> HiraganaCategory("10", "はほよま", "はほよま Ha Ho Yo Ma")
+            "11" -> HiraganaCategory("11", "きさちら", "きさちら Ki Sa Chi Ra")
+            "12" -> HiraganaCategory("12", "Test All Learned", "Test All Learned")
+            else -> null
+        }
+    }
 }
