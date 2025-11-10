@@ -6,6 +6,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 
+data class HiraganaCategory(
+    val id: String,
+    val hiraganaList: List<Hiragana>
+)
+
 class HiraganaRepository(private val hiraganaDataSource: HiraganaDataSource) {
     fun getHiraganaCategories(): Flow<Result<List<HiraganaCategory>>> = flow {
         emit(Result.Loading)

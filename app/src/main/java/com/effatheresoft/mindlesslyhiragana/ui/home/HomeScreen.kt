@@ -7,19 +7,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.effatheresoft.mindlesslyhiragana.R
 import com.effatheresoft.mindlesslyhiragana.data.Hiragana
 import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.ui.DefaultViewModelProvider
@@ -65,25 +65,21 @@ fun HomeScreenContent(
                     )
                 }
                 is HomeUiState.Success -> {
+                    if (uiState.hiraganaCategories.isEmpty()) {
+                        Text(
+                            text = "No hiragana categories yet",
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center
+                        )
+                    }
                     LazyColumn {
-                        items(items = Hiragana.categories) { item ->
-                            if (item.id.toInt() <= uiState.highestCategoryId.toInt()) {
-                                HomeListItem(
-                                    text = item.hiraganaList.joinToString(" ") { it.hiragana },
-                                    isUnlocked = true,
-                                    onClick = { onNavigateToDetails(item.id) }
-                                )
-                            }
+                        items(items = uiState.hiraganaCategories) { item ->
+                            HomeListItem(
+                                item.hiraganaList.joinToString(" ") { it.hiragana },
+                                { onNavigateToDetails(item.id) }
+                            )
                         }
-                        item { HomeListItem(text = "Test All Learned") }
-                        items(items = Hiragana.categories) { item ->
-                            if (item.id.toInt() > uiState.highestCategoryId.toInt()) {
-                                HomeListItem(
-                                    text = item.hiraganaList.joinToString(" ") { it.hiragana },
-                                    isUnlocked = false
-                                )
-                            }
-                        }
+
                     }
                 }
                 is HomeUiState.Error -> {
@@ -102,12 +98,10 @@ fun HomeScreenContent(
 @Composable
 fun HomeListItem(
     text: String,
-    modifier: Modifier = Modifier,
-    isUnlocked: Boolean = true,
     onClick: () -> Unit = {}
 ) {
     TextButton(
-        modifier = modifier.padding(horizontal = 4.dp),
+        modifier = Modifier.padding(horizontal = 4.dp),
         onClick = onClick
     ) {
         Row(
@@ -115,13 +109,9 @@ fun HomeListItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(text, Modifier.weight(1f))
-
             Icon(
-                painter = when(isUnlocked) {
-                    true -> { painterResource(R.drawable.keyboard_arrow_right_24px) }
-                    false -> { painterResource(R.drawable.lock_24px) }
-                },
-                contentDescription = "Choose this category"
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                contentDescription = text
             )
         }
     }
@@ -146,7 +136,7 @@ fun HomeScreenSuccessPreview() {
             HiraganaCategory("11", listOf(Hiragana.KI, Hiragana.SA, Hiragana.CHI, Hiragana.RA))
         )
         HomeScreenContent(
-            uiState = HomeUiState.Success("0")
+            uiState = HomeUiState.Success(hiraganaCategories)
         )
     }
 }
@@ -156,7 +146,7 @@ fun HomeScreenSuccessPreview() {
 fun HomeScreenSuccessEmptyPreview() {
     MindlesslyHiraganaTheme {
         HomeScreenContent(
-            uiState = HomeUiState.Success("0")
+            uiState = HomeUiState.Success(listOf())
         )
     }
 }

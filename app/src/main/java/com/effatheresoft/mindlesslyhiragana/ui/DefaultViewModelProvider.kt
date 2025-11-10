@@ -13,7 +13,7 @@ import com.effatheresoft.mindlesslyhiragana.ui.results.ResultsViewModel
 
 object DefaultViewModelProvider {
     val Factory: ViewModelProvider.Factory = viewModelFactory {
-        initializer { HomeViewModel(application().userRepository) }
+        initializer { HomeViewModel(application().hiraganaRepository) }
         initializer { DetailsViewModel(application().hiraganaRepository) }
         initializer { QuizViewModel(application().hiraganaRepository) }
         initializer { ResultsViewModel(application().hiraganaRepository) }
