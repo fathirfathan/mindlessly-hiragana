@@ -22,10 +22,18 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.effatheresoft.mindlesslyhiragana.CustomTestRunner"
     }
 
     buildTypes {
+        debug {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -60,6 +68,9 @@ dependencies {
     ksp(libs.hilt.android.compiler)
     kspTest(libs.hilt.android.compiler)
     kspAndroidTest(libs.hilt.android.compiler)
+
+    // jetpack compose test
+    debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
