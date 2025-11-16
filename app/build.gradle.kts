@@ -72,6 +72,11 @@ dependencies {
     // jetpack compose test
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    // kotlinx coroutines
+    implementation(libs.kotlinx.coroutines.android)
+    testImplementation(libs.kotlinx.coroutines.android)
+    testImplementation(libs.kotlinx.coroutines.test)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
