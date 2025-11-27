@@ -55,6 +55,9 @@ android {
 }
 
 dependencies {
+    testImplementation(project(":shared-test"))
+    androidTestImplementation(project(":shared-test"))
+
     // room
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.room.runtime)
@@ -63,6 +66,7 @@ dependencies {
 
     // hilt
     implementation(libs.hilt.android)
+    implementation(libs.hilt.navigation.compose)
     testImplementation(libs.hilt.android.testing)
     androidTestImplementation(libs.hilt.android.testing)
     ksp(libs.hilt.android.compiler)

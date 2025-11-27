@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Mindlessly Hiragana"
 include(":app")
+include(":shared-test")
