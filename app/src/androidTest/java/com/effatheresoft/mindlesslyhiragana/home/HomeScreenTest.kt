@@ -12,6 +12,7 @@ import com.effatheresoft.mindlesslyhiragana.data.UserRepository
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -29,7 +30,7 @@ class HomeScreenTest {
     private val activity get() = composeTestRule.activity
 
     @Inject
-    lateinit var userRepository: UserRepository
+    lateinit var fakeUserRepository: UserRepository
 
     @Before
     fun initialize() {
@@ -37,14 +38,14 @@ class HomeScreenTest {
     }
 
     @Test
-    fun displayTopAppBar() {
+    fun displayTopAppBar() = runTest {
         setContent()
 
         composeTestRule.onNodeWithText("Mindlessly Hiragana").assertIsDisplayed()
     }
 
     @Test
-    fun displayHiraganaCategories() {
+    fun displayHiraganaCategories() = runTest {
         setContent()
 
         composeTestRule.onNodeWithText("ひみかせ").assertIsDisplayed()
@@ -64,7 +65,8 @@ class HomeScreenTest {
     }
 
     @Test
-    fun displayHiraganaCategoriesLockState_withLocalUserProgress() {
+    fun displayHiraganaCategoriesLockState_withLocalUserProgress() = runTest{
+        fakeUserRepository.setLocalUserProgress("himikase")
         setContent()
 
         composeTestRule.onNodeWithContentDescription("ひみかせ category unlocked").assertIsDisplayed()
@@ -104,7 +106,7 @@ class HomeScreenTest {
         composeTestRule.setContent {
             MindlesslyHiraganaTheme {
                 Surface {
-                    HomeScreen(HomeViewModel(userRepository))
+                    HomeScreen(HomeViewModel(fakeUserRepository))
                 }
             }
         }

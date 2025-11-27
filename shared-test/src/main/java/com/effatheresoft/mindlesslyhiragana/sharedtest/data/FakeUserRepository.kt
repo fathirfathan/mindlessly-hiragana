@@ -11,5 +11,9 @@ class FakeUserRepository : UserRepository {
     val localUser = _localUser.asStateFlow()
 
     override fun getLocalUser(): Flow<User> = localUser.map { it }
+
+    override suspend fun setLocalUserProgress(string: String) {
+        _localUser.value = _localUser.value.copy(progress = string)
+    }
 }
 

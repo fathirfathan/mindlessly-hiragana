@@ -54,8 +54,8 @@ class HomeViewModelTest {
     fun uiStateReturnsLocalUser() = runTest {
         Dispatchers.setMain(StandardTestDispatcher())
 
-        // Default user when user open the app
         val localUser = User(localUserId, "himikase")
+        fakeUserRepository.setLocalUserProgress(localUser.progress)
 
         assertEquals(homeViewModel.uiState.first().isLoading, true)
         advanceUntilIdle()
