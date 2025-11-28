@@ -1,11 +1,11 @@
 package com.effatheresoft.mindlesslyhiragana.home
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -15,7 +15,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -41,59 +40,45 @@ fun HomeScreen(
         }
     ) { paddingValues ->
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-        val currentProgressCategoryIndex =
-            remember(uiState) { hiraganaCategories.indexOfFirst { it.id == uiState.progress } }
-        val unlockedCategory =
-            remember(uiState) { hiraganaCategories.take(currentProgressCategoryIndex + 1) }
-        val lockedCategory =
-            remember(uiState) { hiraganaCategories.drop(currentProgressCategoryIndex + 1) }
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = 32.dp)
-        ) {
-            for (category in unlockedCategory) {
-                CategoryItem(
-                    title = category.toHiraganaStringWithNakaguro(),
-                    isLocked = false
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-
-            CategoryItem(
-                title = "Test All Learned",
-                isLocked = false
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-
-            for (category in lockedCategory) {
-                CategoryItem(
-                    title = category.toHiraganaStringWithNakaguro(),
-                    isLocked = true
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-        }
+        HomeContent(
+            unlockedCategories = uiState.unlockedCategories,
+            lockedCategories = uiState.lockedCategories,
+            modifier = Modifier.padding(paddingValues)
+        )
     }
 }
 
-val hiraganaCategories = listOf(
-    HiraganaCategory("himikase",  listOf(Hiragana.HI,  Hiragana.MI, Hiragana.KA,  Hiragana.SE)),
-    HiraganaCategory("fuwoya",    listOf(Hiragana.FU,  Hiragana.WO, Hiragana.YA)),
-    HiraganaCategory("ao",        listOf(Hiragana.A,   Hiragana.O)),
-    HiraganaCategory("tsuune",    listOf(Hiragana.TSU, Hiragana.U,  Hiragana.N,   Hiragana.E)),
-    HiraganaCategory("kuherike",  listOf(Hiragana.KU,  Hiragana.HE, Hiragana.RI,  Hiragana.KE)),
-    HiraganaCategory("konitana",  listOf(Hiragana.KO,  Hiragana.NI, Hiragana.TA,  Hiragana.NA)),
-    HiraganaCategory("sumuroru",  listOf(Hiragana.SU,  Hiragana.MU, Hiragana.RO,  Hiragana.RU)),
-    HiraganaCategory("shiimo",    listOf(Hiragana.SHI, Hiragana.I,  Hiragana.MO)),
-    HiraganaCategory("toteso",    listOf(Hiragana.TO,  Hiragana.TE, Hiragana.SO)),
-    HiraganaCategory("wanere",    listOf(Hiragana.WA,  Hiragana.NE, Hiragana.RE)),
-    HiraganaCategory("noyumenu",  listOf(Hiragana.NO,  Hiragana.YU, Hiragana.ME,  Hiragana.NU)),
-    HiraganaCategory("yohamaho",  listOf(Hiragana.YO,  Hiragana.HA, Hiragana.MA,  Hiragana.HO)),
-    HiraganaCategory("sakichira", listOf(Hiragana.SA,  Hiragana.KI, Hiragana.CHI, Hiragana.RA)),
-)
+@Composable
+fun HomeContent(
+    unlockedCategories: List<HiraganaCategory>,
+    lockedCategories: List<HiraganaCategory>,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(24.dp),
+        modifier = modifier.fillMaxSize().padding(horizontal = 32.dp, vertical = 16.dp)
+    ) {
+        for (category in unlockedCategories) {
+            CategoryItem(
+                title = category.toHiraganaStringWithNakaguro(),
+                isLocked = false
+            )
+        }
+
+        CategoryItem(
+            title = "Test All Learned",
+            isLocked = false
+        )
+
+        for (category in lockedCategories) {
+            CategoryItem(
+                title = category.toHiraganaStringWithNakaguro(),
+                isLocked = true
+            )
+        }
+    }
+}
 
 @Composable
 fun CategoryItem(
@@ -102,7 +87,7 @@ fun CategoryItem(
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
     ) {
         Text(title)
         Spacer(modifier = Modifier.weight(1f))
@@ -120,12 +105,27 @@ fun CategoryItem(
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {
     MindlesslyHiraganaTheme {
         Surface {
-            HomeScreen()
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    CenterAlignedTopAppBar(
+                        title = { Text("Mindlessly Hiragana") }
+                    )
+                }
+            ) { paddingValues ->
+                HomeContent(
+                    unlockedCategories = Hiragana.getCategories().take(3),
+                    lockedCategories = Hiragana.getCategories().drop(3),
+                    modifier = Modifier.padding(paddingValues)
+                )
+
+            }
         }
     }
 }

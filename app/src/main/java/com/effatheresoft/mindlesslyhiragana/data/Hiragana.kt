@@ -5,7 +5,6 @@ data class HiraganaCategory(
     val hiraganaList: List<Hiragana>
 ) {
     fun toHiraganaStringWithNakaguro(): String {
-        // hiragana on compound categories: tsuune, kuherike, konitana, sumuroru
         val hiraganaBeforeNakaguroSet = setOf(Hiragana.U, Hiragana.HE, Hiragana.NI, Hiragana.MU)
         return hiraganaList.joinToString("") { if (it in hiraganaBeforeNakaguroSet) "${it.kana}・" else it.kana }
     }
@@ -111,5 +110,25 @@ enum class Hiragana(val kana: String) {
     PI("ぴ"),
     PU("ぷ"),
     PE("ぺ"),
-    PO("ぽ"),
+    PO("ぽ");
+
+    companion object {
+        fun getCategories(): List<HiraganaCategory> {
+            return listOf(
+                HiraganaCategory("himikase",  listOf(HI,  MI, KA,  SE)),
+                HiraganaCategory("fuwoya",    listOf(FU,  WO, YA)),
+                HiraganaCategory("ao",        listOf(A,   O)),
+                HiraganaCategory("tsuune",    listOf(TSU, U,  N,   E)),
+                HiraganaCategory("kuherike",  listOf(KU,  HE, RI,  KE)),
+                HiraganaCategory("konitana",  listOf(KO,  NI, TA,  NA)),
+                HiraganaCategory("sumuroru",  listOf(SU,  MU, RO,  RU)),
+                HiraganaCategory("shiimo",    listOf(SHI, I,  MO)),
+                HiraganaCategory("toteso",    listOf(TO,  TE, SO)),
+                HiraganaCategory("wanere",    listOf(WA,  NE, RE)),
+                HiraganaCategory("noyumenu",  listOf(NO,  YU, ME,  NU)),
+                HiraganaCategory("yohamaho",  listOf(YO,  HA, MA,  HO)),
+                HiraganaCategory("sakichira", listOf(SA,  KI, CHI, RA)),
+            )
+        }
+    }
 }

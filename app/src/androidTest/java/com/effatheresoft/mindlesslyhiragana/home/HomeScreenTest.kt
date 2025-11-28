@@ -1,6 +1,7 @@
 package com.effatheresoft.mindlesslyhiragana.home
 
 import androidx.compose.material3.Surface
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -65,7 +66,7 @@ class HomeScreenTest {
     }
 
     @Test
-    fun displayHiraganaCategoriesLockState_withLocalUserProgress() = runTest{
+    fun displayHiraganaCategoriesLockStateBasedOnProgress() = runTest{
         fakeUserRepository.setLocalUserProgress("himikase")
         setContent()
 
@@ -83,24 +84,54 @@ class HomeScreenTest {
         composeTestRule.onNodeWithContentDescription("のゆめぬ category locked").assertIsDisplayed()
         composeTestRule.onNodeWithContentDescription("よはまほ category locked").assertIsDisplayed()
         composeTestRule.onNodeWithContentDescription("さきちら category locked").assertIsDisplayed()
-
-        val himikasePosition = composeTestRule
-            .onNode(hasText("ひみかせ"))
-            .fetchSemanticsNode()
-            .positionInRoot
-        val testAllLearnedPosition = composeTestRule
-            .onNode(hasText("Test All Learned"))
-            .fetchSemanticsNode()
-            .positionInRoot
-        val fuwoyaPosition = composeTestRule
-            .onNode(hasText("ふをや"))
-            .fetchSemanticsNode()
-            .positionInRoot
-
-        // `Test All Learned` is between `ひみかせ` and `ふをや`
-        assert(himikasePosition.y < testAllLearnedPosition.y)
-        assert(testAllLearnedPosition.y < fuwoyaPosition.y)
     }
+
+    @Test
+    fun displayHiraganaCategoriesInRightOrder() = runTest {
+        fakeUserRepository.setLocalUserProgress("himikase")
+        setContent()
+
+        val himikasePosition = getTextPosition("ひみかせ")
+        val testAllLearnedPosition = getTextPosition("Test All Learned")
+        val fuwoyaPosition = getTextPosition("ふをや")
+        val aoPosition = getTextPosition("あお")
+        val tsuunnePosition = getTextPosition("つう・んえ")
+        val kuherikePosition = getTextPosition("くへ・りけ")
+        val konitanaPosition = getTextPosition("こに・たな")
+        val sumuroruPosition = getTextPosition("すむ・ろる")
+        val shiimoPosition = getTextPosition("しいも")
+        val totesosoPosition = getTextPosition("とてそ")
+        val wanerePosition = getTextPosition("わねれ")
+        val noyumenuPosition = getTextPosition("のゆめぬ")
+        val yohamahoPosition = getTextPosition("よはまほ")
+        val sakichiraPosition = getTextPosition("さきちら")
+
+        himikasePosition.assertOnTopOf(testAllLearnedPosition)
+        testAllLearnedPosition.assertOnTopOf(fuwoyaPosition)
+        fuwoyaPosition.assertOnTopOf(aoPosition)
+        aoPosition.assertOnTopOf(tsuunnePosition)
+        tsuunnePosition.assertOnTopOf(kuherikePosition)
+        kuherikePosition.assertOnTopOf(konitanaPosition)
+        konitanaPosition.assertOnTopOf(sumuroruPosition)
+        sumuroruPosition.assertOnTopOf(shiimoPosition)
+        shiimoPosition.assertOnTopOf(totesosoPosition)
+        totesosoPosition.assertOnTopOf(wanerePosition)
+        wanerePosition.assertOnTopOf(noyumenuPosition)
+        noyumenuPosition.assertOnTopOf(yohamahoPosition)
+        yohamahoPosition.assertOnTopOf(sakichiraPosition)
+    }
+
+    fun Offset.assertOnTopOf(other: Offset) {
+        assert(this.y < other.y)
+    }
+
+    fun getTextPosition(text: String): Offset {
+        return composeTestRule
+            .onNode(hasText(text))
+            .fetchSemanticsNode()
+            .positionInRoot
+    }
+
 
     fun setContent() {
         composeTestRule.setContent {
