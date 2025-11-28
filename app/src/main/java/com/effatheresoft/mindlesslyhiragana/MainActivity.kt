@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.effatheresoft.mindlesslyhiragana.home.HomeScreen
+import com.effatheresoft.mindlesslyhiragana.navigation.DefaultNavGraph
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -15,7 +15,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MindlesslyHiraganaTheme {
-                HomeScreen()
+                DefaultNavGraph()
             }
         }
     }

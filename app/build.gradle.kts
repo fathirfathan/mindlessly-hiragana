@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.androidx.room)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt.android)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 room {
@@ -80,6 +81,9 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     testImplementation(libs.kotlinx.coroutines.android)
     testImplementation(libs.kotlinx.coroutines.test)
+
+    // Kotlinx Json Serialization
+    implementation(libs.kotlinx.serialization.json)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
