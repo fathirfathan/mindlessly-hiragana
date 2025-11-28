@@ -1,5 +1,6 @@
 package com.effatheresoft.mindlesslyhiragana.home
 
+import com.effatheresoft.mindlesslyhiragana.Constants.LOCAL_USER_ID
 import com.effatheresoft.mindlesslyhiragana.data.FakeUserRepository
 import com.effatheresoft.mindlesslyhiragana.data.User
 import junit.framework.TestCase.assertEquals
@@ -39,7 +40,6 @@ class MainCoroutineRule(
 class HomeViewModelTest {
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var fakeUserRepository: FakeUserRepository
-    private val localUserId = "localUser"
 
     @get:Rule
     val mainCoroutineRule = MainCoroutineRule()
@@ -54,7 +54,7 @@ class HomeViewModelTest {
     fun uiStateReturnsLocalUser() = runTest {
         Dispatchers.setMain(StandardTestDispatcher())
 
-        val localUser = User(localUserId, "himikase")
+        val localUser = User(LOCAL_USER_ID, "himikase")
         fakeUserRepository.setLocalUserProgress(localUser.progress)
 
         assertEquals(homeViewModel.uiState.first().isLoading, true)

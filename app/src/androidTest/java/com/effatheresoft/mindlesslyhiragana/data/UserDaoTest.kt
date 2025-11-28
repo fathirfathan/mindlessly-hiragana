@@ -3,6 +3,7 @@ package com.effatheresoft.mindlesslyhiragana.data
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.effatheresoft.mindlesslyhiragana.Constants.LOCAL_USER_ID
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
 import kotlinx.coroutines.flow.Flow
@@ -15,7 +16,6 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class UserDaoTest {
     private lateinit var defaultDatabase: DefaultDatabase
-    private val localUserId = "localUser"
 
     @Before
     fun initializeDatabase() = runTest {
@@ -29,7 +29,7 @@ class UserDaoTest {
     fun observedLocalUser_sendsNewData_whenLocalUserChanges() = runTest {
         // Observe local user
         val localUser = UserRoomEntity(
-            id = localUserId,
+            id = LOCAL_USER_ID,
             progress = "1"
         )
         defaultDatabase.userDao().upsertUser(localUser)
@@ -37,7 +37,7 @@ class UserDaoTest {
 
         // When local user is updated
         val updatedLocalUser = UserRoomEntity(
-            id = localUserId,
+            id = LOCAL_USER_ID,
             progress = "2"
         )
         defaultDatabase.userDao().upsertUser(updatedLocalUser)

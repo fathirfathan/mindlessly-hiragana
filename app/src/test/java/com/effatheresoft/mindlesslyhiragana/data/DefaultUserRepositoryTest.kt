@@ -1,5 +1,6 @@
 package com.effatheresoft.mindlesslyhiragana.data
 
+import com.effatheresoft.mindlesslyhiragana.Constants.LOCAL_USER_ID
 import com.effatheresoft.mindlesslyhiragana.home.MainCoroutineRule
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -13,7 +14,7 @@ import org.junit.Test
 
 class FakeUserDao: UserDao {
     var localUserEntity = UserRoomEntity(
-        id = "localUser",
+        id = LOCAL_USER_ID,
         progress = "1"
     )
     val localUserEntities = hashMapOf(localUserEntity.id to localUserEntity)
@@ -23,7 +24,7 @@ class FakeUserDao: UserDao {
     }
 
     override fun observeLocalUser(): Flow<UserRoomEntity> = flow {
-        emit(localUserEntities["localUser"] ?: localUserEntity)
+        emit(localUserEntities[LOCAL_USER_ID] ?: localUserEntity)
     }
 
     override suspend fun getUserById(id: String): UserRoomEntity? {
@@ -47,12 +48,12 @@ class DefaultUserRepositoryTest {
     @Test
     fun observedLocalUser_returnsLocalUser() = runTest {
         // When observing local user
-        val localUser = User("localUser", "himikase")
+        val localUser = User(LOCAL_USER_ID, "himikase")
         defaultUserRepository.setLocalUserProgress(localUser.progress)
         val observedLocalUser = defaultUserRepository.observeLocalUser()
 
         // And local user is updated
-        val newlocalUser = User("localUser", "fuwoya")
+        val newlocalUser = User(LOCAL_USER_ID, "fuwoya")
         defaultUserRepository.setLocalUserProgress(newlocalUser.progress)
 
         // Then the observed user sends the updated values
