@@ -1,6 +1,5 @@
 package com.effatheresoft.mindlesslyhiragana.home
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +12,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -56,8 +56,7 @@ fun HomeContent(
     modifier: Modifier = Modifier
 ) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(24.dp),
-        modifier = modifier.fillMaxSize().padding(horizontal = 32.dp, vertical = 16.dp)
+        modifier = modifier.fillMaxSize().padding(horizontal = 16.dp)
     ) {
         for (category in unlockedCategories) {
             CategoryItem(
@@ -86,21 +85,24 @@ fun CategoryItem(
     isLocked: Boolean,
     modifier: Modifier = Modifier
 ) {
-    Row(
+    TextButton(
+        onClick = {},
         modifier = modifier.fillMaxWidth()
     ) {
-        Text(title)
-        Spacer(modifier = Modifier.weight(1f))
-        when(isLocked) {
-            true -> Icon(
-                painter = painterResource(R.drawable.lock_24px),
-                contentDescription = "$title category locked"
-            )
-            false -> Icon(
-                painter = painterResource(R.drawable.arrow_right_24px),
-                contentDescription = "$title category unlocked"
-            )
+        Row {
+            Text(title)
+            Spacer(modifier = Modifier.weight(1f))
+            when(isLocked) {
+                true -> Icon(
+                    painter = painterResource(R.drawable.lock_24px),
+                    contentDescription = "$title category locked"
+                )
+                false -> Icon(
+                    painter = painterResource(R.drawable.arrow_right_24px),
+                    contentDescription = "$title category unlocked"
+                )
 
+            }
         }
     }
 }
