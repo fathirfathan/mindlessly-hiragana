@@ -2,18 +2,19 @@ package com.effatheresoft.mindlesslyhiragana.data
 
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 
-class DefaultUserRepository @Inject constructor(): UserRepository {
+class DefaultUserRepository @Inject constructor(
+    private val localDataSource: UserDao
+): UserRepository {
 
-    private val _localUser = MutableStateFlow(User("localUser", "himikase"))
-    val localUser = _localUser.asStateFlow()
+    override fun observeLocalUser(): Flow<User> = localDataSource.observeLocalUser().map { it.toUser() }
 
-    override fun getLocalUser(): Flow<User> = localUser.map { it }
-
-    override suspend fun setLocalUserProgress(string: String) {
-        _localUser.value = _localUser.value.copy(progress = string)
-    }
+    override suspend fun setLocalUserProgress(string: String) =
+        localDataSource.upsertUser(
+            User(
+                id = "localUser",
+                progress = string
+            ).toUserRoomEntity()
+        )
 }

@@ -5,6 +5,8 @@ import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
@@ -13,28 +15,37 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class UserDaoTest {
     private lateinit var defaultDatabase: DefaultDatabase
-    private lateinit var prepopulatedLocalUser: UserRoomEntity
+    private val localUserId = "localUser"
 
     @Before
-    fun initializeAndPrepopulateDatabase() = runTest {
+    fun initializeDatabase() = runTest {
         defaultDatabase = Room.inMemoryDatabaseBuilder(
             context = getApplicationContext(),
             klass = DefaultDatabase::class.java
         ).allowMainThreadQueries().build()
-
-        prepopulatedLocalUser = UserRoomEntity(
-            id = "localUser",
-            progress = "1"
-        )
-        defaultDatabase.userDao().upsertUser(prepopulatedLocalUser)
     }
 
     @Test
-    fun getLocalUser() = runTest {
-        val loadedData = defaultDatabase.userDao().getLocalUser()
-        assertNotNull(loadedData)
-        assertEquals(loadedData.id, prepopulatedLocalUser.id)
-        assertEquals(loadedData.progress, prepopulatedLocalUser.progress)
+    fun observedLocalUser_sendsNewData_whenLocalUserChanges() = runTest {
+        // Observe local user
+        val localUser = UserRoomEntity(
+            id = localUserId,
+            progress = "1"
+        )
+        defaultDatabase.userDao().upsertUser(localUser)
+        val observedLocalUser: Flow<UserRoomEntity> = defaultDatabase.userDao().observeLocalUser()
+
+        // When local user is updated
+        val updatedLocalUser = UserRoomEntity(
+            id = localUserId,
+            progress = "2"
+        )
+        defaultDatabase.userDao().upsertUser(updatedLocalUser)
+
+        // Then the observed user sends the updated values
+        val latestData = observedLocalUser.first()
+        assertEquals(latestData.id, updatedLocalUser.id)
+        assertEquals(latestData.progress, updatedLocalUser.progress)
     }
 
     @Test

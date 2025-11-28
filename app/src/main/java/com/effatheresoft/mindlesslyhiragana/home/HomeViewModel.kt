@@ -25,7 +25,7 @@ class HomeViewModel @Inject constructor(val userRepository: UserRepository) : Vi
 
     private val hiraganaCategories = Hiragana.getCategories()
 
-    private val _localUser = userRepository.getLocalUser()
+    private val _localUser = userRepository.observeLocalUser()
     private val _isLoading = MutableStateFlow(false)
 
     val uiState: StateFlow<HomeUiState> = combine(_localUser, _isLoading) { localUser, isLoading ->

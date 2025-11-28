@@ -3,6 +3,7 @@ package com.effatheresoft.mindlesslyhiragana.data
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface UserDao {
@@ -10,7 +11,7 @@ interface UserDao {
     suspend fun upsertUser(user: UserRoomEntity)
 
     @Query("SELECT * FROM user WHERE id = 'localUser'")
-    suspend fun getLocalUser(): UserRoomEntity
+    fun observeLocalUser(): Flow<UserRoomEntity>
 
     @Query("SELECT * FROM user WHERE id = :id")
     suspend fun getUserById(id: String): UserRoomEntity?

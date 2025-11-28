@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 
 
 interface UserRepository {
-    fun getLocalUser(): Flow<User>
+    fun observeLocalUser(): Flow<User>
 
     suspend fun setLocalUserProgress(string: String)
 }
