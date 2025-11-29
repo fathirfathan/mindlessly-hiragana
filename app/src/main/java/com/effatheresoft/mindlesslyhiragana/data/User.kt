@@ -7,61 +7,19 @@ data class User(
 
 fun User.toUserRoomEntity(): UserRoomEntity {
     return when(progress) {
-        "himikase" -> UserRoomEntity(
-            id = id,
-            progress = "1"
-        )
-        "fuwoya" -> UserRoomEntity(
-            id = id,
-            progress = "2"
-        )
-        "ao" -> UserRoomEntity(
-            id = id,
-            progress = "3"
-        )
-        "tsuune" -> UserRoomEntity(
-            id = id,
-            progress = "4"
-        )
-        "kuherike" -> UserRoomEntity(
-            id = id,
-            progress = "5"
-        )
-        "konitana" -> UserRoomEntity(
-            id = id,
-            progress = "6"
-        )
-        "sumuroru" -> UserRoomEntity(
-            id = id,
-            progress = "7"
-        )
-        "shiimo" -> UserRoomEntity(
-            id = id,
-            progress = "8"
-        )
-        "toteso" -> UserRoomEntity(
-            id = id,
-            progress = "9"
-        )
-        "wanere" -> UserRoomEntity(
-            id = id,
-            progress = "10"
-        )
-        "noyumenu" -> UserRoomEntity(
-            id = id,
-            progress = "11"
-        )
-        "yohamaho" -> UserRoomEntity(
-            id = id,
-            progress = "12"
-        )
-        "sakichira" -> UserRoomEntity(
-            id = id,
-            progress = "13"
-        )
-        else -> UserRoomEntity(
-            id = id,
-            progress = "-1"
-        )
+        "himikase"  -> this.copy(progress = "1").toUserRoomEntity()
+        "fuwoya"    -> this.copy(progress = "2").toUserRoomEntity()
+        "ao"        -> this.copy(progress = "3").toUserRoomEntity()
+        "tsuune"    -> this.copy(progress = "4").toUserRoomEntity()
+        "kuherike"  -> this.copy(progress = "5").toUserRoomEntity()
+        "konitana"  -> this.copy(progress = "6").toUserRoomEntity()
+        "sumuroru"  -> this.copy(progress = "7").toUserRoomEntity()
+        "shiimo"    -> this.copy(progress = "8").toUserRoomEntity()
+        "toteso"    -> this.copy(progress = "9").toUserRoomEntity()
+        "wanere"    -> this.copy(progress = "10").toUserRoomEntity()
+        "noyumenu"  -> this.copy(progress = "11").toUserRoomEntity()
+        "yohamaho"  -> this.copy(progress = "12").toUserRoomEntity()
+        "sakichira" -> this.copy(progress = "13").toUserRoomEntity()
+        else -> this.copy(progress = "-1").toUserRoomEntity()
     }
 }
