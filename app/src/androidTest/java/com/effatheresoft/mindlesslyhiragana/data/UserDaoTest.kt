@@ -30,7 +30,8 @@ class UserDaoTest {
         // Observe local user
         val localUser = UserRoomEntity(
             id = LOCAL_USER_ID,
-            progress = "1"
+            progress = "1",
+            learningSetsCount = 5
         )
         defaultDatabase.userDao().upsertUser(localUser)
         val observedLocalUser: Flow<UserRoomEntity> = defaultDatabase.userDao().observeLocalUser()
@@ -38,7 +39,8 @@ class UserDaoTest {
         // When local user is updated
         val updatedLocalUser = UserRoomEntity(
             id = LOCAL_USER_ID,
-            progress = "2"
+            progress = "2",
+            learningSetsCount = 1
         )
         defaultDatabase.userDao().upsertUser(updatedLocalUser)
 
@@ -46,6 +48,7 @@ class UserDaoTest {
         val latestData = observedLocalUser.first()
         assertEquals(latestData.id, updatedLocalUser.id)
         assertEquals(latestData.progress, updatedLocalUser.progress)
+        assertEquals(latestData.learningSetsCount, updatedLocalUser.learningSetsCount)
     }
 
     @Test
@@ -53,7 +56,8 @@ class UserDaoTest {
         // GIVEN - A new user is inserted
         val newUser = UserRoomEntity(
             id = "newUser",
-            progress = "1"
+            progress = "1",
+            learningSetsCount = 5
         )
         defaultDatabase.userDao().upsertUser(newUser)
 
@@ -62,5 +66,6 @@ class UserDaoTest {
         assertNotNull(loadedData as UserRoomEntity)
         assertEquals(loadedData.id, newUser.id)
         assertEquals(loadedData.progress, newUser.progress)
+        assertEquals(loadedData.learningSetsCount, newUser.learningSetsCount)
     }
 }

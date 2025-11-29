@@ -1,8 +1,14 @@
 package com.effatheresoft.mindlesslyhiragana.navigation
 
+import androidx.compose.ui.semantics.ProgressBarRangeInfo
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasProgressBarRangeInfo
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performSemanticsAction
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.effatheresoft.mindlesslyhiragana.HiltTestActivity
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
@@ -36,10 +42,61 @@ class DefaultNavGraphTest {
         composeTestRule.onNodeWithText("Mindlessly Hiragana").assertIsDisplayed()
     }
 
-    fun setContent() {
+    @Test
+    fun homeScreen_onCategoryClicked_navigatesToLearnScreen() {
+        setContent()
+
+        composeTestRule.onNodeWithText("ひみかせ").performClick()
+        composeTestRule.onNodeWithText("Learning Sets", substring = true).assertIsDisplayed()
+        composeTestRule.onNodeWithText("ひみかせ").assertIsDisplayed()
+    }
+
+    @Test
+    fun learnScreen_onNavigationIconClicked_navigatesToHomeScreen() {
+        setContent(Route.Learn("himikase"))
+
+        composeTestRule.onNodeWithContentDescription("Navigate back").performClick()
+        composeTestRule.onNodeWithText("Mindlessly Hiragana").assertIsDisplayed()
+    }
+
+    @Test
+    fun whenLearningSetsCountChanged_countStaysChanged() {
+        val currentCount = 5
+        val changedCount = 1
+        setContent(Route.Learn("himikase"))
+
+        // LearnScreen()
+        composeTestRule.onNode(
+            hasProgressBarRangeInfo(
+                ProgressBarRangeInfo(
+                    current = currentCount.toFloat(),
+                    range = 1f..10f,
+                    steps = 8
+                )
+            )
+        ).performSemanticsAction(SemanticsActions.SetProgress) { it(changedCount.toFloat()) }
+        composeTestRule.onNodeWithContentDescription("Navigate back").performClick()
+
+        // HomeScreen()
+        composeTestRule.onNodeWithText("ひみかせ").performClick()
+
+        // LearnScreen()
+        composeTestRule.onNode(
+            hasProgressBarRangeInfo(
+                ProgressBarRangeInfo(
+                    current = changedCount.toFloat(),
+                    range = 1f..10f,
+                    steps = 8
+                )
+            )
+        ).assertIsDisplayed()
+        composeTestRule.onNodeWithText("Learning Sets: $changedCount Sets").assertIsDisplayed()
+    }
+
+    fun setContent(startDestination: Route = Route.Home) {
         composeTestRule.setContent {
             MindlesslyHiraganaTheme {
-                DefaultNavGraph()
+                DefaultNavGraph(startDestination = startDestination)
             }
         }
     }

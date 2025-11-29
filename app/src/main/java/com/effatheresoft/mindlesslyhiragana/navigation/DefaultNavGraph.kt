@@ -6,20 +6,25 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.effatheresoft.mindlesslyhiragana.home.HomeScreen
+import com.effatheresoft.mindlesslyhiragana.learn.LearnScreen
 import kotlinx.serialization.Serializable
 
 sealed interface Route {
 
     @Serializable
     object Home: Route
+
+    @Serializable
+    data class Learn(val categoryId: String): Route
 }
 
 @Composable
 fun DefaultNavGraph(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    startDestination: Route.Home = Route.Home
+    startDestination: Route = Route.Learn("himikase")
 ) {
     NavHost(
         navController = navController,
@@ -27,7 +32,16 @@ fun DefaultNavGraph(
         modifier = modifier
     ) {
         composable<Route.Home> {
-            HomeScreen()
+            HomeScreen(
+                onNavigateToLearn = { navController.navigate(Route.Learn(it)) }
+            )
+        }
+        composable<Route.Learn> { navBackStackEntry ->
+            val learnRoute: Route.Learn = navBackStackEntry.toRoute()
+            LearnScreen(
+                categoryId = learnRoute.categoryId,
+                onNavigationIconClick = { navController.navigate(Route.Home) }
+            )
         }
     }
 }

@@ -67,7 +67,7 @@ class HomeScreenTest {
 
     @Test
     fun displayHiraganaCategoriesLockStateBasedOnProgress() = runTest{
-        fakeUserRepository.setLocalUserProgress("himikase")
+        fakeUserRepository.updateLocalUserProgress("himikase")
         setContent()
 
         composeTestRule.onNodeWithContentDescription("ひみかせ category unlocked").assertIsDisplayed()
@@ -88,7 +88,7 @@ class HomeScreenTest {
 
     @Test
     fun displayHiraganaCategoriesInRightOrder() = runTest {
-        fakeUserRepository.setLocalUserProgress("himikase")
+        fakeUserRepository.updateLocalUserProgress("himikase")
         setContent()
 
         val himikasePosition = getTextPosition("ひみかせ")
@@ -137,7 +137,10 @@ class HomeScreenTest {
         composeTestRule.setContent {
             MindlesslyHiraganaTheme {
                 Surface {
-                    HomeScreen(HomeViewModel(fakeUserRepository))
+                    HomeScreen(
+                        onNavigateToLearn = {},
+                        viewModel = HomeViewModel(fakeUserRepository)
+                    )
                 }
             }
         }

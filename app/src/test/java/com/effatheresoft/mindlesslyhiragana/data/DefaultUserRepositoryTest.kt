@@ -1,7 +1,7 @@
 package com.effatheresoft.mindlesslyhiragana.data
 
 import com.effatheresoft.mindlesslyhiragana.Constants.LOCAL_USER_ID
-import com.effatheresoft.mindlesslyhiragana.home.MainCoroutineRule
+import com.effatheresoft.mindlesslyhiragana.MainCoroutineRule
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -15,12 +15,21 @@ import org.junit.Test
 class FakeUserDao: UserDao {
     var localUserEntity = UserRoomEntity(
         id = LOCAL_USER_ID,
-        progress = "1"
+        progress = "1",
+        learningSetsCount = 5
     )
     val localUserEntities = hashMapOf(localUserEntity.id to localUserEntity)
 
     override suspend fun upsertUser(user: UserRoomEntity) {
         localUserEntities[user.id] = user
+    }
+
+    override suspend  fun updateLocalUserProgress(progress: String) {
+        localUserEntities[LOCAL_USER_ID] = localUserEntities[LOCAL_USER_ID]!!.copy(progress = progress)
+    }
+
+    override suspend fun updateLocalUserLearningSetsCount(count: Int) {
+        localUserEntities[LOCAL_USER_ID] = localUserEntities[LOCAL_USER_ID]!!.copy(learningSetsCount = count)
     }
 
     override fun observeLocalUser(): Flow<UserRoomEntity> = flow {
@@ -34,7 +43,7 @@ class FakeUserDao: UserDao {
 }
 
 class DefaultUserRepositoryTest {
-    private lateinit var defaultUserRepository: DefaultUserRepository
+    private lateinit var defaultUserRepository: UserRepository
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @get:Rule
@@ -46,19 +55,36 @@ class DefaultUserRepositoryTest {
     }
 
     @Test
-    fun observedLocalUser_returnsLocalUser() = runTest {
-        // When observing local user
-        val localUser = User(LOCAL_USER_ID, "himikase")
-        defaultUserRepository.setLocalUserProgress(localUser.progress)
+    fun whileObservingLocalUser_whenProgressIsUpdated_thenLocalUserProgressIsUpdated() = runTest {
+        // While observing local user
+        val localUser = User(LOCAL_USER_ID, "himikase", 5)
+        defaultUserRepository.updateLocalUserProgress(localUser.progress)
         val observedLocalUser = defaultUserRepository.observeLocalUser()
 
         // And local user is updated
-        val newlocalUser = User(LOCAL_USER_ID, "fuwoya")
-        defaultUserRepository.setLocalUserProgress(newlocalUser.progress)
+        val newlocalUser = User(LOCAL_USER_ID, "fuwoya", 5)
+        defaultUserRepository.updateLocalUserProgress(newlocalUser.progress)
 
         // Then the observed user sends the updated values
         val latestData = observedLocalUser.first()
         assertEquals(latestData.id, newlocalUser.id)
         assertEquals(latestData.progress, newlocalUser.progress)
+    }
+
+    @Test
+    fun whileObservingLocalUser_whenLearningSetsCountIsUpdated_thenLocalUserCountIsUpdated() = runTest {
+        // While observing local user
+        val localUser = User(LOCAL_USER_ID, "himikase", 5)
+        defaultUserRepository.updateLocalUserLearningSetsCount(localUser.learningSetsCount)
+        val observedLocalUser = defaultUserRepository.observeLocalUser()
+
+        // And local user is updated
+        val newlocalUser = User(LOCAL_USER_ID, "himikase", 1)
+        defaultUserRepository.updateLocalUserLearningSetsCount(newlocalUser.learningSetsCount)
+
+        // Then the observed user sends the updated values
+        val latestData = observedLocalUser.first()
+        assertEquals(latestData.id, newlocalUser.id)
+        assertEquals(latestData.learningSetsCount, newlocalUser.learningSetsCount)
     }
 }

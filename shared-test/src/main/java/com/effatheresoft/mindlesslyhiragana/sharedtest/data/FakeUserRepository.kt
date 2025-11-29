@@ -8,13 +8,17 @@ import kotlinx.coroutines.flow.map
 
 class FakeUserRepository : UserRepository {
 
-    private val _localUser = MutableStateFlow(User(LOCAL_USER_ID, "himikase"))
+    private val _localUser = MutableStateFlow(User(LOCAL_USER_ID, "himikase", 5))
     val localUser = _localUser.asStateFlow()
 
     override fun observeLocalUser(): Flow<User> = localUser.map { it }
 
-    override suspend fun setLocalUserProgress(string: String) {
-        _localUser.value = _localUser.value.copy(progress = string)
+    override suspend fun updateLocalUserProgress(progress: String) {
+        _localUser.value = _localUser.value.copy(progress = progress)
+    }
+
+    override suspend fun updateLocalUserLearningSetsCount(count: Int) {
+        _localUser.value = _localUser.value.copy(learningSetsCount = count)
     }
 }
 

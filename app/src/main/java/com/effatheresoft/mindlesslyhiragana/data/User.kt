@@ -2,24 +2,81 @@ package com.effatheresoft.mindlesslyhiragana.data
 
 data class User(
     val id: String,
-    val progress: String
+    val progress: String,
+    val learningSetsCount: Int
 )
 
 fun User.toUserRoomEntity(): UserRoomEntity {
     return when(progress) {
-        "himikase"  -> this.copy(progress = "1").toUserRoomEntity()
-        "fuwoya"    -> this.copy(progress = "2").toUserRoomEntity()
-        "ao"        -> this.copy(progress = "3").toUserRoomEntity()
-        "tsuune"    -> this.copy(progress = "4").toUserRoomEntity()
-        "kuherike"  -> this.copy(progress = "5").toUserRoomEntity()
-        "konitana"  -> this.copy(progress = "6").toUserRoomEntity()
-        "sumuroru"  -> this.copy(progress = "7").toUserRoomEntity()
-        "shiimo"    -> this.copy(progress = "8").toUserRoomEntity()
-        "toteso"    -> this.copy(progress = "9").toUserRoomEntity()
-        "wanere"    -> this.copy(progress = "10").toUserRoomEntity()
-        "noyumenu"  -> this.copy(progress = "11").toUserRoomEntity()
-        "yohamaho"  -> this.copy(progress = "12").toUserRoomEntity()
-        "sakichira" -> this.copy(progress = "13").toUserRoomEntity()
-        else -> this.copy(progress = "-1").toUserRoomEntity()
+        "himikase" -> UserRoomEntity(
+            id = id,
+            progress = "1",
+            learningSetsCount = learningSetsCount
+        )
+        "fuwoya" -> UserRoomEntity(
+            id = id,
+            progress = "2",
+            learningSetsCount = learningSetsCount
+        )
+        "ao" -> UserRoomEntity(
+            id = id,
+            progress = "3",
+            learningSetsCount = learningSetsCount
+        )
+        "tsuune" -> UserRoomEntity(
+            id = id,
+            progress = "4",
+            learningSetsCount = learningSetsCount
+        )
+        "kuherike" -> UserRoomEntity(
+            id = id,
+            progress = "5",
+            learningSetsCount = learningSetsCount
+        )
+        "konitana" -> UserRoomEntity(
+            id = id,
+            progress = "6",
+            learningSetsCount = learningSetsCount
+        )
+        "sumuroru" -> UserRoomEntity(
+            id = id,
+            progress = "7",
+            learningSetsCount = learningSetsCount
+        )
+        "shiimo" -> UserRoomEntity(
+            id = id,
+            progress = "8",
+            learningSetsCount = learningSetsCount
+        )
+        "toteso" -> UserRoomEntity(
+            id = id,
+            progress = "9",
+            learningSetsCount = learningSetsCount
+        )
+        "wanere" -> UserRoomEntity(
+            id = id,
+            progress = "10",
+            learningSetsCount = learningSetsCount
+        )
+        "noyumenu" -> UserRoomEntity(
+            id = id,
+            progress = "11",
+            learningSetsCount = learningSetsCount
+        )
+        "yohamaho" -> UserRoomEntity(
+            id = id,
+            progress = "12",
+            learningSetsCount = learningSetsCount
+        )
+        "sakichira" -> UserRoomEntity(
+            id = id,
+            progress = "13",
+            learningSetsCount = learningSetsCount
+        )
+        else -> UserRoomEntity(
+            id = id,
+            progress = "-1",
+            learningSetsCount = learningSetsCount
+        )
     }
 }

@@ -1,45 +1,26 @@
 package com.effatheresoft.mindlesslyhiragana.home
 
 import com.effatheresoft.mindlesslyhiragana.Constants.LOCAL_USER_ID
+import com.effatheresoft.mindlesslyhiragana.MainCoroutineRule
 import com.effatheresoft.mindlesslyhiragana.data.FakeUserRepository
 import com.effatheresoft.mindlesslyhiragana.data.User
+import com.effatheresoft.mindlesslyhiragana.data.UserRepository
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.TestDispatcher
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.TestWatcher
-import org.junit.runner.Description
-
-@ExperimentalCoroutinesApi
-class MainCoroutineRule(
-    val testDispatcher: TestDispatcher = UnconfinedTestDispatcher()
-) : TestWatcher() {
-
-    override fun starting(description: Description?) {
-        super.starting(description)
-        Dispatchers.setMain(testDispatcher)
-    }
-
-    override fun finished(description: Description?) {
-        super.finished(description)
-        Dispatchers.resetMain()
-    }
-}
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModelTest {
     private lateinit var homeViewModel: HomeViewModel
-    private lateinit var fakeUserRepository: FakeUserRepository
+    private lateinit var fakeUserRepository: UserRepository
 
     @get:Rule
     val mainCoroutineRule = MainCoroutineRule()
@@ -51,11 +32,11 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun uiStateReturnsLocalUser() = runTest {
+    fun uiState_containsLocalUser() = runTest {
         Dispatchers.setMain(StandardTestDispatcher())
 
-        val localUser = User(LOCAL_USER_ID, "himikase")
-        fakeUserRepository.setLocalUserProgress(localUser.progress)
+        val localUser = User(LOCAL_USER_ID, "himikase", 5)
+        fakeUserRepository.updateLocalUserProgress(localUser.progress)
 
         assertEquals(homeViewModel.uiState.first().isLoading, true)
         advanceUntilIdle()

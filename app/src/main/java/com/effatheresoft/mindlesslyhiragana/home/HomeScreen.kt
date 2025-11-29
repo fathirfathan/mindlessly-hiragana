@@ -29,6 +29,8 @@ import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+    onNavigateToLearn: (categoryId: String) -> Unit,
+    modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     Scaffold(
@@ -44,6 +46,7 @@ fun HomeScreen(
         HomeContent(
             unlockedCategories = uiState.unlockedCategories,
             lockedCategories = uiState.lockedCategories,
+            onNavigateToLearn = onNavigateToLearn,
             modifier = Modifier.padding(paddingValues)
         )
     }
@@ -53,6 +56,7 @@ fun HomeScreen(
 fun HomeContent(
     unlockedCategories: List<HiraganaCategory>,
     lockedCategories: List<HiraganaCategory>,
+    onNavigateToLearn: (categoryId: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -61,19 +65,22 @@ fun HomeContent(
         for (category in unlockedCategories) {
             CategoryItem(
                 title = category.toHiraganaStringWithNakaguro(),
-                isLocked = false
+                isLocked = false,
+                onClick = { onNavigateToLearn(category.id) }
             )
         }
 
         CategoryItem(
             title = "Test All Learned",
-            isLocked = false
+            isLocked = false,
+            onClick = { onNavigateToLearn("testAllLearned") }
         )
 
         for (category in lockedCategories) {
             CategoryItem(
                 title = category.toHiraganaStringWithNakaguro(),
-                isLocked = true
+                isLocked = true,
+                onClick = { onNavigateToLearn(category.id) }
             )
         }
     }
@@ -83,10 +90,11 @@ fun HomeContent(
 fun CategoryItem(
     title: String,
     isLocked: Boolean,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     TextButton(
-        onClick = {},
+        onClick = onClick,
         modifier = modifier.fillMaxWidth()
     ) {
         Row {
@@ -124,6 +132,7 @@ fun HomeScreenPreview() {
                 HomeContent(
                     unlockedCategories = Hiragana.getCategories().take(3),
                     lockedCategories = Hiragana.getCategories().drop(3),
+                    onNavigateToLearn = {},
                     modifier = Modifier.padding(paddingValues)
                 )
 

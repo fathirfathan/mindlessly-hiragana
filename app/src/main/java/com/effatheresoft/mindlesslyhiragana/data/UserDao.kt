@@ -11,6 +11,12 @@ interface UserDao {
     @Upsert
     suspend fun upsertUser(user: UserRoomEntity)
 
+    @Query("UPDATE user SET progress = :progress WHERE id = '$LOCAL_USER_ID'")
+    suspend fun updateLocalUserProgress(progress: String)
+
+    @Query("UPDATE user SET learningSetsCount = :count WHERE id = '$LOCAL_USER_ID'")
+    suspend fun updateLocalUserLearningSetsCount(count: Int)
+
     @Query("SELECT * FROM user WHERE id = '$LOCAL_USER_ID'")
     fun observeLocalUser(): Flow<UserRoomEntity>
 

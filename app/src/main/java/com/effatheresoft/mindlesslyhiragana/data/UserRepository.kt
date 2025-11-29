@@ -4,7 +4,10 @@ import kotlinx.coroutines.flow.Flow
 
 
 interface UserRepository {
+
     fun observeLocalUser(): Flow<User>
 
-    suspend fun setLocalUserProgress(string: String)
+    suspend fun updateLocalUserProgress(progress: String)
+
+    suspend fun updateLocalUserLearningSetsCount(count: Int)
 }

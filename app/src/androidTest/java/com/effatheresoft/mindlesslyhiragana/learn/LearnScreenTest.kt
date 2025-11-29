@@ -112,7 +112,7 @@ class LearnScreenTest {
         composeTestRule.setContent {
             MindlesslyHiraganaTheme {
                 Surface {
-                    LearnScreen(categoryId = "himikase")
+                    LearnScreen(categoryId = "himikase", onNavigationIconClick = {})
                 }
             }
         }
