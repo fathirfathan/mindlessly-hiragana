@@ -24,7 +24,7 @@ sealed interface Route {
 fun DefaultNavGraph(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    startDestination: Route = Route.Learn("himikase")
+    startDestination: Route = Route.Home
 ) {
     NavHost(
         navController = navController,
