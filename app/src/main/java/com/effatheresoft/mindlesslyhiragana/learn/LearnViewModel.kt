@@ -2,6 +2,7 @@ package com.effatheresoft.mindlesslyhiragana.learn
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.effatheresoft.mindlesslyhiragana.Constants.DEFAULT_LEARNING_SETS_COUNT
 import com.effatheresoft.mindlesslyhiragana.data.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +15,7 @@ import javax.inject.Inject
 
 data class LearnUiState(
     val isLoading: Boolean = false,
-    val learningSetsCount: Int = 5
+    val learningSetsCount: Int = DEFAULT_LEARNING_SETS_COUNT
 )
 
 @HiltViewModel

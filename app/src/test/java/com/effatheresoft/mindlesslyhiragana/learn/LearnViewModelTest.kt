@@ -1,5 +1,6 @@
 package com.effatheresoft.mindlesslyhiragana.learn
 
+import com.effatheresoft.mindlesslyhiragana.Constants.DEFAULT_LEARNING_SETS_COUNT
 import com.effatheresoft.mindlesslyhiragana.Constants.LOCAL_USER_ID
 import com.effatheresoft.mindlesslyhiragana.MainCoroutineRule
 import com.effatheresoft.mindlesslyhiragana.data.FakeUserRepository
@@ -30,7 +31,7 @@ class LearnViewModelTest {
 
     @Test
     fun uiState_containsLearningSetsCount() = runTest {
-        val localUser = User(LOCAL_USER_ID, HIMIKASE.id, learningSetsCount = 5)
+        val localUser = User(LOCAL_USER_ID, HIMIKASE.id, learningSetsCount = DEFAULT_LEARNING_SETS_COUNT)
         fakeUserRepository.updateLocalUserLearningSetsCount(localUser.learningSetsCount)
 
         assertEquals(learnViewModel.uiState.first().learningSetsCount, localUser.learningSetsCount)

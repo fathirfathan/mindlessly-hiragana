@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.effatheresoft.mindlesslyhiragana.Constants.DEFAULT_LEARNING_SETS_COUNT
 import com.effatheresoft.mindlesslyhiragana.R
 import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.HIMIKASE
@@ -107,7 +108,7 @@ fun LearnScreenPreview() {
         ) { paddingValues ->
             LearnScreenContent(
                 category = HIMIKASE.id,
-                learningSetsCount = 5,
+                learningSetsCount = DEFAULT_LEARNING_SETS_COUNT,
                 onLearningSetsCountChange = {},
                 modifier = Modifier.padding(paddingValues)
             )

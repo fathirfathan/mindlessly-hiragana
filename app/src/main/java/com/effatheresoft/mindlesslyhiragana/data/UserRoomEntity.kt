@@ -2,6 +2,7 @@ package com.effatheresoft.mindlesslyhiragana.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.effatheresoft.mindlesslyhiragana.Constants.DEFAULT_DATABASE_USER_TABLE_NAME
 import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.AO
 import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.HIMIKASE
 import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.FUWOYA
@@ -16,7 +17,7 @@ import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.TSUUNE
 import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.WANERE
 import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.YOHAMAHO
 
-@Entity(tableName = "user")
+@Entity(tableName = DEFAULT_DATABASE_USER_TABLE_NAME)
 data class UserRoomEntity(
     @PrimaryKey val id: String,
     val progress: String,

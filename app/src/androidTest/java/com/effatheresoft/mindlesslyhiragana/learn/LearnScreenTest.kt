@@ -16,6 +16,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.effatheresoft.mindlesslyhiragana.Constants.DEFAULT_LEARNING_SETS_COUNT
 import com.effatheresoft.mindlesslyhiragana.HiltTestActivity
 import com.effatheresoft.mindlesslyhiragana.R
 import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.HIMIKASE
@@ -61,11 +62,11 @@ class LearnScreenTest {
     fun learningSetsCustomizer_withDefaultSetsCount_assertIsDisplayed() {
         setContent()
 
-        composeTestRule.onNodeWithText(activity.getString(R.string.learning_sets_n_sets, 5)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(activity.getString(R.string.learning_sets_n_sets, DEFAULT_LEARNING_SETS_COUNT)).assertIsDisplayed()
         composeTestRule.onNode(
             hasProgressBarRangeInfo(
                 ProgressBarRangeInfo(
-                    current = 5f,
+                    current = DEFAULT_LEARNING_SETS_COUNT.toFloat(),
                     range = 1f..10f,
                     steps = 8
                 )
@@ -75,8 +76,11 @@ class LearnScreenTest {
 
     @Test
     fun learningSetsCustomizer_whenCountIsSetToOne_assertIsDisplayed() {
-        val currentCount = 5
-        val changedCount = 1
+        val currentCount = DEFAULT_LEARNING_SETS_COUNT
+        val changedCount = when {
+            DEFAULT_LEARNING_SETS_COUNT >= 10 -> 9
+            else -> DEFAULT_LEARNING_SETS_COUNT + 1
+        }
         setContent()
 
         composeTestRule.onNode(

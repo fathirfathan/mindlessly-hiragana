@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.effatheresoft.mindlesslyhiragana.Constants.TEST_ALL_LEARNED_ID
 import com.effatheresoft.mindlesslyhiragana.R
 import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
@@ -75,7 +76,7 @@ fun HomeContent(
         CategoryItem(
             title = stringResource(R.string.test_all_learned),
             isLocked = false,
-            onClick = { onNavigateToLearn("testAllLearned") }
+            onClick = { onNavigateToLearn(TEST_ALL_LEARNED_ID) }
         )
 
         for (category in lockedCategories) {

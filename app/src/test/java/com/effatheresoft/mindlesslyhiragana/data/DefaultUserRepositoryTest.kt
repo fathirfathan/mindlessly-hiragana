@@ -1,5 +1,6 @@
 package com.effatheresoft.mindlesslyhiragana.data
 
+import com.effatheresoft.mindlesslyhiragana.Constants.DEFAULT_LEARNING_SETS_COUNT
 import com.effatheresoft.mindlesslyhiragana.Constants.LOCAL_USER_ID
 import com.effatheresoft.mindlesslyhiragana.MainCoroutineRule
 import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.HIMIKASE
@@ -18,7 +19,7 @@ class FakeUserDao: UserDao {
     var localUserEntity = UserRoomEntity(
         id = LOCAL_USER_ID,
         progress = "1",
-        learningSetsCount = 5
+        learningSetsCount = DEFAULT_LEARNING_SETS_COUNT
     )
     val localUserEntities = hashMapOf(localUserEntity.id to localUserEntity)
 
@@ -59,12 +60,12 @@ class DefaultUserRepositoryTest {
     @Test
     fun whileObservingLocalUser_whenProgressIsUpdated_thenLocalUserProgressIsUpdated() = runTest {
         // While observing local user
-        val localUser = User(LOCAL_USER_ID, HIMIKASE.id, 5)
+        val localUser = User(LOCAL_USER_ID, HIMIKASE.id, DEFAULT_LEARNING_SETS_COUNT)
         defaultUserRepository.updateLocalUserProgress(localUser.progress)
         val observedLocalUser = defaultUserRepository.observeLocalUser()
 
         // And local user is updated
-        val newlocalUser = User(LOCAL_USER_ID, FUWOYA.id, 5)
+        val newlocalUser = User(LOCAL_USER_ID, FUWOYA.id, DEFAULT_LEARNING_SETS_COUNT)
         defaultUserRepository.updateLocalUserProgress(newlocalUser.progress)
 
         // Then the observed user sends the updated values
@@ -76,12 +77,16 @@ class DefaultUserRepositoryTest {
     @Test
     fun whileObservingLocalUser_whenLearningSetsCountIsUpdated_thenLocalUserCountIsUpdated() = runTest {
         // While observing local user
-        val localUser = User(LOCAL_USER_ID, HIMIKASE.id, 5)
+        val localUser = User(LOCAL_USER_ID, HIMIKASE.id, DEFAULT_LEARNING_SETS_COUNT)
         defaultUserRepository.updateLocalUserLearningSetsCount(localUser.learningSetsCount)
         val observedLocalUser = defaultUserRepository.observeLocalUser()
 
         // And local user is updated
-        val newlocalUser = User(LOCAL_USER_ID, HIMIKASE.id, 1)
+        val newLearningSetsCount = when {
+            DEFAULT_LEARNING_SETS_COUNT >= 10 -> 9
+            else -> DEFAULT_LEARNING_SETS_COUNT + 1
+        }
+        val newlocalUser = User(LOCAL_USER_ID, HIMIKASE.id, newLearningSetsCount)
         defaultUserRepository.updateLocalUserLearningSetsCount(newlocalUser.learningSetsCount)
 
         // Then the observed user sends the updated values

@@ -1,5 +1,6 @@
 package com.effatheresoft.mindlesslyhiragana.home
 
+import com.effatheresoft.mindlesslyhiragana.Constants.DEFAULT_LEARNING_SETS_COUNT
 import com.effatheresoft.mindlesslyhiragana.Constants.LOCAL_USER_ID
 import com.effatheresoft.mindlesslyhiragana.MainCoroutineRule
 import com.effatheresoft.mindlesslyhiragana.data.FakeUserRepository
@@ -36,7 +37,7 @@ class HomeViewModelTest {
     fun uiState_containsLocalUser() = runTest {
         Dispatchers.setMain(StandardTestDispatcher())
 
-        val localUser = User(LOCAL_USER_ID, HIMIKASE.id, 5)
+        val localUser = User(LOCAL_USER_ID, HIMIKASE.id, DEFAULT_LEARNING_SETS_COUNT)
         fakeUserRepository.updateLocalUserProgress(localUser.progress)
 
         assertEquals(homeViewModel.uiState.first().isLoading, true)

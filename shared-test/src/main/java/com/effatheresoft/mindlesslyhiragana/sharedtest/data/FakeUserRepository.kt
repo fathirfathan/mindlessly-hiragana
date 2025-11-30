@@ -1,5 +1,6 @@
 package com.effatheresoft.mindlesslyhiragana.data
 
+import com.effatheresoft.mindlesslyhiragana.Constants.DEFAULT_LEARNING_SETS_COUNT
 import com.effatheresoft.mindlesslyhiragana.Constants.LOCAL_USER_ID
 import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.HIMIKASE
 import kotlinx.coroutines.flow.Flow
@@ -9,7 +10,7 @@ import kotlinx.coroutines.flow.map
 
 class FakeUserRepository : UserRepository {
 
-    private val _localUser = MutableStateFlow(User(LOCAL_USER_ID, HIMIKASE.id, 5))
+    private val _localUser = MutableStateFlow(User(LOCAL_USER_ID, HIMIKASE.id, DEFAULT_LEARNING_SETS_COUNT))
     val localUser = _localUser.asStateFlow()
 
     override fun observeLocalUser(): Flow<User> = localUser.map { it }
