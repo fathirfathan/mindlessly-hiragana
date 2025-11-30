@@ -16,12 +16,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.effatheresoft.mindlesslyhiragana.R
-import com.effatheresoft.mindlesslyhiragana.data.Hiragana
+import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory
+import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.HIMIKASE
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,12 +37,12 @@ fun LearnScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Learn") },
+                title = { Text(stringResource(R.string.learn)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigationIconClick) {
                         Icon(
                             painter = painterResource(R.drawable.arrow_back_24px),
-                            contentDescription = "Navigate back"
+                            contentDescription = stringResource(R.string.navigate_back)
                         )
                     }
                 }
@@ -51,7 +53,7 @@ fun LearnScreen(
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
         LearnScreenContent(
-            category = Hiragana.getCategories().first { it.id == categoryId }.toHiraganaStringWithNakaguro(),
+            category = HiraganaCategory.entries.first { it.id == categoryId }.toHiraganaStringWithNakaguro(),
             learningSetsCount = uiState.learningSetsCount,
             onLearningSetsCountChange = { viewModel.updateLearningSetsCount(it) },
             modifier = Modifier.padding(paddingValues)
@@ -71,14 +73,14 @@ fun LearnScreenContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(category)
-        Text("Learning Sets: $learningSetsCount Sets")
+        Text(stringResource(R.string.learning_sets_n_sets, learningSetsCount))
         Slider(
             value = learningSetsCount.toFloat(),
             valueRange = 1f..10f,
             steps = 8,
             onValueChange = { onLearningSetsCountChange(it.toInt()) }
         )
-        Button(onClick = {}) { Text("Learn") }
+        Button(onClick = {}) { Text(stringResource(R.string.learn)) }
     }
 }
 
@@ -90,12 +92,12 @@ fun LearnScreenPreview() {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Learn") },
+                    title = { Text(stringResource(R.string.learn)) },
                     navigationIcon = {
                         IconButton(onClick = {}) {
                             Icon(
                                 painter = painterResource(R.drawable.arrow_back_24px),
-                                contentDescription = "Navigate back"
+                                contentDescription = stringResource(R.string.navigate_back)
                             )
                         }
                     }
@@ -104,7 +106,7 @@ fun LearnScreenPreview() {
             modifier = Modifier.fillMaxSize(),
         ) { paddingValues ->
             LearnScreenContent(
-                category = "himikase",
+                category = HIMIKASE.id,
                 learningSetsCount = 5,
                 onLearningSetsCountChange = {},
                 modifier = Modifier.padding(paddingValues)

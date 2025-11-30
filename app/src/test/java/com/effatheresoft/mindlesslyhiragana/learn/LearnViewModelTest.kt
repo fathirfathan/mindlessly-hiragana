@@ -3,6 +3,7 @@ package com.effatheresoft.mindlesslyhiragana.learn
 import com.effatheresoft.mindlesslyhiragana.Constants.LOCAL_USER_ID
 import com.effatheresoft.mindlesslyhiragana.MainCoroutineRule
 import com.effatheresoft.mindlesslyhiragana.data.FakeUserRepository
+import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.HIMIKASE
 import com.effatheresoft.mindlesslyhiragana.data.User
 import com.effatheresoft.mindlesslyhiragana.data.UserRepository
 import junit.framework.TestCase.assertEquals
@@ -29,7 +30,7 @@ class LearnViewModelTest {
 
     @Test
     fun uiState_containsLearningSetsCount() = runTest {
-        val localUser = User(LOCAL_USER_ID, "himikase", learningSetsCount = 5)
+        val localUser = User(LOCAL_USER_ID, HIMIKASE.id, learningSetsCount = 5)
         fakeUserRepository.updateLocalUserLearningSetsCount(localUser.learningSetsCount)
 
         assertEquals(learnViewModel.uiState.first().learningSetsCount, localUser.learningSetsCount)

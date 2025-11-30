@@ -10,6 +10,9 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.effatheresoft.mindlesslyhiragana.HiltTestActivity
+import com.effatheresoft.mindlesslyhiragana.R
+import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory
+import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.HIMIKASE
 import com.effatheresoft.mindlesslyhiragana.data.UserRepository
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -43,14 +46,14 @@ class HomeScreenTest {
     fun displayTopAppBar() = runTest {
         setContent()
 
-        composeTestRule.onNodeWithText("Mindlessly Hiragana").assertIsDisplayed()
+        composeTestRule.onNodeWithText(activity.getString(R.string.mindlessly_hiragana)).assertIsDisplayed()
     }
 
     @Test
     fun displayHiraganaCategories() = runTest {
         setContent()
 
-        val categories = listOf("ひみかせ", "ふをや", "あお", "つう・んえ", "くへ・りけ", "こに・たな", "すむ・ろる", "しいも", "とてそ", "わねれ", "のゆめぬ", "よはまほ", "さきちら", "Test All Learned")
+        val categories = HiraganaCategory.entries.map { it.kanaWithNakaguro } + activity.getString(R.string.test_all_learned)
         for (category in categories) {
             composeTestRule.onNodeWithText(category).assertIsDisplayed()
         }
@@ -58,26 +61,27 @@ class HomeScreenTest {
 
     @Test
     fun displayHiraganaCategoriesLockStateBasedOnProgress() = runTest{
-        fakeUserRepository.updateLocalUserProgress("himikase")
+        fakeUserRepository.updateLocalUserProgress(HIMIKASE.id)
         setContent()
 
-        val unlockedCategories = listOf("ひみかせ", "Test All Learned")
-        val lockedCategories = listOf("ふをや", "あお", "つう・んえ", "くへ・りけ", "こに・たな", "すむ・ろる", "しいも", "とてそ", "わねれ", "のゆめぬ", "よはまほ", "さきちら")
+        val unlockedCategories = listOf(HIMIKASE.kanaWithNakaguro, activity.getString(R.string.test_all_learned))
+        val lockedCategories = HiraganaCategory.entries.drop(1).map { it.kanaWithNakaguro }
 
         for (category in unlockedCategories) {
-            composeTestRule.onNodeWithContentDescription("$category category unlocked").assertIsDisplayed()
+            composeTestRule.onNodeWithContentDescription(activity.getString(R.string.x_category_unlocked, category)).assertIsDisplayed()
         }
         for (category in lockedCategories) {
-            composeTestRule.onNodeWithContentDescription("$category category locked").assertIsDisplayed()
+            composeTestRule.onNodeWithContentDescription(activity.getString(R.string.x_category_locked, category)).assertIsDisplayed()
         }
     }
 
     @Test
     fun displayHiraganaCategoriesInRightOrder() = runTest {
-        fakeUserRepository.updateLocalUserProgress("himikase")
+        fakeUserRepository.updateLocalUserProgress(HIMIKASE.id)
         setContent()
 
-        val categoriesOrder = listOf("ひみかせ", "Test All Learned", "ふをや", "あお", "つう・んえ", "くへ・りけ", "こに・たな", "すむ・ろる", "しいも", "とてそ", "わねれ", "のゆめぬ", "よはまほ", "さきちら")
+        // "ひみかせ", "Test All Learned", "ふをや", ..., "よはまほ", "さきちら"
+        val categoriesOrder = listOf(HIMIKASE.kanaWithNakaguro, activity.getString(R.string.test_all_learned)) + HiraganaCategory.entries.drop(1).map { it.kanaWithNakaguro }
         for (i in 0 until categoriesOrder.size - 1) {
             getTextPosition(categoriesOrder[i]).assertOnTopOf(getTextPosition(categoriesOrder[i + 1]))
         }
@@ -85,13 +89,13 @@ class HomeScreenTest {
 
     @Test
     fun lockedCategories_whenIsClicked_assertDoNotNavigate() = runTest {
-        fakeUserRepository.updateLocalUserProgress("himikase")
+        fakeUserRepository.updateLocalUserProgress(HIMIKASE.id)
         setContent()
 
-        val lockedCategories = listOf("ふをや", "あお", "つう・んえ", "くへ・りけ", "こに・たな", "すむ・ろる", "しいも", "とてそ", "わねれ", "のゆめぬ", "よはまほ", "さきちら")
+        val lockedCategories = HiraganaCategory.entries.drop(1).map { it.kanaWithNakaguro }
         for (category in lockedCategories) {
             composeTestRule.onNodeWithText(category).performClick()
-            composeTestRule.onNodeWithText("Mindlessly Hiragana").assertIsDisplayed()
+            composeTestRule.onNodeWithText(activity.getString(R.string.mindlessly_hiragana)).assertIsDisplayed()
         }
     }
 

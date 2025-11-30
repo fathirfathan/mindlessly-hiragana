@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Mindlessly Hiragana</string>
+    <string name="mindlessly_hiragana">Mindlessly Hiragana</string>
+    <string name="test_all_learned">Test All Learned</string>
+    <string name="x_category_locked">%1$s category locked</string>
+    <string name="x_category_unlocked">%1$s category unlocked</string>
+    <string name="learn">Learn</string>
+    <string name="navigate_back">Navigate back</string>
+    <string name="learning_sets_n_sets">Learning Sets: %1$d Sets</string>
+    <string name="learning_sets">Learning Sets</string>
 </resources>

@@ -17,6 +17,8 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.effatheresoft.mindlesslyhiragana.HiltTestActivity
+import com.effatheresoft.mindlesslyhiragana.R
+import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.HIMIKASE
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -44,22 +46,22 @@ class LearnScreenTest {
     fun topAppBar_assertIsDisplayed() {
         setContent()
 
-        composeTestRule.onAllNodesWithText("Learn").onFirst().assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("Navigate back").assertIsDisplayed()
+        composeTestRule.onAllNodesWithText(activity.getString(R.string.learn)).onFirst().assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription(activity.getString(R.string.navigate_back)).assertIsDisplayed()
     }
 
     @Test
     fun hiraganaCategory_assertIsDisplayed() {
         setContent()
 
-        composeTestRule.onNodeWithText("ひみかせ").assertIsDisplayed()
+        composeTestRule.onNodeWithText(HIMIKASE.kanaWithNakaguro).assertIsDisplayed()
     }
 
     @Test
     fun learningSetsCustomizer_withDefaultSetsCount_assertIsDisplayed() {
         setContent()
 
-        composeTestRule.onNodeWithText("Learning Sets: 5 Sets").assertIsDisplayed()
+        composeTestRule.onNodeWithText(activity.getString(R.string.learning_sets_n_sets, 5)).assertIsDisplayed()
         composeTestRule.onNode(
             hasProgressBarRangeInfo(
                 ProgressBarRangeInfo(
@@ -96,14 +98,14 @@ class LearnScreenTest {
                 )
             )
         ).assertIsDisplayed()
-        composeTestRule.onNodeWithText("Learning Sets: $changedCount Sets").assertIsDisplayed()
+        composeTestRule.onNodeWithText(activity.getString(R.string.learning_sets_n_sets, changedCount)).assertIsDisplayed()
     }
 
     @Test
     fun learnButton_assertIsDisplayed() {
         setContent()
 
-        composeTestRule.onNode(isButton() and hasText("Learn")).assertIsDisplayed()
+        composeTestRule.onNode(isButton() and hasText(activity.getString(R.string.learn))).assertIsDisplayed()
     }
 
     fun isButton() = SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button)
@@ -112,7 +114,7 @@ class LearnScreenTest {
         composeTestRule.setContent {
             MindlesslyHiraganaTheme {
                 Surface {
-                    LearnScreen(categoryId = "himikase", onNavigationIconClick = {})
+                    LearnScreen(categoryId = HIMIKASE.id, onNavigationIconClick = {})
                 }
             }
         }

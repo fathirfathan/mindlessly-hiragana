@@ -11,6 +11,8 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.effatheresoft.mindlesslyhiragana.HiltTestActivity
+import com.effatheresoft.mindlesslyhiragana.R
+import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.HIMIKASE
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -39,31 +41,31 @@ class DefaultNavGraphTest {
     fun startDestination_isHomeScreen() {
         setContent()
 
-        composeTestRule.onNodeWithText("Mindlessly Hiragana").assertIsDisplayed()
+        composeTestRule.onNodeWithText(activity.getString(R.string.mindlessly_hiragana)).assertIsDisplayed()
     }
 
     @Test
     fun homeScreen_onCategoryClicked_navigatesToLearnScreen() {
         setContent()
 
-        composeTestRule.onNodeWithText("ひみかせ").performClick()
-        composeTestRule.onNodeWithText("Learning Sets", substring = true).assertIsDisplayed()
-        composeTestRule.onNodeWithText("ひみかせ").assertIsDisplayed()
+        composeTestRule.onNodeWithText(HIMIKASE.kanaWithNakaguro).performClick()
+        composeTestRule.onNodeWithText(activity.getString(R.string.learning_sets), substring = true).assertIsDisplayed()
+        composeTestRule.onNodeWithText(HIMIKASE.kanaWithNakaguro).assertIsDisplayed()
     }
 
     @Test
     fun learnScreen_onNavigationIconClicked_navigatesToHomeScreen() {
-        setContent(Route.Learn("himikase"))
+        setContent(Route.Learn(HIMIKASE.id))
 
-        composeTestRule.onNodeWithContentDescription("Navigate back").performClick()
-        composeTestRule.onNodeWithText("Mindlessly Hiragana").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription(activity.getString(R.string.navigate_back)).performClick()
+        composeTestRule.onNodeWithText(activity.getString(R.string.mindlessly_hiragana)).assertIsDisplayed()
     }
 
     @Test
     fun whenLearningSetsCountChanged_countStaysChanged() {
         val currentCount = 5
         val changedCount = 1
-        setContent(Route.Learn("himikase"))
+        setContent(Route.Learn(HIMIKASE.id))
 
         // LearnScreen()
         composeTestRule.onNode(
@@ -75,10 +77,10 @@ class DefaultNavGraphTest {
                 )
             )
         ).performSemanticsAction(SemanticsActions.SetProgress) { it(changedCount.toFloat()) }
-        composeTestRule.onNodeWithContentDescription("Navigate back").performClick()
+        composeTestRule.onNodeWithContentDescription(activity.getString(R.string.navigate_back)).performClick()
 
         // HomeScreen()
-        composeTestRule.onNodeWithText("ひみかせ").performClick()
+        composeTestRule.onNodeWithText(HIMIKASE.kanaWithNakaguro).performClick()
 
         // LearnScreen()
         composeTestRule.onNode(
@@ -90,7 +92,7 @@ class DefaultNavGraphTest {
                 )
             )
         ).assertIsDisplayed()
-        composeTestRule.onNodeWithText("Learning Sets: $changedCount Sets").assertIsDisplayed()
+        composeTestRule.onNodeWithText(activity.getString(R.string.learning_sets_n_sets, changedCount)).assertIsDisplayed()
     }
 
     fun setContent(startDestination: Route = Route.Home) {

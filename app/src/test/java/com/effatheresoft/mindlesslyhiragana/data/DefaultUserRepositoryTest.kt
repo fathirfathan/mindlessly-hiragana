@@ -2,6 +2,8 @@ package com.effatheresoft.mindlesslyhiragana.data
 
 import com.effatheresoft.mindlesslyhiragana.Constants.LOCAL_USER_ID
 import com.effatheresoft.mindlesslyhiragana.MainCoroutineRule
+import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.HIMIKASE
+import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.FUWOYA
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -57,12 +59,12 @@ class DefaultUserRepositoryTest {
     @Test
     fun whileObservingLocalUser_whenProgressIsUpdated_thenLocalUserProgressIsUpdated() = runTest {
         // While observing local user
-        val localUser = User(LOCAL_USER_ID, "himikase", 5)
+        val localUser = User(LOCAL_USER_ID, HIMIKASE.id, 5)
         defaultUserRepository.updateLocalUserProgress(localUser.progress)
         val observedLocalUser = defaultUserRepository.observeLocalUser()
 
         // And local user is updated
-        val newlocalUser = User(LOCAL_USER_ID, "fuwoya", 5)
+        val newlocalUser = User(LOCAL_USER_ID, FUWOYA.id, 5)
         defaultUserRepository.updateLocalUserProgress(newlocalUser.progress)
 
         // Then the observed user sends the updated values
@@ -74,12 +76,12 @@ class DefaultUserRepositoryTest {
     @Test
     fun whileObservingLocalUser_whenLearningSetsCountIsUpdated_thenLocalUserCountIsUpdated() = runTest {
         // While observing local user
-        val localUser = User(LOCAL_USER_ID, "himikase", 5)
+        val localUser = User(LOCAL_USER_ID, HIMIKASE.id, 5)
         defaultUserRepository.updateLocalUserLearningSetsCount(localUser.learningSetsCount)
         val observedLocalUser = defaultUserRepository.observeLocalUser()
 
         // And local user is updated
-        val newlocalUser = User(LOCAL_USER_ID, "himikase", 1)
+        val newlocalUser = User(LOCAL_USER_ID, HIMIKASE.id, 1)
         defaultUserRepository.updateLocalUserLearningSetsCount(newlocalUser.learningSetsCount)
 
         // Then the observed user sends the updated values

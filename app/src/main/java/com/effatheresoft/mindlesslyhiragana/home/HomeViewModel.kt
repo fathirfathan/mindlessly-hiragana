@@ -2,8 +2,8 @@ package com.effatheresoft.mindlesslyhiragana.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.effatheresoft.mindlesslyhiragana.data.Hiragana
 import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory
+import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.HIMIKASE
 import com.effatheresoft.mindlesslyhiragana.data.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 data class HomeUiState(
-    val progress: String = "himikase",
+    val progress: String = HIMIKASE.id,
     val isLoading: Boolean = false,
     val unlockedCategories: List<HiraganaCategory> = emptyList(),
     val lockedCategories: List<HiraganaCategory> = emptyList()
@@ -23,7 +23,7 @@ data class HomeUiState(
 @HiltViewModel
 class HomeViewModel @Inject constructor(val userRepository: UserRepository) : ViewModel() {
 
-    private val hiraganaCategories = Hiragana.getCategories()
+    private val hiraganaCategories = HiraganaCategory.entries
 
     private val _localUser = userRepository.observeLocalUser()
     private val _isLoading = MutableStateFlow(false)

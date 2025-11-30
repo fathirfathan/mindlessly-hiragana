@@ -17,12 +17,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.effatheresoft.mindlesslyhiragana.R
-import com.effatheresoft.mindlesslyhiragana.data.Hiragana
 import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 
@@ -34,10 +34,10 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Mindlessly Hiragana") }
+                title = { Text(stringResource(R.string.mindlessly_hiragana)) }
             )
         }
     ) { paddingValues ->
@@ -60,7 +60,9 @@ fun HomeContent(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.fillMaxSize().padding(horizontal = 16.dp)
+        modifier = modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp)
     ) {
         for (category in unlockedCategories) {
             CategoryItem(
@@ -71,7 +73,7 @@ fun HomeContent(
         }
 
         CategoryItem(
-            title = "Test All Learned",
+            title = stringResource(R.string.test_all_learned),
             isLocked = false,
             onClick = { onNavigateToLearn("testAllLearned") }
         )
@@ -103,11 +105,11 @@ fun CategoryItem(
             when(isLocked) {
                 true -> Icon(
                     painter = painterResource(R.drawable.lock_24px),
-                    contentDescription = "$title category locked"
+                    contentDescription = stringResource(R.string.x_category_locked, title)
                 )
                 false -> Icon(
                     painter = painterResource(R.drawable.arrow_right_24px),
-                    contentDescription = "$title category unlocked"
+                    contentDescription = stringResource(R.string.x_category_unlocked, title)
                 )
 
             }
@@ -125,13 +127,13 @@ fun HomeScreenPreview() {
                 modifier = Modifier.fillMaxSize(),
                 topBar = {
                     CenterAlignedTopAppBar(
-                        title = { Text("Mindlessly Hiragana") }
+                        title = { Text(stringResource(R.string.mindlessly_hiragana)) }
                     )
                 }
             ) { paddingValues ->
                 HomeContent(
-                    unlockedCategories = Hiragana.getCategories().take(3),
-                    lockedCategories = Hiragana.getCategories().drop(3),
+                    unlockedCategories = HiraganaCategory.entries.take(3),
+                    lockedCategories = HiraganaCategory.entries.drop(3),
                     onNavigateToLearn = {},
                     modifier = Modifier.padding(paddingValues)
                 )

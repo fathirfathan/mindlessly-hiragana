@@ -3,6 +3,7 @@ package com.effatheresoft.mindlesslyhiragana.home
 import com.effatheresoft.mindlesslyhiragana.Constants.LOCAL_USER_ID
 import com.effatheresoft.mindlesslyhiragana.MainCoroutineRule
 import com.effatheresoft.mindlesslyhiragana.data.FakeUserRepository
+import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.HIMIKASE
 import com.effatheresoft.mindlesslyhiragana.data.User
 import com.effatheresoft.mindlesslyhiragana.data.UserRepository
 import junit.framework.TestCase.assertEquals
@@ -35,7 +36,7 @@ class HomeViewModelTest {
     fun uiState_containsLocalUser() = runTest {
         Dispatchers.setMain(StandardTestDispatcher())
 
-        val localUser = User(LOCAL_USER_ID, "himikase", 5)
+        val localUser = User(LOCAL_USER_ID, HIMIKASE.id, 5)
         fakeUserRepository.updateLocalUserProgress(localUser.progress)
 
         assertEquals(homeViewModel.uiState.first().isLoading, true)

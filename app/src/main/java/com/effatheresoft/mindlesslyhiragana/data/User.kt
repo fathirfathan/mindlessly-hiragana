@@ -1,5 +1,19 @@
 package com.effatheresoft.mindlesslyhiragana.data
 
+import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.AO
+import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.HIMIKASE
+import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.FUWOYA
+import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.TSUUNE
+import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.KUHERIKE
+import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.KONITANA
+import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.SUMURORU
+import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.SHIIMO
+import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.TOTESO
+import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.WANERE
+import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.NOYUMENU
+import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.YOHAMAHO
+import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.SAKICHIRA
+
 data class User(
     val id: String,
     val progress: String,
@@ -8,67 +22,67 @@ data class User(
 
 fun User.toUserRoomEntity(): UserRoomEntity {
     return when(progress) {
-        "himikase" -> UserRoomEntity(
+        HIMIKASE.id -> UserRoomEntity(
             id = id,
             progress = "1",
             learningSetsCount = learningSetsCount
         )
-        "fuwoya" -> UserRoomEntity(
+        FUWOYA.id -> UserRoomEntity(
             id = id,
             progress = "2",
             learningSetsCount = learningSetsCount
         )
-        "ao" -> UserRoomEntity(
+        AO.id -> UserRoomEntity(
             id = id,
             progress = "3",
             learningSetsCount = learningSetsCount
         )
-        "tsuune" -> UserRoomEntity(
+        TSUUNE.id -> UserRoomEntity(
             id = id,
             progress = "4",
             learningSetsCount = learningSetsCount
         )
-        "kuherike" -> UserRoomEntity(
+        KUHERIKE.id -> UserRoomEntity(
             id = id,
             progress = "5",
             learningSetsCount = learningSetsCount
         )
-        "konitana" -> UserRoomEntity(
+        KONITANA.id -> UserRoomEntity(
             id = id,
             progress = "6",
             learningSetsCount = learningSetsCount
         )
-        "sumuroru" -> UserRoomEntity(
+        SUMURORU.id -> UserRoomEntity(
             id = id,
             progress = "7",
             learningSetsCount = learningSetsCount
         )
-        "shiimo" -> UserRoomEntity(
+        SHIIMO.id -> UserRoomEntity(
             id = id,
             progress = "8",
             learningSetsCount = learningSetsCount
         )
-        "toteso" -> UserRoomEntity(
+        TOTESO.id -> UserRoomEntity(
             id = id,
             progress = "9",
             learningSetsCount = learningSetsCount
         )
-        "wanere" -> UserRoomEntity(
+        WANERE.id -> UserRoomEntity(
             id = id,
             progress = "10",
             learningSetsCount = learningSetsCount
         )
-        "noyumenu" -> UserRoomEntity(
+        NOYUMENU.id -> UserRoomEntity(
             id = id,
             progress = "11",
             learningSetsCount = learningSetsCount
         )
-        "yohamaho" -> UserRoomEntity(
+        YOHAMAHO.id -> UserRoomEntity(
             id = id,
             progress = "12",
             learningSetsCount = learningSetsCount
         )
-        "sakichira" -> UserRoomEntity(
+        SAKICHIRA.id -> UserRoomEntity(
             id = id,
             progress = "13",
             learningSetsCount = learningSetsCount
