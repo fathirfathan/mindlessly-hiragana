@@ -80,7 +80,7 @@ fun HomeContent(
             CategoryItem(
                 title = category.toHiraganaStringWithNakaguro(),
                 isLocked = true,
-                onClick = { onNavigateToLearn(category.id) }
+                onClick = {}
             )
         }
     }

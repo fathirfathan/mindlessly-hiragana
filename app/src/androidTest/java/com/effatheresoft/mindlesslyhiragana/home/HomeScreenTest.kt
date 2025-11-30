@@ -7,6 +7,7 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.effatheresoft.mindlesslyhiragana.HiltTestActivity
 import com.effatheresoft.mindlesslyhiragana.data.UserRepository
@@ -49,20 +50,10 @@ class HomeScreenTest {
     fun displayHiraganaCategories() = runTest {
         setContent()
 
-        composeTestRule.onNodeWithText("ひみかせ").assertIsDisplayed()
-        composeTestRule.onNodeWithText("ふをや").assertIsDisplayed()
-        composeTestRule.onNodeWithText("あお").assertIsDisplayed()
-        composeTestRule.onNodeWithText("つう・んえ").assertIsDisplayed()
-        composeTestRule.onNodeWithText("くへ・りけ").assertIsDisplayed()
-        composeTestRule.onNodeWithText("こに・たな").assertIsDisplayed()
-        composeTestRule.onNodeWithText("すむ・ろる").assertIsDisplayed()
-        composeTestRule.onNodeWithText("しいも").assertIsDisplayed()
-        composeTestRule.onNodeWithText("とてそ").assertIsDisplayed()
-        composeTestRule.onNodeWithText("わねれ").assertIsDisplayed()
-        composeTestRule.onNodeWithText("のゆめぬ").assertIsDisplayed()
-        composeTestRule.onNodeWithText("よはまほ").assertIsDisplayed()
-        composeTestRule.onNodeWithText("さきちら").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Test All Learned").assertIsDisplayed()
+        val categories = listOf("ひみかせ", "ふをや", "あお", "つう・んえ", "くへ・りけ", "こに・たな", "すむ・ろる", "しいも", "とてそ", "わねれ", "のゆめぬ", "よはまほ", "さきちら", "Test All Learned")
+        for (category in categories) {
+            composeTestRule.onNodeWithText(category).assertIsDisplayed()
+        }
     }
 
     @Test
@@ -70,20 +61,15 @@ class HomeScreenTest {
         fakeUserRepository.updateLocalUserProgress("himikase")
         setContent()
 
-        composeTestRule.onNodeWithContentDescription("ひみかせ category unlocked").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("Test All Learned category unlocked").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("ふをや category locked").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("あお category locked").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("つう・んえ category locked").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("くへ・りけ category locked").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("こに・たな category locked").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("すむ・ろる category locked").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("しいも category locked").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("とてそ category locked").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("わねれ category locked").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("のゆめぬ category locked").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("よはまほ category locked").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("さきちら category locked").assertIsDisplayed()
+        val unlockedCategories = listOf("ひみかせ", "Test All Learned")
+        val lockedCategories = listOf("ふをや", "あお", "つう・んえ", "くへ・りけ", "こに・たな", "すむ・ろる", "しいも", "とてそ", "わねれ", "のゆめぬ", "よはまほ", "さきちら")
+
+        for (category in unlockedCategories) {
+            composeTestRule.onNodeWithContentDescription("$category category unlocked").assertIsDisplayed()
+        }
+        for (category in lockedCategories) {
+            composeTestRule.onNodeWithContentDescription("$category category locked").assertIsDisplayed()
+        }
     }
 
     @Test
@@ -91,34 +77,22 @@ class HomeScreenTest {
         fakeUserRepository.updateLocalUserProgress("himikase")
         setContent()
 
-        val himikasePosition = getTextPosition("ひみかせ")
-        val testAllLearnedPosition = getTextPosition("Test All Learned")
-        val fuwoyaPosition = getTextPosition("ふをや")
-        val aoPosition = getTextPosition("あお")
-        val tsuunnePosition = getTextPosition("つう・んえ")
-        val kuherikePosition = getTextPosition("くへ・りけ")
-        val konitanaPosition = getTextPosition("こに・たな")
-        val sumuroruPosition = getTextPosition("すむ・ろる")
-        val shiimoPosition = getTextPosition("しいも")
-        val totesosoPosition = getTextPosition("とてそ")
-        val wanerePosition = getTextPosition("わねれ")
-        val noyumenuPosition = getTextPosition("のゆめぬ")
-        val yohamahoPosition = getTextPosition("よはまほ")
-        val sakichiraPosition = getTextPosition("さきちら")
+        val categoriesOrder = listOf("ひみかせ", "Test All Learned", "ふをや", "あお", "つう・んえ", "くへ・りけ", "こに・たな", "すむ・ろる", "しいも", "とてそ", "わねれ", "のゆめぬ", "よはまほ", "さきちら")
+        for (i in 0 until categoriesOrder.size - 1) {
+            getTextPosition(categoriesOrder[i]).assertOnTopOf(getTextPosition(categoriesOrder[i + 1]))
+        }
+    }
 
-        himikasePosition.assertOnTopOf(testAllLearnedPosition)
-        testAllLearnedPosition.assertOnTopOf(fuwoyaPosition)
-        fuwoyaPosition.assertOnTopOf(aoPosition)
-        aoPosition.assertOnTopOf(tsuunnePosition)
-        tsuunnePosition.assertOnTopOf(kuherikePosition)
-        kuherikePosition.assertOnTopOf(konitanaPosition)
-        konitanaPosition.assertOnTopOf(sumuroruPosition)
-        sumuroruPosition.assertOnTopOf(shiimoPosition)
-        shiimoPosition.assertOnTopOf(totesosoPosition)
-        totesosoPosition.assertOnTopOf(wanerePosition)
-        wanerePosition.assertOnTopOf(noyumenuPosition)
-        noyumenuPosition.assertOnTopOf(yohamahoPosition)
-        yohamahoPosition.assertOnTopOf(sakichiraPosition)
+    @Test
+    fun lockedCategories_whenIsClicked_assertDoNotNavigate() = runTest {
+        fakeUserRepository.updateLocalUserProgress("himikase")
+        setContent()
+
+        val lockedCategories = listOf("ふをや", "あお", "つう・んえ", "くへ・りけ", "こに・たな", "すむ・ろる", "しいも", "とてそ", "わねれ", "のゆめぬ", "よはまほ", "さきちら")
+        for (category in lockedCategories) {
+            composeTestRule.onNodeWithText(category).performClick()
+            composeTestRule.onNodeWithText("Mindlessly Hiragana").assertIsDisplayed()
+        }
     }
 
     fun Offset.assertOnTopOf(other: Offset) {
