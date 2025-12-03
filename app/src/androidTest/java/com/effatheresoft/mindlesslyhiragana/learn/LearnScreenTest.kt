@@ -112,15 +112,16 @@ class LearnScreenTest {
         composeTestRule.onNode(isButton() and hasText(activity.getString(R.string.learn))).assertIsDisplayed()
     }
 
-    fun isButton() = SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button)
-
     fun setContent() {
         composeTestRule.setContent {
             MindlesslyHiraganaTheme {
                 Surface {
-                    LearnScreen(categoryId = HIMIKASE.id, onNavigationIconClick = {})
+                    LearnScreen(categoryId = HIMIKASE.id, onNavigationIconClick = {}, onLearnButtonClick = {})
                 }
             }
         }
     }
+
 }
+
+fun isButton() = SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button)

@@ -32,6 +32,7 @@ import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 fun LearnScreen(
     categoryId: String,
     onNavigationIconClick: () -> Unit,
+    onLearnButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: LearnViewModel = hiltViewModel()
 ) {
@@ -57,6 +58,7 @@ fun LearnScreen(
             category = HiraganaCategory.entries.first { it.id == categoryId }.toHiraganaStringWithNakaguro(),
             learningSetsCount = uiState.learningSetsCount,
             onLearningSetsCountChange = { viewModel.updateLearningSetsCount(it) },
+            onLearnButtonClick = onLearnButtonClick,
             modifier = Modifier.padding(paddingValues)
         )
     }
@@ -67,6 +69,7 @@ fun LearnScreenContent(
     category: String,
     learningSetsCount: Int,
     onLearningSetsCountChange: (Int) -> Unit,
+    onLearnButtonClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -81,7 +84,7 @@ fun LearnScreenContent(
             steps = 8,
             onValueChange = { onLearningSetsCountChange(it.toInt()) }
         )
-        Button(onClick = {}) { Text(stringResource(R.string.learn)) }
+        Button(onClick = onLearnButtonClick) { Text(stringResource(R.string.learn)) }
     }
 }
 
@@ -110,6 +113,7 @@ fun LearnScreenPreview() {
                 category = HIMIKASE.id,
                 learningSetsCount = DEFAULT_LEARNING_SETS_COUNT,
                 onLearningSetsCountChange = {},
+                onLearnButtonClick = {},
                 modifier = Modifier.padding(paddingValues)
             )
         }
