@@ -2,10 +2,12 @@ package com.effatheresoft.mindlesslyhiragana.quiz
 
 import androidx.compose.material3.Surface
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.effatheresoft.mindlesslyhiragana.HiltTestActivity
 import com.effatheresoft.mindlesslyhiragana.R
@@ -81,6 +83,14 @@ class QuizScreenTest {
         for (answer in possibleAnswers) {
             composeTestRule.onNodeWithText(answer).assertIsDisplayed()
         }
+    }
+
+    @Test
+    fun whenIncorrectAnswerButtonIsSelected_assertButtonIsDisabled() = runTest {
+        setContent()
+
+        composeTestRule.onNodeWithText(MI.name).performClick()
+        composeTestRule.onNodeWithText(MI.name).assertIsNotEnabled()
     }
 
     fun setContent() {

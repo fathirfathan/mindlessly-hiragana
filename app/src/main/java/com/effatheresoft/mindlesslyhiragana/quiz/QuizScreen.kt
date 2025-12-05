@@ -16,6 +16,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,10 +28,12 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.effatheresoft.mindlesslyhiragana.Constants.DEFAULT_LEARNING_SETS_COUNT
 import com.effatheresoft.mindlesslyhiragana.R
+import com.effatheresoft.mindlesslyhiragana.data.Hiragana
 import com.effatheresoft.mindlesslyhiragana.data.Hiragana.HI
 import com.effatheresoft.mindlesslyhiragana.data.Hiragana.KA
 import com.effatheresoft.mindlesslyhiragana.data.Hiragana.MI
 import com.effatheresoft.mindlesslyhiragana.data.Hiragana.SE
+import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.HIMIKASE
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,30 +59,57 @@ fun QuizScreen(
         },
         modifier = modifier.fillMaxSize(),
     ) { paddingValues ->
-        viewModel.generateQuiz(categoryId)
-        val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-        QuizContent(
-            question = uiState.currentQuestion,
-            remainingQuestionsCount = uiState.remainingQuestionsCount,
-            possibleAnswers = uiState.possibleAnswers,
-            modifier = Modifier.padding(paddingValues)
-        )
+        LaunchedEffect(categoryId) {
+            viewModel.generateQuizzes(categoryId)
+        }
+        val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+        val currentQuiz = uiState.currentQuiz
+
+        currentQuiz?.let {
+            QuizContent(
+                question = currentQuiz.question,
+                remainingQuestionsCount = uiState.remainingQuestionsCount,
+                possibleAnswers = currentQuiz.possibleAnswers,
+                onAnswerSelected = viewModel::selectCurrentQuizAnswer,
+                modifier = Modifier.padding(paddingValues)
+            )
+        }
     }
 }
 
+data class QuizHistory(
+    val category: HiraganaCategory,
+    val quizzes: List<Quiz>
+)
+
+data class Quiz(
+    val question: Hiragana,
+    val possibleAnswers: List<PossibleAnswer>
+)
+
+data class PossibleAnswer(
+    val answer: Hiragana,
+    val isCorrect: Boolean,
+    val isSelected: Boolean
+)
+
 @Composable
 fun QuizContent(
-    question: String,
+    question: Hiragana,
     remainingQuestionsCount: Int,
-    possibleAnswers: List<String>,
+    possibleAnswers: List<PossibleAnswer>,
+    onAnswerSelected: (Hiragana) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.fillMaxSize().padding(bottom = 16.dp).padding(horizontal = 16.dp)
+        modifier = modifier
+            .fillMaxSize()
+            .padding(bottom = 16.dp)
+            .padding(horizontal = 16.dp)
     ) {
-        Text(text = question, style = MaterialTheme.typography.displayLarge)
+        Text(text = question.kana, style = MaterialTheme.typography.displayLarge)
         Spacer(modifier = Modifier.weight(1f))
         Text("Remaining: $remainingQuestionsCount")
         Row(
@@ -87,8 +117,11 @@ fun QuizContent(
             modifier = Modifier.fillMaxWidth()
         ) {
             for (answer in possibleAnswers) {
-                Button(onClick = {}) {
-                    Text(answer)
+                Button(
+                    onClick = { onAnswerSelected(answer.answer) },
+                    enabled = !answer.isSelected
+                ) {
+                    Text(answer.answer.name)
                 }
             }
         }
@@ -116,9 +149,15 @@ fun QuizScreenPreview() {
         modifier = Modifier.fillMaxSize(),
     ) { paddingValues ->
         QuizContent(
-            question = HI.kana,
+            question = HI,
             remainingQuestionsCount = HIMIKASE.hiraganaList.size * DEFAULT_LEARNING_SETS_COUNT - 1,
-            possibleAnswers = listOf(HI.name, MI.name, KA.name, SE.name),
+            possibleAnswers = listOf(
+                PossibleAnswer(answer = HI, isCorrect = true, isSelected = false),
+                PossibleAnswer(answer = MI, isCorrect = false, isSelected = false),
+                PossibleAnswer(answer = KA, isCorrect = false, isSelected = false),
+                PossibleAnswer(answer = SE, isCorrect = false, isSelected = false)
+            ),
+            onAnswerSelected = {},
             modifier = Modifier.padding(paddingValues)
         )
     }
