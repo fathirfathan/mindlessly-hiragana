@@ -8,6 +8,8 @@ import com.effatheresoft.mindlesslyhiragana.data.DefaultDatabase
 import com.effatheresoft.mindlesslyhiragana.data.DefaultUserRepository
 import com.effatheresoft.mindlesslyhiragana.data.UserDao
 import com.effatheresoft.mindlesslyhiragana.data.UserRepository
+import com.effatheresoft.mindlesslyhiragana.data.repository.DefaultQuizRepository
+import com.effatheresoft.mindlesslyhiragana.data.repository.QuizRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -23,6 +25,10 @@ abstract class RepositoryModule {
     @Singleton
     @Binds
     abstract fun bindUserRepository(repository: DefaultUserRepository): UserRepository
+
+    @Singleton
+    @Binds
+    abstract fun bindQuizRepository(repository: DefaultQuizRepository): QuizRepository
 }
 
 @Module

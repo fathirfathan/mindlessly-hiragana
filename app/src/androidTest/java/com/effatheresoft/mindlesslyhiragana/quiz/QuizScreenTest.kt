@@ -16,7 +16,7 @@ import com.effatheresoft.mindlesslyhiragana.data.Hiragana.KA
 import com.effatheresoft.mindlesslyhiragana.data.Hiragana.MI
 import com.effatheresoft.mindlesslyhiragana.data.Hiragana.SE
 import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.HIMIKASE
-import com.effatheresoft.mindlesslyhiragana.data.UserRepository
+import com.effatheresoft.mindlesslyhiragana.data.repository.QuizRepository
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -40,7 +40,7 @@ class QuizScreenTest {
     private val activity get() = composeTestRule.activity
 
     @Inject
-    lateinit var fakeUserRepository: UserRepository
+    lateinit var fakeQuizRepository: QuizRepository
 
     @Before
     fun init() {
@@ -68,7 +68,7 @@ class QuizScreenTest {
 
     @Test
     fun remainingQuestionsCount_assertIsDisplayed() = runTest {
-        val viewModel = QuizViewModel(fakeUserRepository)
+        val viewModel = QuizViewModel(fakeQuizRepository)
         setContent(viewModel)
 
         val remainingQuestionsCount = viewModel.uiState.first().remainingQuestionsCount
@@ -86,11 +86,15 @@ class QuizScreenTest {
     }
 
     @Test
-    fun whenIncorrectAnswerButtonIsSelected_assertButtonIsDisabled() = runTest {
+    fun whenIncorrectAnswerButtonsAreSelected_assertButtonsAreDisabled() = runTest {
         setContent()
 
         composeTestRule.onNodeWithText(MI.name).performClick()
+        composeTestRule.onNodeWithText(KA.name).performClick()
+        composeTestRule.onNodeWithText(SE.name).performClick()
         composeTestRule.onNodeWithText(MI.name).assertIsNotEnabled()
+        composeTestRule.onNodeWithText(KA.name).assertIsNotEnabled()
+        composeTestRule.onNodeWithText(SE.name).assertIsNotEnabled()
     }
 
     fun setContent() {
