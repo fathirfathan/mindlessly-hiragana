@@ -13,6 +13,7 @@ import com.effatheresoft.mindlesslyhiragana.HiltTestActivity
 import com.effatheresoft.mindlesslyhiragana.R
 import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.HIMIKASE
+import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.FUWOYA
 import com.effatheresoft.mindlesslyhiragana.data.UserRepository
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -43,14 +44,14 @@ class HomeScreenTest {
     }
 
     @Test
-    fun displayTopAppBar() = runTest {
+    fun assertTopAppBarDisplayed() = runTest {
         setContent()
 
         composeTestRule.onNodeWithText(activity.getString(R.string.mindlessly_hiragana)).assertIsDisplayed()
     }
 
     @Test
-    fun displayHiraganaCategories() = runTest {
+    fun assertHiraganaCategoriesDisplayed() = runTest {
         setContent()
 
         val categories = HiraganaCategory.entries.map { it.kanaWithNakaguro } + activity.getString(R.string.test_all_learned)
@@ -60,12 +61,12 @@ class HomeScreenTest {
     }
 
     @Test
-    fun displayHiraganaCategoriesLockStateBasedOnProgress() = runTest{
-        fakeUserRepository.updateLocalUserProgress(HIMIKASE.id)
+    fun assertHiraganaCategoriesLockState_areBasedOnProgress() = runTest{
+        fakeUserRepository.updateLocalUserProgress(FUWOYA.id)
         setContent()
 
-        val unlockedCategories = listOf(HIMIKASE.kanaWithNakaguro, activity.getString(R.string.test_all_learned))
-        val lockedCategories = HiraganaCategory.entries.drop(1).map { it.kanaWithNakaguro }
+        val unlockedCategories = listOf(HIMIKASE.kanaWithNakaguro, FUWOYA.kanaWithNakaguro, activity.getString(R.string.test_all_learned))
+        val lockedCategories = HiraganaCategory.entries.drop(unlockedCategories.size - 1).map { it.kanaWithNakaguro }
 
         for (category in unlockedCategories) {
             composeTestRule.onNodeWithContentDescription(activity.getString(R.string.x_category_unlocked, category)).assertIsDisplayed()
@@ -76,8 +77,7 @@ class HomeScreenTest {
     }
 
     @Test
-    fun displayHiraganaCategoriesInRightOrder() = runTest {
-        fakeUserRepository.updateLocalUserProgress(HIMIKASE.id)
+    fun assertHiraganaCategoriesOrderIsCorrect() = runTest {
         setContent()
 
         // "ひみかせ", "Test All Learned", "ふをや", ..., "よはまほ", "さきちら"
@@ -88,8 +88,7 @@ class HomeScreenTest {
     }
 
     @Test
-    fun lockedCategories_whenIsClicked_assertDoNotNavigate() = runTest {
-        fakeUserRepository.updateLocalUserProgress(HIMIKASE.id)
+    fun onLockedCategories_whenIsClicked_assertDoNotNavigate() = runTest {
         setContent()
 
         val lockedCategories = HiraganaCategory.entries.drop(1).map { it.kanaWithNakaguro }

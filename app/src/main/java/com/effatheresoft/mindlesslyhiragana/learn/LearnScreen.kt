@@ -110,7 +110,7 @@ fun LearnScreenPreview() {
             modifier = Modifier.fillMaxSize(),
         ) { paddingValues ->
             LearnScreenContent(
-                category = HIMIKASE.id,
+                category = HIMIKASE.kanaWithNakaguro,
                 learningSetsCount = DEFAULT_LEARNING_SETS_COUNT,
                 onLearningSetsCountChange = {},
                 onLearnButtonClick = {},
