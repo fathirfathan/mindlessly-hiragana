@@ -1,8 +1,11 @@
 package com.effatheresoft.mindlesslyhiragana.result
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -10,17 +13,28 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.effatheresoft.mindlesslyhiragana.R
+import com.effatheresoft.mindlesslyhiragana.data.Hiragana
+import com.effatheresoft.mindlesslyhiragana.data.Hiragana.HI
+import com.effatheresoft.mindlesslyhiragana.data.Hiragana.MI
+import com.effatheresoft.mindlesslyhiragana.data.Hiragana.KA
+import com.effatheresoft.mindlesslyhiragana.data.Hiragana.SE
+import com.effatheresoft.mindlesslyhiragana.quiz.Quiz
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ResultScreen(
+    viewModel: ResultViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -39,19 +53,51 @@ fun ResultScreen(
         },
         modifier = modifier.fillMaxSize(),
     ) { paddingValues ->
-        ResultContent(modifier = Modifier.padding(paddingValues))
+
+        val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+        ResultContent(
+            correctCounts = uiState.correctCounts,
+            incorrectCounts = uiState.incorrectCounts,
+            individualIncorrectCounts = uiState.individualIncorrectCounts,
+            modifier = Modifier.padding(paddingValues)
+        )
     }
 }
 
+val Quiz.isCorrect
+    get() = this.possibleAnswers.count { it.isSelected } == 1
+val List<Quiz>.correctCounts
+    get() = count { quiz -> quiz.isCorrect }
+val List<Quiz>.incorrectCounts
+    get() = count { quiz -> !quiz.isCorrect }
+
+
 @Composable
 fun ResultContent(
+    correctCounts: Int,
+    incorrectCounts: Int,
+    individualIncorrectCounts: List<Pair<Hiragana, Int>>,
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.fillMaxSize().padding(horizontal = 16.dp).padding(bottom = 16.dp)
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier.fillMaxSize().padding(16.dp)
     ) {
-        Text("Correct: 17")
-        Text("Incorrect: 3")
+        Spacer(Modifier.height(16.dp))
+        Text("Correct: $correctCounts")
+        Text("Incorrect: $incorrectCounts")
+        Spacer(Modifier.height(16.dp))
+
+        Text("Incorrect Counts")
+        for ((hiragana, count) in individualIncorrectCounts) {
+            Text("${hiragana.kana}: $count")
+        }
+
+        Spacer(Modifier.weight(1f))
+        Button({}) { Text("Try Again") }
+        Button({}) { Text("Test All Learned") }
+        Spacer(Modifier.height(16.dp))
     }
 }
 
@@ -63,7 +109,7 @@ fun ResultScreenPreview() {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text(stringResource(R.string.result)) },
+                    title = { Text("Result") },
                     navigationIcon = {
                         IconButton(onClick = {}) {
                             Icon(
@@ -76,7 +122,17 @@ fun ResultScreenPreview() {
             },
             modifier = Modifier.fillMaxSize(),
         ) { paddingValues ->
-            ResultContent(Modifier.padding(paddingValues))
+            ResultContent(
+                correctCounts = 4,
+                incorrectCounts = 4,
+                individualIncorrectCounts = listOf(
+                    HI to 0,
+                    MI to 2,
+                    KA to 0,
+                    SE to 2
+                ),
+                modifier = Modifier.padding(paddingValues)
+            )
         }
     }
 }

@@ -134,6 +134,25 @@ class DefaultNavGraphTest {
         composeTestRule.onNodeWithText(activity.getString(R.string.result)).assertIsDisplayed()
     }
 
+    @Test
+    fun quizScreen_whenAllQuizzesAreCorrectlyAnswered_navigatesToResultScreen_assertResultCountsAreCorrect() {
+        setContent(Route.Quiz(HIMIKASE.id))
+
+        repeat(DEFAULT_LEARNING_SETS_COUNT) {
+            composeTestRule.onNode(isButton() and hasText(HI.name)).performClick()
+            composeTestRule.onNode(isButton() and hasText(MI.name)).performClick()
+            composeTestRule.onNode(isButton() and hasText(KA.name)).performClick()
+            composeTestRule.onNode(isButton() and hasText(SE.name)).performClick()
+        }
+        composeTestRule.onNodeWithText(activity.getString(R.string.result)).assertIsDisplayed()
+        composeTestRule.onNodeWithText("Correct: 20").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Incorrect: 0").assertIsDisplayed()
+        composeTestRule.onNodeWithText("${HI.kana}: 0").assertIsDisplayed()
+        composeTestRule.onNodeWithText("${MI.kana}: 0").assertIsDisplayed()
+        composeTestRule.onNodeWithText("${KA.kana}: 0").assertIsDisplayed()
+        composeTestRule.onNodeWithText("${SE.kana}: 0").assertIsDisplayed()
+    }
+
     fun setContent(startDestination: Route = Route.Home) {
         composeTestRule.setContent {
             MindlesslyHiraganaTheme {

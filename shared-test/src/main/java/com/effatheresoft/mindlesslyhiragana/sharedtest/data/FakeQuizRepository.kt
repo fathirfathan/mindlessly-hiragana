@@ -2,6 +2,10 @@ package com.effatheresoft.mindlesslyhiragana.sharedtest.data
 
 import com.effatheresoft.mindlesslyhiragana.Constants.DEFAULT_LEARNING_SETS_COUNT
 import com.effatheresoft.mindlesslyhiragana.data.Hiragana
+import com.effatheresoft.mindlesslyhiragana.data.Hiragana.HI
+import com.effatheresoft.mindlesslyhiragana.data.Hiragana.KA
+import com.effatheresoft.mindlesslyhiragana.data.Hiragana.MI
+import com.effatheresoft.mindlesslyhiragana.data.Hiragana.SE
 import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.data.repository.QuizRepository
 import com.effatheresoft.mindlesslyhiragana.quiz.PossibleAnswer
@@ -9,7 +13,10 @@ import com.effatheresoft.mindlesslyhiragana.quiz.Quiz
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class FakeQuizRepository: QuizRepository {
+class FakeQuizRepository(): QuizRepository {
+    constructor(isPrepopulated: Boolean) : this() {
+        if (isPrepopulated) _quizzes.value = getDefaultQuizzes()
+    }
 
     private var _currentHiraganaCategory: HiraganaCategory = HiraganaCategory.HIMIKASE
     private val observedLearningSetsCount = DEFAULT_LEARNING_SETS_COUNT
@@ -63,4 +70,81 @@ class FakeQuizRepository: QuizRepository {
             _quizzes.value = generatedQuizzes
         }
     }
+
+    fun getDefaultQuizzes() = listOf(
+        Quiz(
+            question = HI,
+            possibleAnswers = listOf(
+                PossibleAnswer(HI, true, true),
+                PossibleAnswer(MI, false, false),
+                PossibleAnswer(KA, false, false),
+                PossibleAnswer(SE, false, false),
+            )
+        ),
+        Quiz(
+            question = MI,
+            possibleAnswers = listOf(
+                PossibleAnswer(HI, false, true),
+                PossibleAnswer(MI, true, true),
+                PossibleAnswer(KA, false, false),
+                PossibleAnswer(SE, false, false),
+            )
+        ),
+        Quiz(
+            question = KA,
+            possibleAnswers = listOf(
+                PossibleAnswer(HI, false, false),
+                PossibleAnswer(MI, false, false),
+                PossibleAnswer(KA, true, true),
+                PossibleAnswer(SE, false, false),
+            )
+        ),
+        Quiz(
+            question = SE,
+            possibleAnswers = listOf(
+                PossibleAnswer(HI, false, true),
+                PossibleAnswer(MI, false, true),
+                PossibleAnswer(KA, false, true),
+                PossibleAnswer(SE, true, true),
+            )
+        ),
+
+
+        Quiz(
+            question = HI,
+            possibleAnswers = listOf(
+                PossibleAnswer(HI, true, true),
+                PossibleAnswer(MI, false, false),
+                PossibleAnswer(KA, false, false),
+                PossibleAnswer(SE, false, false),
+            )
+        ),
+        Quiz(
+            question = MI,
+            possibleAnswers = listOf(
+                PossibleAnswer(HI, false, true),
+                PossibleAnswer(MI, true, true),
+                PossibleAnswer(KA, false, false),
+                PossibleAnswer(SE, false, false),
+            )
+        ),
+        Quiz(
+            question = KA,
+            possibleAnswers = listOf(
+                PossibleAnswer(HI, false, false),
+                PossibleAnswer(MI, false, false),
+                PossibleAnswer(KA, true, true),
+                PossibleAnswer(SE, false, false),
+            )
+        ),
+        Quiz(
+            question = SE,
+            possibleAnswers = listOf(
+                PossibleAnswer(HI, false, true),
+                PossibleAnswer(MI, false, true),
+                PossibleAnswer(KA, false, true),
+                PossibleAnswer(SE, true, true),
+            )
+        ),
+    )
 }
