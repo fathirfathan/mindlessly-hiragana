@@ -52,7 +52,10 @@ fun DefaultNavGraph(
 
         composable<Route.Quiz> { navBackStackEntry ->
             val quizRoute: Route.Quiz = navBackStackEntry.toRoute()
-            QuizScreen(categoryId = quizRoute.categoryId)
+            QuizScreen(
+                categoryId = quizRoute.categoryId,
+                onNavigationIconClick = { navController.navigate(Route.Learn(quizRoute.categoryId)) }
+            )
         }
     }
 }

@@ -29,11 +29,12 @@ class QuizViewModelTest {
     fun setupViewModel() {
         fakeQuizRepository = FakeQuizRepository()
         quizViewModel = QuizViewModel(fakeQuizRepository)
+
+        quizViewModel.generateQuizzes(HIMIKASE.id)
     }
 
     @Test
     fun whenQuizIsGenerated_assertCurrentQuizState() = runTest {
-        val categoryId = HIMIKASE.id
         val expectedCurrentQuiz = Quiz(
             question = HI,
             possibleAnswers = listOf(
@@ -43,39 +44,55 @@ class QuizViewModelTest {
                 PossibleAnswer(answer = SE, isCorrect = false, isSelected = false),
             )
         )
-
-        quizViewModel.generateQuizzes(categoryId)
         assertEquals(expectedCurrentQuiz, quizViewModel.uiState.first().currentQuiz)
     }
 
     @Test
     fun whenQuizIsGenerated_assertRemainingQuestionsCountState() = runTest {
-        val categoryId = HIMIKASE.id
         val possibleCurrentQuestion = HIMIKASE.hiraganaList
-        quizViewModel.generateQuizzes(categoryId)
         val remainingQuestionsCount = possibleCurrentQuestion.size * DEFAULT_LEARNING_SETS_COUNT - 1
 
         assertEquals(remainingQuestionsCount, quizViewModel.uiState.first().remainingQuestionsCount)
     }
 
     @Test
-    fun onCurrentQuiz_whenAllAnswersAreSelected_assertAllAnswersAreSelected() = runTest {
-        val categoryId = HIMIKASE.id
+    fun onCurrentQuiz_whenIncorrectAnswersAreSelected_assertAreSelected() = runTest {
         val possibleAnswers = listOf(
             PossibleAnswer(HI, isCorrect = true, isSelected = false),
             PossibleAnswer(MI, isCorrect = false, isSelected = false),
             PossibleAnswer(KA, isCorrect = false, isSelected = false),
             PossibleAnswer(SE, isCorrect = false, isSelected = false)
         )
-        quizViewModel.generateQuizzes(categoryId)
 
-        quizViewModel.selectCurrentQuizAnswer(possibleAnswers[0].answer)
         quizViewModel.selectCurrentQuizAnswer(possibleAnswers[1].answer)
         quizViewModel.selectCurrentQuizAnswer(possibleAnswers[2].answer)
         quizViewModel.selectCurrentQuizAnswer(possibleAnswers[3].answer)
-        assertEquals(true, quizViewModel.uiState.first().currentQuiz!!.possibleAnswers[0].isSelected)
         assertEquals(true, quizViewModel.uiState.first().currentQuiz!!.possibleAnswers[1].isSelected)
         assertEquals(true, quizViewModel.uiState.first().currentQuiz!!.possibleAnswers[2].isSelected)
         assertEquals(true, quizViewModel.uiState.first().currentQuiz!!.possibleAnswers[3].isSelected)
+    }
+
+    @Test
+    fun onCurrentQuiz_whenCorrectAnswerIsSelected_assertCurrentQuizIsUpdated() = runTest {
+        val possibleAnswers = listOf(
+            PossibleAnswer(HI, isCorrect = true, isSelected = false),
+            PossibleAnswer(MI, isCorrect = false, isSelected = false),
+            PossibleAnswer(KA, isCorrect = false, isSelected = false),
+            PossibleAnswer(SE, isCorrect = false, isSelected = false)
+        )
+        val expectedUpdatedQuiz = Quiz(
+            question = MI,
+            possibleAnswers = listOf(
+                PossibleAnswer(HI, isCorrect = false, isSelected = false),
+                PossibleAnswer(MI, isCorrect = true, isSelected = false),
+                PossibleAnswer(KA, isCorrect = false, isSelected = false),
+                PossibleAnswer(SE, isCorrect = false, isSelected = false)
+            )
+        )
+        val expectedRemainingQuestionsCount = HIMIKASE.hiraganaList.size * DEFAULT_LEARNING_SETS_COUNT - 2
+
+        quizViewModel.selectCurrentQuizAnswer(possibleAnswers[0].answer)
+        assertEquals(expectedUpdatedQuiz, quizViewModel.uiState.first().currentQuiz)
+        assertEquals(expectedRemainingQuestionsCount, quizViewModel.uiState.first().remainingQuestionsCount)
     }
 }

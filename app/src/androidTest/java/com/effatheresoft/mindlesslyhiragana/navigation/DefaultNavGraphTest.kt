@@ -54,9 +54,7 @@ class DefaultNavGraphTest {
     fun homeScreen_onCategoryClicked_navigatesToLearnScreen() {
         setContent()
 
-        composeTestRule.onNodeWithText(HIMIKASE.kanaWithNakaguro).performClick()
-        composeTestRule.onNodeWithText(activity.getString(R.string.learning_sets), substring = true).assertIsDisplayed()
-        composeTestRule.onNodeWithText(HIMIKASE.kanaWithNakaguro).assertIsDisplayed()
+        assertIsOnLearnScreen()
     }
 
     @Test
@@ -114,6 +112,13 @@ class DefaultNavGraphTest {
         composeTestRule.onNode(possibleQuizHiragana).assertIsDisplayed()
     }
 
+    @Test
+    fun quizScreen_onNavigationIconClicked_navigatesToLearnScreen() {
+        setContent(Route.Quiz(HIMIKASE.id))
+
+        composeTestRule.onNodeWithContentDescription(activity.getString(R.string.navigate_back)).performClick()
+        assertIsOnLearnScreen()
+    }
 
     fun setContent(startDestination: Route = Route.Home) {
         composeTestRule.setContent {
@@ -121,5 +126,11 @@ class DefaultNavGraphTest {
                 DefaultNavGraph(startDestination = startDestination)
             }
         }
+    }
+
+    fun assertIsOnLearnScreen() {
+        composeTestRule.onNodeWithText(HIMIKASE.kanaWithNakaguro).performClick()
+        composeTestRule.onNodeWithText(activity.getString(R.string.learning_sets), substring = true).assertIsDisplayed()
+        composeTestRule.onNodeWithText(HIMIKASE.kanaWithNakaguro).assertIsDisplayed()
     }
 }

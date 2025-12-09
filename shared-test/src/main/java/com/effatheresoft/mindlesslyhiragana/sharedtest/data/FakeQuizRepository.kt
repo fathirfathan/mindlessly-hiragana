@@ -34,7 +34,7 @@ class FakeQuizRepository: QuizRepository {
 
     override suspend fun generateQuizzes(categoryId: String) {
         _currentHiraganaCategory = HiraganaCategory.entries.first { it.id == categoryId }
-        _currentHiraganaCategory?.let { hiraganaCategory ->
+        _currentHiraganaCategory.let { hiraganaCategory ->
             val possibleAnswers = hiraganaCategory.hiraganaList.map {
                 PossibleAnswer(
                     answer = it,

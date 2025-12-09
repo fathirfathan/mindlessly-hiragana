@@ -2,6 +2,7 @@ package com.effatheresoft.mindlesslyhiragana.quiz
 
 import androidx.compose.material3.Surface
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -72,7 +73,7 @@ class QuizScreenTest {
         setContent(viewModel)
 
         val remainingQuestionsCount = viewModel.uiState.first().remainingQuestionsCount
-        composeTestRule.onNodeWithText("Remaining: $remainingQuestionsCount").assertIsDisplayed()
+        composeTestRule.onNodeWithText(activity.getString(R.string.remaining_n, remainingQuestionsCount)).assertIsDisplayed()
     }
     
     @Test
@@ -97,11 +98,28 @@ class QuizScreenTest {
         composeTestRule.onNodeWithText(SE.name).assertIsNotEnabled()
     }
 
+    @Test
+    fun whenCorrectAnswerButtonsAreSelected_assertNextQuizDisplayed() = runTest {
+        val viewModel = QuizViewModel(fakeQuizRepository)
+        setContent(viewModel)
+
+        composeTestRule.onNodeWithText(HI.name).performClick()
+        composeTestRule.onNodeWithText(MI.kana).assertIsDisplayed()
+
+        val remainingQuestionsCount = viewModel.uiState.first().remainingQuestionsCount
+        composeTestRule.onNodeWithText(activity.getString(R.string.remaining_n, remainingQuestionsCount)).assertIsDisplayed()
+
+        composeTestRule.onNodeWithText(HI.name).assertIsEnabled()
+        composeTestRule.onNodeWithText(MI.name).assertIsEnabled()
+        composeTestRule.onNodeWithText(KA.name).assertIsEnabled()
+        composeTestRule.onNodeWithText(SE.name).assertIsEnabled()
+    }
+
     fun setContent() {
         composeTestRule.setContent {
             MindlesslyHiraganaTheme {
                 Surface {
-                    QuizScreen(categoryId = HIMIKASE.id)
+                    QuizScreen(categoryId = HIMIKASE.id, onNavigationIconClick = {} )
                 }
             }
         }
@@ -111,7 +129,7 @@ class QuizScreenTest {
         composeTestRule.setContent {
             MindlesslyHiraganaTheme {
                 Surface {
-                    QuizScreen(categoryId = HIMIKASE.id, viewModel = viewModel)
+                    QuizScreen(categoryId = HIMIKASE.id, viewModel = viewModel, onNavigationIconClick = {})
                 }
             }
         }

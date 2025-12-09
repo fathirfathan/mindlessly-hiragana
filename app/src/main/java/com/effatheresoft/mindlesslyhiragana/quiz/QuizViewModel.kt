@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -24,14 +25,14 @@ class QuizViewModel @Inject constructor(val quizRepository: QuizRepository): Vie
 
     private val _isLoading = MutableStateFlow(false)
     private val _quizzes = quizRepository.observeQuizzes()
-    private val _currentQuestionIndex = MutableStateFlow(0)
+    private val _currentQuizIndex = MutableStateFlow(0)
 
     val uiState: StateFlow<QuizUiState> =
-        combine(_isLoading, _quizzes, _currentQuestionIndex) { isLoading, quizzes, currentQuestionIndex ->
+        combine(_isLoading, _quizzes, _currentQuizIndex) { isLoading, quizzes, currentQuizIndex ->
             QuizUiState(
                 isLoading = isLoading,
-                currentQuiz = quizzes.getOrNull(currentQuestionIndex),
-                remainingQuestionsCount = quizzes.size - currentQuestionIndex - 1
+                currentQuiz = quizzes.getOrNull(currentQuizIndex),
+                remainingQuestionsCount = quizzes.size - currentQuizIndex - 1
             )
         }.stateIn(
             scope = viewModelScope,
@@ -39,8 +40,13 @@ class QuizViewModel @Inject constructor(val quizRepository: QuizRepository): Vie
             initialValue = QuizUiState(isLoading = true)
         )
 
-    fun selectCurrentQuizAnswer(answer: Hiragana) =
-        quizRepository.selectQuizAnswer(_currentQuestionIndex.value, answer)
+    fun selectCurrentQuizAnswer(answer: Hiragana) = viewModelScope.launch {
+        quizRepository.selectQuizAnswer(_currentQuizIndex.value, answer)
+
+        val currentQuiz = _quizzes.first()[_currentQuizIndex.value]
+        val selectedAnswer = currentQuiz.possibleAnswers.first { it.answer == answer }
+        if (selectedAnswer.isCorrect) _currentQuizIndex.value += 1
+    }
 
     fun generateQuizzes(categoryId: String) = viewModelScope.launch {
         quizRepository.generateQuizzes(categoryId)

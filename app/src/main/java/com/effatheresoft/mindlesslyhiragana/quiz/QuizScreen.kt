@@ -41,6 +41,7 @@ import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.HIMIKASE
 fun QuizScreen(
     categoryId: String,
     modifier: Modifier = Modifier,
+    onNavigationIconClick: () -> Unit,
     viewModel: QuizViewModel = hiltViewModel()
 ) {
     Scaffold(
@@ -48,7 +49,7 @@ fun QuizScreen(
             TopAppBar(
                 title = { Text(stringResource(R.string.learn)) },
                 navigationIcon = {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = onNavigationIconClick) {
                         Icon(
                             painter = painterResource(R.drawable.arrow_back_24px),
                             contentDescription = stringResource(R.string.navigate_back)
