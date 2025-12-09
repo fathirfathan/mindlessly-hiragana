@@ -42,6 +42,7 @@ fun QuizScreen(
     categoryId: String,
     modifier: Modifier = Modifier,
     onNavigationIconClick: () -> Unit,
+    onCompleted: () -> Unit,
     viewModel: QuizViewModel = hiltViewModel()
 ) {
     Scaffold(
@@ -66,6 +67,9 @@ fun QuizScreen(
         }
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
         val currentQuiz = uiState.currentQuiz
+        LaunchedEffect(uiState.isCompleted) {
+            if (uiState.isCompleted) onCompleted()
+        }
 
         currentQuiz?.let {
             QuizContent(

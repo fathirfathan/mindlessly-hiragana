@@ -9,4 +9,5 @@
     <string name="learning_sets_n_sets">Learning Sets: %1$d Sets</string>
     <string name="learning_sets">Learning Sets</string>
     <string name="remaining_n">Remaining: %1$d</string>
+    <string name="result">Result</string>
 </resources>

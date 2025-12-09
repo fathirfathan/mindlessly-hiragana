@@ -11,6 +11,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.effatheresoft.mindlesslyhiragana.Constants.DEFAULT_LEARNING_SETS_COUNT
 import com.effatheresoft.mindlesslyhiragana.HiltTestActivity
 import com.effatheresoft.mindlesslyhiragana.R
 import com.effatheresoft.mindlesslyhiragana.data.Hiragana.HI
@@ -118,6 +119,19 @@ class DefaultNavGraphTest {
 
         composeTestRule.onNodeWithContentDescription(activity.getString(R.string.navigate_back)).performClick()
         assertIsOnLearnScreen()
+    }
+
+    @Test
+    fun quizScreen_whenAllQuizzesAreCorrectlyAnswered_navigatesToResultScreen() {
+        setContent(Route.Quiz(HIMIKASE.id))
+
+        repeat(DEFAULT_LEARNING_SETS_COUNT) {
+            composeTestRule.onNode(isButton() and hasText(HI.name)).performClick()
+            composeTestRule.onNode(isButton() and hasText(MI.name)).performClick()
+            composeTestRule.onNode(isButton() and hasText(KA.name)).performClick()
+            composeTestRule.onNode(isButton() and hasText(SE.name)).performClick()
+        }
+        composeTestRule.onNodeWithText(activity.getString(R.string.result)).assertIsDisplayed()
     }
 
     fun setContent(startDestination: Route = Route.Home) {

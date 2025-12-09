@@ -18,6 +18,7 @@ data class QuizUiState(
     val isLoading: Boolean = false,
     val currentQuiz: Quiz? = null,
     val remainingQuestionsCount: Int = -1,
+    val isCompleted: Boolean = false
 )
 
 @HiltViewModel
@@ -26,13 +27,15 @@ class QuizViewModel @Inject constructor(val quizRepository: QuizRepository): Vie
     private val _isLoading = MutableStateFlow(false)
     private val _quizzes = quizRepository.observeQuizzes()
     private val _currentQuizIndex = MutableStateFlow(0)
+    private val _isCompleted = MutableStateFlow(false)
 
     val uiState: StateFlow<QuizUiState> =
-        combine(_isLoading, _quizzes, _currentQuizIndex) { isLoading, quizzes, currentQuizIndex ->
+        combine(_isLoading, _quizzes, _currentQuizIndex, _isCompleted) { isLoading, quizzes, currentQuizIndex, isCompleted ->
             QuizUiState(
                 isLoading = isLoading,
                 currentQuiz = quizzes.getOrNull(currentQuizIndex),
-                remainingQuestionsCount = quizzes.size - currentQuizIndex - 1
+                remainingQuestionsCount = quizzes.size - currentQuizIndex - 1,
+                isCompleted = isCompleted
             )
         }.stateIn(
             scope = viewModelScope,
@@ -45,7 +48,13 @@ class QuizViewModel @Inject constructor(val quizRepository: QuizRepository): Vie
 
         val currentQuiz = _quizzes.first()[_currentQuizIndex.value]
         val selectedAnswer = currentQuiz.possibleAnswers.first { it.answer == answer }
-        if (selectedAnswer.isCorrect) _currentQuizIndex.value += 1
+        if (selectedAnswer.isCorrect) {
+            if (_currentQuizIndex.value == _quizzes.first().size - 1) {
+                _isCompleted.value = true
+            } else {
+                _currentQuizIndex.value += 1
+            }
+        }
     }
 
     fun generateQuizzes(categoryId: String) = viewModelScope.launch {

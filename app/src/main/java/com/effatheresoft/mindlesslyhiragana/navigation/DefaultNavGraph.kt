@@ -10,6 +10,7 @@ import androidx.navigation.toRoute
 import com.effatheresoft.mindlesslyhiragana.home.HomeScreen
 import com.effatheresoft.mindlesslyhiragana.learn.LearnScreen
 import com.effatheresoft.mindlesslyhiragana.quiz.QuizScreen
+import com.effatheresoft.mindlesslyhiragana.result.ResultScreen
 import kotlinx.serialization.Serializable
 
 sealed interface Route {
@@ -22,6 +23,9 @@ sealed interface Route {
 
     @Serializable
     data class Quiz(val categoryId: String): Route
+
+    @Serializable
+    data class Result(val categoryId: String): Route
 }
 
 @Composable
@@ -54,8 +58,13 @@ fun DefaultNavGraph(
             val quizRoute: Route.Quiz = navBackStackEntry.toRoute()
             QuizScreen(
                 categoryId = quizRoute.categoryId,
-                onNavigationIconClick = { navController.navigate(Route.Learn(quizRoute.categoryId)) }
+                onNavigationIconClick = { navController.navigate(Route.Learn(quizRoute.categoryId)) },
+                onCompleted = { navController.navigate(Route.Result(quizRoute.categoryId)) }
             )
+        }
+
+        composable<Route.Result> {
+            ResultScreen()
         }
     }
 }

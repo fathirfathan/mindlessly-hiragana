@@ -119,7 +119,11 @@ class QuizScreenTest {
         composeTestRule.setContent {
             MindlesslyHiraganaTheme {
                 Surface {
-                    QuizScreen(categoryId = HIMIKASE.id, onNavigationIconClick = {} )
+                    QuizScreen(
+                        categoryId = HIMIKASE.id,
+                        onNavigationIconClick = {},
+                        onCompleted = {}
+                    )
                 }
             }
         }
@@ -129,7 +133,12 @@ class QuizScreenTest {
         composeTestRule.setContent {
             MindlesslyHiraganaTheme {
                 Surface {
-                    QuizScreen(categoryId = HIMIKASE.id, viewModel = viewModel, onNavigationIconClick = {})
+                    QuizScreen(
+                        categoryId = HIMIKASE.id,
+                        viewModel = viewModel,
+                        onNavigationIconClick = {},
+                        onCompleted = {}
+                    )
                 }
             }
         }

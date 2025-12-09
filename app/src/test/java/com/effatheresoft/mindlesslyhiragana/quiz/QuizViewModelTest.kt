@@ -2,6 +2,7 @@ package com.effatheresoft.mindlesslyhiragana.quiz
 
 import com.effatheresoft.mindlesslyhiragana.Constants.DEFAULT_LEARNING_SETS_COUNT
 import com.effatheresoft.mindlesslyhiragana.MainCoroutineRule
+import com.effatheresoft.mindlesslyhiragana.data.Hiragana
 import com.effatheresoft.mindlesslyhiragana.data.Hiragana.HI
 import com.effatheresoft.mindlesslyhiragana.data.Hiragana.KA
 import com.effatheresoft.mindlesslyhiragana.data.Hiragana.MI
@@ -94,5 +95,18 @@ class QuizViewModelTest {
         quizViewModel.selectCurrentQuizAnswer(possibleAnswers[0].answer)
         assertEquals(expectedUpdatedQuiz, quizViewModel.uiState.first().currentQuiz)
         assertEquals(expectedRemainingQuestionsCount, quizViewModel.uiState.first().remainingQuestionsCount)
+    }
+
+    @Test
+    fun whenAllQuizzesAreCorrectlyAnswered_assertIsCompleted() = runTest {
+        val correctAnswers = mutableListOf<Hiragana>()
+        repeat(DEFAULT_LEARNING_SETS_COUNT) {
+            correctAnswers.addAll(listOf(HI, MI, KA, SE))
+        }
+        correctAnswers.forEach { answer ->
+            quizViewModel.selectCurrentQuizAnswer(answer)
+        }
+
+        assertEquals(true, quizViewModel.uiState.first().isCompleted)
     }
 }
