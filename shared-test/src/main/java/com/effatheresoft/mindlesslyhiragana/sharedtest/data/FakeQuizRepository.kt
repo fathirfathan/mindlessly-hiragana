@@ -18,6 +18,10 @@ class FakeQuizRepository(): QuizRepository {
         if (isPrepopulated) _quizzes.value = getDefaultQuizzes()
     }
 
+    constructor(isPrepopulated: Boolean, isAllCorrect: Boolean) : this() {
+        if (isPrepopulated && isAllCorrect) _quizzes.value = getAllCorrectQuizzes()
+    }
+
     private var _currentHiraganaCategory: HiraganaCategory = HiraganaCategory.HIMIKASE
     private val observedLearningSetsCount = DEFAULT_LEARNING_SETS_COUNT
     private val _quizzes = MutableStateFlow(emptyList<Quiz>())
@@ -69,6 +73,29 @@ class FakeQuizRepository(): QuizRepository {
             }
             _quizzes.value = generatedQuizzes
         }
+    }
+
+    fun getAllCorrectQuizzes(): List<Quiz> {
+        val allCorrectQuizzes = mutableListOf<Quiz>()
+        val hiraganaCategory = _currentHiraganaCategory.hiraganaList
+        repeat(2) {
+            hiraganaCategory.forEach { hiragana ->
+                allCorrectQuizzes.add(
+                    Quiz(
+                        question = hiragana,
+                        possibleAnswers = hiraganaCategory.map {
+                            PossibleAnswer(
+                                answer = it,
+                                isCorrect = it == hiragana,
+                                isSelected = it == hiragana
+                            )
+                        }
+                    )
+                )
+            }
+        }
+
+        return allCorrectQuizzes
     }
 
     fun getDefaultQuizzes() = listOf(

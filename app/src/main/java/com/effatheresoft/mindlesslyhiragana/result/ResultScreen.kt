@@ -96,7 +96,10 @@ fun ResultContent(
 
         Spacer(Modifier.weight(1f))
         Button({}) { Text("Try Again") }
-        Button({}) { Text("Test All Learned") }
+        Button(
+            onClick = {},
+            enabled = incorrectCounts == 0
+        ) { Text("Test All Learned") }
         Spacer(Modifier.height(16.dp))
     }
 }

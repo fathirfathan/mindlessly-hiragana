@@ -2,6 +2,7 @@ package com.effatheresoft.mindlesslyhiragana.result
 
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
@@ -77,6 +78,14 @@ class ResultScreenTest {
         composeTestRule.onNodeWithText("${MI.kana}: 2").assertIsDisplayed()
         composeTestRule.onNodeWithText("${KA.kana}: 0").assertIsDisplayed()
         composeTestRule.onNodeWithText("${SE.kana}: 2").assertIsDisplayed()
+    }
+
+    @Test
+    fun whenIncorrectIsZero_testAllLearnedButton_assertIsEnabled() {
+        fakeQuizRepository = FakeQuizRepository(isPrepopulated = true, isAllCorrect = true)
+        setContent(fakeQuizRepository)
+
+        composeTestRule.onNode(isButton() and hasText(activity.getString(R.string.test_all_learned))).assertIsEnabled()
     }
 
 
