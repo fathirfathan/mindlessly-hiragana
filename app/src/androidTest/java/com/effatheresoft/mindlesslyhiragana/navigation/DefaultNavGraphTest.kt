@@ -1,28 +1,27 @@
 package com.effatheresoft.mindlesslyhiragana.navigation
 
-import androidx.compose.ui.semantics.ProgressBarRangeInfo
-import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.hasProgressBarRangeInfo
-import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performSemanticsAction
+import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.effatheresoft.mindlesslyhiragana.Constants.DEFAULT_LEARNING_SETS_COUNT
 import com.effatheresoft.mindlesslyhiragana.HiltTestActivity
-import com.effatheresoft.mindlesslyhiragana.R
 import com.effatheresoft.mindlesslyhiragana.data.Hiragana.HI
 import com.effatheresoft.mindlesslyhiragana.data.Hiragana.KA
 import com.effatheresoft.mindlesslyhiragana.data.Hiragana.MI
 import com.effatheresoft.mindlesslyhiragana.data.Hiragana.SE
+import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.HIMIKASE
-import com.effatheresoft.mindlesslyhiragana.learn.isButton
+import com.effatheresoft.mindlesslyhiragana.home.HomeScreenRobot
+import com.effatheresoft.mindlesslyhiragana.learn.LearnScreenRobot
+import com.effatheresoft.mindlesslyhiragana.quiz.QuizScreenRobot
+import com.effatheresoft.mindlesslyhiragana.result.ResultScreenRobot
+import com.effatheresoft.mindlesslyhiragana.sharedtest.util.performBackPress
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import junit.framework.TestCase.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -39,131 +38,143 @@ class DefaultNavGraphTest {
     val composeTestRule = createAndroidComposeRule<HiltTestActivity>()
     private val activity get() = composeTestRule.activity
 
+    private lateinit var screen: ScreenRobot<ActivityScenarioRule<HiltTestActivity>, HiltTestActivity>
+
     @Before
     fun init() {
         hiltRule.inject()
+        val homeScreenRobot = HomeScreenRobot(composeTestRule)
+        val learnScreenRobot = LearnScreenRobot(composeTestRule)
+        val quizScreenRobot = QuizScreenRobot(composeTestRule)
+        val resultScreenRobot = ResultScreenRobot(composeTestRule)
+
+        learnScreenRobot.category = HIMIKASE
+        learnScreenRobot.progressBarValue = DEFAULT_LEARNING_SETS_COUNT
+
+        screen = ScreenRobot(
+            home = homeScreenRobot,
+            learn = learnScreenRobot,
+            quiz = quizScreenRobot,
+            result = resultScreenRobot
+        )
     }
 
     @Test
     fun startDestination_isHomeScreen() {
-        setContent()
-
-        composeTestRule.onNodeWithText(activity.getString(R.string.mindlessly_hiragana)).assertIsDisplayed()
+        setContent(Route.Home)
+        screen.home.assert_onHomeScreen()
     }
 
     @Test
     fun homeScreen_onCategoryClicked_navigatesToLearnScreen() {
-        setContent()
-
-        assertIsOnLearnScreen()
+        setContent(Route.Home)
+        screen.navigate_homeToLearn(HIMIKASE)
     }
 
     @Test
-    fun learnScreen_onNavigationIconClicked_navigatesToHomeScreen() {
-        setContent(Route.Learn(HIMIKASE.id))
-
-        composeTestRule.onNodeWithContentDescription(activity.getString(R.string.navigate_back)).performClick()
-        composeTestRule.onNodeWithText(activity.getString(R.string.mindlessly_hiragana)).assertIsDisplayed()
-    }
-
-    @Test
-    fun whenLearningSetsCountChanged_countStaysChanged() {
-        val currentCount = 5
-        val changedCount = 1
-        setContent(Route.Learn(HIMIKASE.id))
-
-        // LearnScreen()
-        composeTestRule.onNode(
-            hasProgressBarRangeInfo(
-                ProgressBarRangeInfo(
-                    current = currentCount.toFloat(),
-                    range = 1f..10f,
-                    steps = 8
-                )
-            )
-        ).performSemanticsAction(SemanticsActions.SetProgress) { it(changedCount.toFloat()) }
-        composeTestRule.onNodeWithContentDescription(activity.getString(R.string.navigate_back)).performClick()
-
-        // HomeScreen()
-        composeTestRule.onNodeWithText(HIMIKASE.kanaWithNakaguro).performClick()
-
-        // LearnScreen()
-        composeTestRule.onNode(
-            hasProgressBarRangeInfo(
-                ProgressBarRangeInfo(
-                    current = changedCount.toFloat(),
-                    range = 1f..10f,
-                    steps = 8
-                )
-            )
-        ).assertIsDisplayed()
-        composeTestRule.onNodeWithText(activity.getString(R.string.learning_sets_n_sets, changedCount)).assertIsDisplayed()
-    }
-
-    @Test
-    fun whenLearnButtonIsClicked_navigatesToQuizScreen() {
-        setContent(Route.Learn(HIMIKASE.id))
-
-        composeTestRule.onNode(isButton() and hasText(activity.getString(R.string.learn))).performClick()
-        val possibleQuizHiragana =
-            hasText(HI.kana) or
-            hasText(MI.kana) or
-            hasText(KA.kana) or
-            hasText(SE.kana)
-        composeTestRule.onNode(possibleQuizHiragana).assertIsDisplayed()
-    }
-
-    @Test
-    fun quizScreen_onNavigationIconClicked_navigatesToLearnScreen() {
-        setContent(Route.Quiz(HIMIKASE.id))
-
-        composeTestRule.onNodeWithContentDescription(activity.getString(R.string.navigate_back)).performClick()
-        assertIsOnLearnScreen()
+    fun learnScreen_whenLearnButtonIsClicked_navigatesToQuizScreen() {
+        setContent(Route.Learn(screen.learn.category.id))
+        screen.navigate_learnToQuiz()
     }
 
     @Test
     fun quizScreen_whenAllQuizzesAreCorrectlyAnswered_navigatesToResultScreen() {
-        setContent(Route.Quiz(HIMIKASE.id))
+        setContent(Route.Quiz(screen.learn.category.id))
+        screen.navigate_quizToResult(isAllCorrect = true)
+    }
 
-        repeat(DEFAULT_LEARNING_SETS_COUNT) {
-            composeTestRule.onNode(isButton() and hasText(HI.name)).performClick()
-            composeTestRule.onNode(isButton() and hasText(MI.name)).performClick()
-            composeTestRule.onNode(isButton() and hasText(KA.name)).performClick()
-            composeTestRule.onNode(isButton() and hasText(SE.name)).performClick()
-        }
-        composeTestRule.onNodeWithText(activity.getString(R.string.result)).assertIsDisplayed()
+    @Test
+    fun resultScreen_navigatedUpToLearnScreen_onNavigateBack_navigatesToHomeScreen() {
+        setContent(Route.Home)
+        screen.navigate_homeToLearn(HIMIKASE)
+        screen.navigate_learnToQuiz()
+        screen.navigate_quizToResult(isAllCorrect = true)
+        screen.result.click_navigateUpButton()
+
+        // don't return to quiz screen
+        screen.learn.assert_onLearnScreen()
+        composeTestRule.performBackPress()
+        screen.home.assert_onHomeScreen()
+    }
+
+    @Test
+    fun learnScreen_onNavigateUpButtonClicked_navigatesToHomeScreen() {
+        setContent(Route.Home)
+        screen.navigate_homeToLearn(HIMIKASE)
+        screen.navigateBack_learnToHome()
+    }
+
+    @Test
+    fun learnScreen_navigatedUpToHome_onNavigateBack_exitApp() {
+        setContent(Route.Home)
+        screen.navigate_homeToLearn(HIMIKASE)
+        screen.navigateBack_learnToHome()
+
+        composeTestRule.performBackPress()
+        assertTrue(activity.isFinishing || activity.isDestroyed)
+    }
+
+    @Test
+    fun quizScreen_onNavigateUpButtonClicked_navigatesToLearnScreen() {
+        setContent(Route.Learn(screen.learn.category.id))
+        screen.navigate_learnToQuiz()
+        screen.navigateBack_quizToLearn()
+    }
+
+    @Test
+    fun quizScreen_navigatedUpToLearnScreen_onNavigateBack_navigatesToHomeScreen() {
+        setContent(Route.Home)
+        screen.navigate_homeToLearn(HIMIKASE)
+        screen.navigate_learnToQuiz()
+        screen.navigateBack_quizToLearn()
+
+        composeTestRule.performBackPress()
+        screen.home.assert_onHomeScreen()
+    }
+
+    @Test
+    fun learnScreen_whenLearningSetsCountChanged_countStaysChanged() {
+        val currentCount = 5
+        val changedCount = 1
+
+        setContent(Route.Home)
+        screen.navigate_homeToLearn(HIMIKASE)
+
+        screen.learn.progressBarValue = currentCount
+        screen.learn.click_progressBar(changedCount)
+
+        screen.navigateBack_learnToHome()
+        screen.navigate_homeToLearn(HIMIKASE)
+
+        screen.learn.assert_progressBar_displayed(changedCount)
+        screen.learn.assert_progressBarLabel_displayed(changedCount)
     }
 
     @Test
     fun quizScreen_whenAllQuizzesAreCorrectlyAnswered_navigatesToResultScreen_assertResultCountsAreCorrect() {
-        setContent(Route.Quiz(HIMIKASE.id))
+        setContent(Route.Quiz(screen.learn.category.id))
+        screen.navigate_quizToResult(isAllCorrect = true)
 
-        repeat(DEFAULT_LEARNING_SETS_COUNT) {
-            composeTestRule.onNode(isButton() and hasText(HI.name)).performClick()
-            composeTestRule.onNode(isButton() and hasText(MI.name)).performClick()
-            composeTestRule.onNode(isButton() and hasText(KA.name)).performClick()
-            composeTestRule.onNode(isButton() and hasText(SE.name)).performClick()
-        }
-        composeTestRule.onNodeWithText(activity.getString(R.string.result)).assertIsDisplayed()
-        composeTestRule.onNodeWithText("Correct: 20").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Incorrect: 0").assertIsDisplayed()
+        screen.result.assert_correctCount_displayed(20)
+        screen.result.assert_incorrectCount_displayed(0)
+
         composeTestRule.onNodeWithText("${HI.kana}: 0").assertIsDisplayed()
         composeTestRule.onNodeWithText("${MI.kana}: 0").assertIsDisplayed()
         composeTestRule.onNodeWithText("${KA.kana}: 0").assertIsDisplayed()
         composeTestRule.onNodeWithText("${SE.kana}: 0").assertIsDisplayed()
     }
 
-    fun setContent(startDestination: Route = Route.Home) {
+    fun setContent(startDestination: Route) {
+        when (startDestination) {
+            is Route.Learn -> screen.learn.category = HiraganaCategory.entries.first { it.id == startDestination.categoryId }
+            is Route.Quiz -> screen.learn.category = HiraganaCategory.entries.first { it.id == startDestination.categoryId }
+            is Route.Result -> screen.learn.category = HiraganaCategory.entries.first { it.id == startDestination.categoryId }
+            else -> {}
+        }
         composeTestRule.setContent {
             MindlesslyHiraganaTheme {
                 DefaultNavGraph(startDestination = startDestination)
             }
         }
-    }
-
-    fun assertIsOnLearnScreen() {
-        composeTestRule.onNodeWithText(HIMIKASE.kanaWithNakaguro).performClick()
-        composeTestRule.onNodeWithText(activity.getString(R.string.learning_sets), substring = true).assertIsDisplayed()
-        composeTestRule.onNodeWithText(HIMIKASE.kanaWithNakaguro).assertIsDisplayed()
     }
 }

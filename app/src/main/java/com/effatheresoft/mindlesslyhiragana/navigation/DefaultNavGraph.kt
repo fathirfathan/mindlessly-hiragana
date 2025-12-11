@@ -49,7 +49,7 @@ fun DefaultNavGraph(
             val learnRoute: Route.Learn = navBackStackEntry.toRoute()
             LearnScreen(
                 categoryId = learnRoute.categoryId,
-                onNavigationIconClick = { navController.navigate(Route.Home) },
+                onNavigationIconClick = { navController.navigateUp() },
                 onLearnButtonClick = { navController.navigate(Route.Quiz(learnRoute.categoryId)) }
             )
         }
@@ -58,13 +58,21 @@ fun DefaultNavGraph(
             val quizRoute: Route.Quiz = navBackStackEntry.toRoute()
             QuizScreen(
                 categoryId = quizRoute.categoryId,
-                onNavigationIconClick = { navController.navigate(Route.Learn(quizRoute.categoryId)) },
-                onCompleted = { navController.navigate(Route.Result(quizRoute.categoryId)) }
+                onNavigationIconClick = { navController.navigateUp() },
+                onCompleted = { navController.navigate(Route.Result(quizRoute.categoryId)) {
+                    popUpTo(Route.Quiz(quizRoute.categoryId)) { inclusive = true }
+                } }
             )
         }
 
-        composable<Route.Result> {
-            ResultScreen()
+        composable<Route.Result> { navBackStackEntry ->
+            val resultRoute: Route.Result = navBackStackEntry.toRoute()
+            val learnRoute = Route.Learn(resultRoute.categoryId)
+            ResultScreen(
+                onNavigationIconClick = {
+                    navController.popBackStack(route = learnRoute, inclusive = false)
+                }
+            )
         }
     }
 }

@@ -34,15 +34,16 @@ import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ResultScreen(
-    viewModel: ResultViewModel = hiltViewModel(),
-    modifier: Modifier = Modifier
+    onNavigationIconClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: ResultViewModel = hiltViewModel()
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.result)) },
                 navigationIcon = {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = onNavigationIconClick) {
                         Icon(
                             painter = painterResource(R.drawable.arrow_back_24px),
                             contentDescription = stringResource(R.string.navigate_back)

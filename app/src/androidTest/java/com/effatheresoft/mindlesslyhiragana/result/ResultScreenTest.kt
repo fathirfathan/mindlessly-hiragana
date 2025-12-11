@@ -92,7 +92,7 @@ class ResultScreenTest {
     fun setContent() {
         composeTestRule.setContent {
             MindlesslyHiraganaTheme {
-                ResultScreen()
+                ResultScreen(onNavigationIconClick = {})
             }
         }
     }
@@ -100,7 +100,7 @@ class ResultScreenTest {
     fun setContent(fakeQuizRepository: QuizRepository) {
         composeTestRule.setContent {
             MindlesslyHiraganaTheme {
-                ResultScreen(viewModel = ResultViewModel(fakeQuizRepository))
+                ResultScreen(onNavigationIconClick = {}, viewModel = ResultViewModel(fakeQuizRepository))
             }
         }
     }
