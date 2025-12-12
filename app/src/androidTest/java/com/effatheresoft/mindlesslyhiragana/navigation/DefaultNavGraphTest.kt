@@ -59,8 +59,10 @@ class DefaultNavGraphTest {
         )
     }
 
+    // region Home Screen Navigation
+
     @Test
-    fun startDestination_isHomeScreen() {
+    fun homeScreen_assertIsStartDestination() {
         setContent(Route.Home)
         screen.home.assert_onHomeScreen()
     }
@@ -71,37 +73,14 @@ class DefaultNavGraphTest {
         screen.navigate_homeToLearn(HIMIKASE)
     }
 
+    // endregion
+
+    // region Learn Screen Navigation
+
     @Test
     fun learnScreen_whenLearnButtonIsClicked_navigatesToQuizScreen() {
         setContent(Route.Learn(screen.learn.category.id))
         screen.navigate_learnToQuiz()
-    }
-
-    @Test
-    fun quizScreen_whenAllQuizzesAreCorrectlyAnswered_navigatesToResultScreen() {
-        setContent(Route.Quiz(screen.learn.category.id))
-        screen.navigate_quizToResult(isAllCorrect = true)
-    }
-
-    @Test
-    fun resultScreen_navigatedUpToLearnScreen_onNavigateBack_navigatesToHomeScreen() {
-        setContent(Route.Home)
-        screen.navigate_homeToLearn(HIMIKASE)
-        screen.navigate_learnToQuiz()
-        screen.navigate_quizToResult(isAllCorrect = true)
-        screen.result.click_navigateUpButton()
-
-        // don't return to quiz screen
-        screen.learn.assert_onLearnScreen()
-        composeTestRule.performBackPress()
-        screen.home.assert_onHomeScreen()
-    }
-
-    @Test
-    fun learnScreen_onNavigateUpButtonClicked_navigatesToHomeScreen() {
-        setContent(Route.Home)
-        screen.navigate_homeToLearn(HIMIKASE)
-        screen.navigateBack_learnToHome()
     }
 
     @Test
@@ -112,24 +91,6 @@ class DefaultNavGraphTest {
 
         composeTestRule.performBackPress()
         assertTrue(activity.isFinishing || activity.isDestroyed)
-    }
-
-    @Test
-    fun quizScreen_onNavigateUpButtonClicked_navigatesToLearnScreen() {
-        setContent(Route.Learn(screen.learn.category.id))
-        screen.navigate_learnToQuiz()
-        screen.navigateBack_quizToLearn()
-    }
-
-    @Test
-    fun quizScreen_navigatedUpToLearnScreen_onNavigateBack_navigatesToHomeScreen() {
-        setContent(Route.Home)
-        screen.navigate_homeToLearn(HIMIKASE)
-        screen.navigate_learnToQuiz()
-        screen.navigateBack_quizToLearn()
-
-        composeTestRule.performBackPress()
-        screen.home.assert_onHomeScreen()
     }
 
     @Test
@@ -150,6 +111,27 @@ class DefaultNavGraphTest {
         screen.learn.assert_progressBarLabel_displayed(changedCount)
     }
 
+    // endregion
+
+    // region Quiz Screen Navigation
+
+    @Test
+    fun quizScreen_whenAllQuizzesAreCorrectlyAnswered_navigatesToResultScreen() {
+        setContent(Route.Quiz(screen.learn.category.id))
+        screen.navigate_quizToResult(isAllCorrect = true)
+    }
+
+    @Test
+    fun quizScreen_whenNavigatedUpTwice_navigatesToHomeScreen() {
+        setContent(Route.Home)
+        screen.navigate_homeToLearn(HIMIKASE)
+        screen.navigate_learnToQuiz()
+        screen.navigateBack_quizToLearn()
+
+        composeTestRule.performBackPress()
+        screen.home.assert_onHomeScreen()
+    }
+
     @Test
     fun quizScreen_whenAllQuizzesAreCorrectlyAnswered_navigatesToResultScreen_assertResultCountsAreCorrect() {
         setContent(Route.Quiz(screen.learn.category.id))
@@ -164,16 +146,39 @@ class DefaultNavGraphTest {
         composeTestRule.onNodeWithText("${SE.kana}: 0").assertIsDisplayed()
     }
 
-    fun setContent(startDestination: Route) {
-        when (startDestination) {
-            is Route.Learn -> screen.learn.category = HiraganaCategory.entries.first { it.id == startDestination.categoryId }
-            is Route.Quiz -> screen.learn.category = HiraganaCategory.entries.first { it.id == startDestination.categoryId }
-            is Route.Result -> screen.learn.category = HiraganaCategory.entries.first { it.id == startDestination.categoryId }
-            else -> {}
+    // endregion
+
+    // region Result Screen Navigation
+
+    @Test
+    fun resultScreen_navigatedUpToLearnScreen_onNavigateBack_navigatesToHomeScreen() {
+        setContent(Route.Home)
+        screen.navigate_homeToLearn(HIMIKASE)
+        screen.navigate_learnToQuiz()
+        screen.navigate_quizToResult(isAllCorrect = true)
+        screen.result.click_navigateUpButton()
+
+        // don't return to quiz screen
+        screen.learn.assert_onLearnScreen()
+        composeTestRule.performBackPress()
+        screen.home.assert_onHomeScreen()
+    }
+
+    // endregion
+
+    fun setContent(startDestination: Route? = null) {
+        startDestination?.let{
+            when (startDestination) {
+                is Route.Learn -> screen.learn.category = HiraganaCategory.entries.first { it.id == startDestination.categoryId }
+                is Route.Quiz -> screen.learn.category = HiraganaCategory.entries.first { it.id == startDestination.categoryId }
+                is Route.Result -> screen.learn.category = HiraganaCategory.entries.first { it.id == startDestination.categoryId }
+                else -> {}
+            }
         }
         composeTestRule.setContent {
             MindlesslyHiraganaTheme {
-                DefaultNavGraph(startDestination = startDestination)
+                if (startDestination == null) DefaultNavGraph()
+                else DefaultNavGraph(startDestination = startDestination)
             }
         }
     }
