@@ -8,6 +8,7 @@ import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.performClick
 import com.effatheresoft.mindlesslyhiragana.R
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
@@ -21,14 +22,20 @@ class TestScreenRobot <TR : TestRule, CA : ComponentActivity> (
 ) {
 
     val activity get() = composeTestRule.activity
+    lateinit var progress: String
     lateinit var categoryList: List<HiraganaCategory>
     var isTestUnlocked by Delegates.notNull<Boolean>()
+
+    suspend fun setProgress(progress: String) {
+        userRepository.updateLocalUserProgress(progress)
+        this.progress = progress
+        categoryList = HiraganaCategory.progressToCategoryList(this.progress)
+    }
 
     fun assertOnTestScreen() {
         topAppBarTitle_assertIsDisplayed()
         testButton_assertIsDisplayed()
     }
-
 
     fun topAppBarTitle_assertIsDisplayed() {
         composeTestRule.onAllNodesWithText(activity.getString(R.string.test_all_learned))[0].assertIsDisplayed()
@@ -36,6 +43,10 @@ class TestScreenRobot <TR : TestRule, CA : ComponentActivity> (
 
     fun topAppBarNavButton_assertIsDisplayed() {
         composeTestRule.onNode(hasContentDescription(activity.getString(R.string.navigate_back))).assertIsDisplayed()
+    }
+
+    fun topAppBarNavButton_click() {
+        composeTestRule.onNode(hasContentDescription(activity.getString(R.string.navigate_back))).performClick()
     }
 
     fun questionsText_assertIsDisplayed(value: Int? = null) {
@@ -56,6 +67,10 @@ class TestScreenRobot <TR : TestRule, CA : ComponentActivity> (
 
     fun challengeButton_assertIsDisplayed() {
         composeTestRule.onNode(isButton() and hasText(activity.getString(R.string.challenge_all_correct_on_learn))).assertIsDisplayed()
+    }
+
+    fun challengeButton_click() {
+        composeTestRule.onNode(isButton() and hasText(activity.getString(R.string.challenge_all_correct_on_learn))).performClick()
     }
 
     fun testButton_assertIsDisplayed() {

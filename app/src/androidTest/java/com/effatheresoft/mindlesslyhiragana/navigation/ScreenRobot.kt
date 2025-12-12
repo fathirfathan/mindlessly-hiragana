@@ -41,6 +41,11 @@ class ScreenRobot <R : TestRule, A : ComponentActivity> (
         }
     }
 
+//    fun navigate_testToLearn() {
+//        test.challengeButton_click()
+//        learn.assert_onLearnScreen(test.categoryList.last())
+//    }
+
     fun navigateBack_learnToHome() {
         learn.click_navigateUpButton()
         home.assert_onHomeScreen()
@@ -49,5 +54,10 @@ class ScreenRobot <R : TestRule, A : ComponentActivity> (
     fun navigateBack_quizToLearn() {
         quiz.click_navigateUpButton()
         learn.assert_onLearnScreen(learn.category)
+    }
+
+    fun navigateBack_testToHome() {
+        test.topAppBarNavButton_click()
+        home.assert_onHomeScreen()
     }
 }

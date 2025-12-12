@@ -27,13 +27,14 @@ import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 @Composable
 fun TestScreen(
     categoryList: List<HiraganaCategory>,
-    isTestUnlocked: Boolean
+    isTestUnlocked: Boolean,
+    onNavigationIconClick: () -> Unit
 ) {
     DefaultScaffold(
         topAppBar = {
             DefaultTopAppBar(
                 title = R.string.test_all_learned,
-                onNavigationIconClick = {}
+                onNavigationIconClick = onNavigationIconClick
             )
         }
     ) {

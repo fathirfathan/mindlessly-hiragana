@@ -76,6 +76,14 @@ enum class HiraganaCategory(
             val hiraganaBeforeNakaguroSet = setOf(U, HE, NI, MU)
             return hiraganaList.joinToString("") { if (it in hiraganaBeforeNakaguroSet) "${it.kana}・" else it.kana }
         }
+
+    companion object {
+        fun progressToCategoryList(progress: String): List<HiraganaCategory> {
+            if (progress.isEmpty()) return emptyList()
+            val progressCategory = HiraganaCategory.entries.first { it.id == progress }
+            return HiraganaCategory.entries.filter { it.ordinal <= progressCategory.ordinal }
+        }
+    }
 }
 
 enum class Hiragana(val kana: String) {

@@ -10,6 +10,7 @@ import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -33,10 +34,10 @@ class TestScreenTest {
     private lateinit var screen: TestScreenRobot<ActivityScenarioRule<HiltTestActivity>, HiltTestActivity>
 
     @Before
-    fun init() {
+    fun init() = runTest {
         hiltRule.inject()
         screen = TestScreenRobot(composeTestRule, fakeUserRepository)
-        screen.categoryList = listOf(HIMIKASE, FUWOYA)
+        screen.setProgress(FUWOYA.id)
         screen.isTestUnlocked = false
     }
 
@@ -55,7 +56,7 @@ class TestScreenTest {
     }
 
     @Test
-    fun givenCategoryList_categoryList_QuestionsCount_assertAreDisplayed() {
+    fun givenCategoryList_categoryList_QuestionsCount_assertAreDisplayed() = runTest {
         setContent()
         screen.questionsText_assertIsDisplayed(2)
         screen.categoryText_assertIsDisplayed()
@@ -80,7 +81,8 @@ class TestScreenTest {
             MindlesslyHiraganaTheme {
                 TestScreen(
                     categoryList = screen.categoryList,
-                    isTestUnlocked = screen.isTestUnlocked
+                    isTestUnlocked = screen.isTestUnlocked,
+                    onNavigationIconClick = {}
                 )
             }
         }

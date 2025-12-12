@@ -182,7 +182,21 @@ class DefaultNavGraphTest {
 
     // region Test Screen Navigation
 
+    @Test
+    fun testScreen_navigatedUpToHome_onNavigateBack_exitApp() {
+        setContent(Route.Home)
+        screen.navigate_homeToTest()
+        screen.navigateBack_testToHome()
 
+        composeTestRule.performBackPress()
+        assertTrue(activity.isFinishing || activity.isDestroyed)
+    }
+
+//    @Test
+//    fun testScreen_whenChallengeButtonClicked_navigatesToLearnScreen() {
+//        setContent(Route.Test)
+//        screen.navigate_testToLearn()
+//    }
 
     // endregion
 

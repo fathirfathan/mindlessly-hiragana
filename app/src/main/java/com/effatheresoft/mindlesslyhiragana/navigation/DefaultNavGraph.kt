@@ -85,7 +85,8 @@ fun DefaultNavGraph(
         composable<Route.Test> {
             TestScreen(
                 categoryList = listOf(HIMIKASE, FUWOYA),
-                isTestUnlocked = false
+                isTestUnlocked = false,
+                onNavigationIconClick = { navController.navigateUp() }
             )
         }
     }
