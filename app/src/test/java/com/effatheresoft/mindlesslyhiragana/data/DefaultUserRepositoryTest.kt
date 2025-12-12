@@ -24,7 +24,8 @@ class FakeUserDao: UserDao {
     var localUserEntity = UserRoomEntity(
         id = LOCAL_USER_ID,
         progress = "1",
-        learningSetsCount = DEFAULT_LEARNING_SETS_COUNT
+        learningSetsCount = DEFAULT_LEARNING_SETS_COUNT,
+        isTestUnlocked = false
     )
     val localUserEntities = hashMapOf(localUserEntity.id to localUserEntity)
 

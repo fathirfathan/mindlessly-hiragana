@@ -104,6 +104,8 @@ class DefaultNavGraphTest {
         screen.navigateBack_learnToHome()
 
         composeTestRule.performBackPress()
+        composeTestRule.waitForIdle()
+        // flaky test; need to find a better way to test this
         assertTrue(activity.isFinishing || activity.isDestroyed)
     }
 
@@ -189,6 +191,8 @@ class DefaultNavGraphTest {
         screen.navigateBack_testToHome()
 
         composeTestRule.performBackPress()
+        composeTestRule.waitForIdle()
+        // flaky test; need to find a better way to test this
         assertTrue(activity.isFinishing || activity.isDestroyed)
     }
 

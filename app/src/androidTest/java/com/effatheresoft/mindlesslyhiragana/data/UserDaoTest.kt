@@ -33,7 +33,8 @@ class UserDaoTest {
         val localUser = UserRoomEntity(
             id = LOCAL_USER_ID,
             progress = "1",
-            learningSetsCount = 5
+            learningSetsCount = 5,
+            isTestUnlocked = false
         )
         defaultDatabase.userDao().upsertUser(localUser)
         val observedLocalUser: Flow<UserRoomEntity> = defaultDatabase.userDao().observeLocalUser()
@@ -42,7 +43,8 @@ class UserDaoTest {
         val updatedLocalUser = UserRoomEntity(
             id = LOCAL_USER_ID,
             progress = "2",
-            learningSetsCount = 1
+            learningSetsCount = 1,
+            isTestUnlocked = false
         )
         defaultDatabase.userDao().upsertUser(updatedLocalUser)
 
@@ -59,7 +61,8 @@ class UserDaoTest {
         val newUser = UserRoomEntity(
             id = "newUser",
             progress = "1",
-            learningSetsCount = 5
+            learningSetsCount = 5,
+            isTestUnlocked = false
         )
         defaultDatabase.userDao().upsertUser(newUser)
 

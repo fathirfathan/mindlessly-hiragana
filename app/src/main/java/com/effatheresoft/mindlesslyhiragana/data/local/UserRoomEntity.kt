@@ -22,7 +22,8 @@ import com.effatheresoft.mindlesslyhiragana.data.model.User
 data class UserRoomEntity(
     @PrimaryKey val id: String,
     val progress: String,
-    val learningSetsCount: Int
+    val learningSetsCount: Int,
+    val isTestUnlocked: Boolean
 )
 
 fun UserRoomEntity.toUser(): User {
