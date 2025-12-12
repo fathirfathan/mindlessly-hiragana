@@ -6,7 +6,7 @@ import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import com.effatheresoft.mindlesslyhiragana.data.Hiragana
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana
 import org.junit.rules.TestRule
 
 class QuizScreenRobot <R : TestRule, A : ComponentActivity> (private val composeTestRule: AndroidComposeTestRule<R, A>) {

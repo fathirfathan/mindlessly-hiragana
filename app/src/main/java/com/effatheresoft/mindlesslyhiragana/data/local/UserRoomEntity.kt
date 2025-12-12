@@ -1,21 +1,22 @@
-package com.effatheresoft.mindlesslyhiragana.data
+package com.effatheresoft.mindlesslyhiragana.data.local
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.effatheresoft.mindlesslyhiragana.Constants.DEFAULT_DATABASE_USER_TABLE_NAME
-import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.AO
-import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.HIMIKASE
-import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.FUWOYA
-import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.KONITANA
-import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.KUHERIKE
-import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.NOYUMENU
-import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.SAKICHIRA
-import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.SHIIMO
-import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.SUMURORU
-import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.TOTESO
-import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.TSUUNE
-import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.WANERE
-import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.YOHAMAHO
+import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.AO
+import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.HIMIKASE
+import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.FUWOYA
+import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.KONITANA
+import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.KUHERIKE
+import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.NOYUMENU
+import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.SAKICHIRA
+import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.SHIIMO
+import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.SUMURORU
+import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.TOTESO
+import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.TSUUNE
+import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.WANERE
+import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.YOHAMAHO
+import com.effatheresoft.mindlesslyhiragana.data.model.User
 
 @Entity(tableName = DEFAULT_DATABASE_USER_TABLE_NAME)
 data class UserRoomEntity(

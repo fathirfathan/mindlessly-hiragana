@@ -23,11 +23,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.effatheresoft.mindlesslyhiragana.R
-import com.effatheresoft.mindlesslyhiragana.data.Hiragana
-import com.effatheresoft.mindlesslyhiragana.data.Hiragana.HI
-import com.effatheresoft.mindlesslyhiragana.data.Hiragana.MI
-import com.effatheresoft.mindlesslyhiragana.data.Hiragana.KA
-import com.effatheresoft.mindlesslyhiragana.data.Hiragana.SE
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.HI
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.MI
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.KA
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.SE
 import com.effatheresoft.mindlesslyhiragana.ui.quiz.Quiz
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 

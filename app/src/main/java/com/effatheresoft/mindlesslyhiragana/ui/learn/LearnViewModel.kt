@@ -3,7 +3,7 @@ package com.effatheresoft.mindlesslyhiragana.ui.learn
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.effatheresoft.mindlesslyhiragana.Constants.DEFAULT_LEARNING_SETS_COUNT
-import com.effatheresoft.mindlesslyhiragana.data.UserRepository
+import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

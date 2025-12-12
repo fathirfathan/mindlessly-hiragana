@@ -2,9 +2,9 @@ package com.effatheresoft.mindlesslyhiragana.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory
-import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.HIMIKASE
-import com.effatheresoft.mindlesslyhiragana.data.UserRepository
+import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
+import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.HIMIKASE
+import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

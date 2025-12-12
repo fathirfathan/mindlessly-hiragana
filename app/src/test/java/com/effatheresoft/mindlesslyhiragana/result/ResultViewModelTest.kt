@@ -1,10 +1,10 @@
 package com.effatheresoft.mindlesslyhiragana.result
 
 import com.effatheresoft.mindlesslyhiragana.MainCoroutineRule
-import com.effatheresoft.mindlesslyhiragana.data.Hiragana.HI
-import com.effatheresoft.mindlesslyhiragana.data.Hiragana.KA
-import com.effatheresoft.mindlesslyhiragana.data.Hiragana.MI
-import com.effatheresoft.mindlesslyhiragana.data.Hiragana.SE
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.HI
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.KA
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.MI
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.SE
 import com.effatheresoft.mindlesslyhiragana.data.repository.QuizRepository
 import com.effatheresoft.mindlesslyhiragana.sharedtest.data.FakeQuizRepository
 import com.effatheresoft.mindlesslyhiragana.ui.result.ResultViewModel

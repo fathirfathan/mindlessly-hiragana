@@ -1,4 +1,4 @@
-package com.effatheresoft.mindlesslyhiragana.data
+package com.effatheresoft.mindlesslyhiragana.data.local
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

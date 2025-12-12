@@ -1,7 +1,7 @@
-package com.effatheresoft.mindlesslyhiragana.data
+package com.effatheresoft.mindlesslyhiragana.data.repository
 
+import com.effatheresoft.mindlesslyhiragana.data.model.User
 import kotlinx.coroutines.flow.Flow
-
 
 interface UserRepository {
 

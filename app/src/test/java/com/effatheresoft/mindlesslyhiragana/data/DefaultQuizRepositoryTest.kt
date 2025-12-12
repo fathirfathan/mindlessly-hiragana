@@ -2,6 +2,8 @@ package com.effatheresoft.mindlesslyhiragana.data
 
 import com.effatheresoft.mindlesslyhiragana.Constants.DEFAULT_LEARNING_SETS_COUNT
 import com.effatheresoft.mindlesslyhiragana.MainCoroutineRule
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana
+import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.data.repository.DefaultQuizRepository
 import com.effatheresoft.mindlesslyhiragana.data.repository.QuizRepository
 import com.effatheresoft.mindlesslyhiragana.ui.quiz.PossibleAnswer

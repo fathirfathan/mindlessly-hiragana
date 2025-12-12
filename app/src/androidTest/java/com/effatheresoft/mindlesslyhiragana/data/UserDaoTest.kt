@@ -4,6 +4,8 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.effatheresoft.mindlesslyhiragana.Constants.LOCAL_USER_ID
+import com.effatheresoft.mindlesslyhiragana.data.local.DefaultDatabase
+import com.effatheresoft.mindlesslyhiragana.data.local.UserRoomEntity
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
 import kotlinx.coroutines.flow.Flow

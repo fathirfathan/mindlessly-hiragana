@@ -1,7 +1,7 @@
 package com.effatheresoft.mindlesslyhiragana.navigation
 
 import androidx.activity.ComponentActivity
-import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory
+import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.ui.home.HomeScreenRobot
 import com.effatheresoft.mindlesslyhiragana.ui.learn.LearnScreenRobot
 import com.effatheresoft.mindlesslyhiragana.ui.quiz.QuizScreenRobot

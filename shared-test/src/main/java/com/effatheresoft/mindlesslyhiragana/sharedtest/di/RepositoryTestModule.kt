@@ -1,7 +1,7 @@
 package com.effatheresoft.mindlesslyhiragana.di
 
 import com.effatheresoft.mindlesslyhiragana.data.FakeUserRepository
-import com.effatheresoft.mindlesslyhiragana.data.UserRepository
+import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
 import com.effatheresoft.mindlesslyhiragana.data.repository.QuizRepository
 import com.effatheresoft.mindlesslyhiragana.sharedtest.data.FakeQuizRepository
 import dagger.Module

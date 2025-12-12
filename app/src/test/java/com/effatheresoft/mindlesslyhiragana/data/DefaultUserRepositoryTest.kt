@@ -3,8 +3,13 @@ package com.effatheresoft.mindlesslyhiragana.data
 import com.effatheresoft.mindlesslyhiragana.Constants.DEFAULT_LEARNING_SETS_COUNT
 import com.effatheresoft.mindlesslyhiragana.Constants.LOCAL_USER_ID
 import com.effatheresoft.mindlesslyhiragana.MainCoroutineRule
-import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.HIMIKASE
-import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.FUWOYA
+import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.HIMIKASE
+import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.FUWOYA
+import com.effatheresoft.mindlesslyhiragana.data.local.UserDao
+import com.effatheresoft.mindlesslyhiragana.data.local.UserRoomEntity
+import com.effatheresoft.mindlesslyhiragana.data.model.User
+import com.effatheresoft.mindlesslyhiragana.data.repository.DefaultUserRepository
+import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow

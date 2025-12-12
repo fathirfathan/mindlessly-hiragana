@@ -4,10 +4,10 @@ import android.content.Context
 import androidx.room.Room
 import com.effatheresoft.mindlesslyhiragana.Constants.DEFAULT_DATABASE_NAME
 import com.effatheresoft.mindlesslyhiragana.Constants.PREPOPULATED_DATABASE_FILEPATH
-import com.effatheresoft.mindlesslyhiragana.data.DefaultDatabase
-import com.effatheresoft.mindlesslyhiragana.data.DefaultUserRepository
-import com.effatheresoft.mindlesslyhiragana.data.UserDao
-import com.effatheresoft.mindlesslyhiragana.data.UserRepository
+import com.effatheresoft.mindlesslyhiragana.data.local.DefaultDatabase
+import com.effatheresoft.mindlesslyhiragana.data.repository.DefaultUserRepository
+import com.effatheresoft.mindlesslyhiragana.data.local.UserDao
+import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
 import com.effatheresoft.mindlesslyhiragana.data.repository.DefaultQuizRepository
 import com.effatheresoft.mindlesslyhiragana.data.repository.QuizRepository
 import dagger.Binds
