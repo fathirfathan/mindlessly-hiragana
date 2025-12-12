@@ -7,6 +7,7 @@ import com.effatheresoft.mindlesslyhiragana.data.FakeUserRepository
 import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.HIMIKASE
 import com.effatheresoft.mindlesslyhiragana.data.User
 import com.effatheresoft.mindlesslyhiragana.data.UserRepository
+import com.effatheresoft.mindlesslyhiragana.ui.learn.LearnViewModel
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first

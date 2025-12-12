@@ -1,4 +1,4 @@
-package com.effatheresoft.mindlesslyhiragana.learn
+package com.effatheresoft.mindlesslyhiragana.ui.learn
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.semantics.ProgressBarRangeInfo

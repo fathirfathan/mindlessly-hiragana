@@ -8,8 +8,8 @@ import com.effatheresoft.mindlesslyhiragana.data.Hiragana.MI
 import com.effatheresoft.mindlesslyhiragana.data.Hiragana.SE
 import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.data.repository.QuizRepository
-import com.effatheresoft.mindlesslyhiragana.quiz.PossibleAnswer
-import com.effatheresoft.mindlesslyhiragana.quiz.Quiz
+import com.effatheresoft.mindlesslyhiragana.ui.quiz.PossibleAnswer
+import com.effatheresoft.mindlesslyhiragana.ui.quiz.Quiz
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 

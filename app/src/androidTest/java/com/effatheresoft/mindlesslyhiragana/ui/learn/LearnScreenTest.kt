@@ -1,4 +1,4 @@
-package com.effatheresoft.mindlesslyhiragana.learn
+package com.effatheresoft.mindlesslyhiragana.ui.learn
 
 import androidx.compose.material3.Surface
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
@@ -116,7 +116,10 @@ class LearnScreenTest {
         composeTestRule.setContent {
             MindlesslyHiraganaTheme {
                 Surface {
-                    LearnScreen(categoryId = HIMIKASE.id, onNavigationIconClick = {}, onLearnButtonClick = {})
+                    LearnScreen(
+                        categoryId = HIMIKASE.id,
+                        onNavigationIconClick = {},
+                        onLearnButtonClick = {})
                 }
             }
         }

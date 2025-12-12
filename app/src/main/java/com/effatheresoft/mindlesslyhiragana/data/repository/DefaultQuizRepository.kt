@@ -3,8 +3,8 @@ package com.effatheresoft.mindlesslyhiragana.data.repository
 import com.effatheresoft.mindlesslyhiragana.data.Hiragana
 import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.data.UserDao
-import com.effatheresoft.mindlesslyhiragana.quiz.PossibleAnswer
-import com.effatheresoft.mindlesslyhiragana.quiz.Quiz
+import com.effatheresoft.mindlesslyhiragana.ui.quiz.PossibleAnswer
+import com.effatheresoft.mindlesslyhiragana.ui.quiz.Quiz
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

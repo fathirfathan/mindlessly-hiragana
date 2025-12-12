@@ -1,4 +1,4 @@
-package com.effatheresoft.mindlesslyhiragana.result
+package com.effatheresoft.mindlesslyhiragana.ui.result
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

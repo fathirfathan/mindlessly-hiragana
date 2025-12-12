@@ -1,4 +1,4 @@
-package com.effatheresoft.mindlesslyhiragana.home
+package com.effatheresoft.mindlesslyhiragana.ui.home
 
 import androidx.compose.material3.Surface
 import androidx.compose.ui.geometry.Offset

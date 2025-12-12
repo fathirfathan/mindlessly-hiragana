@@ -7,10 +7,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.effatheresoft.mindlesslyhiragana.home.HomeScreen
-import com.effatheresoft.mindlesslyhiragana.learn.LearnScreen
-import com.effatheresoft.mindlesslyhiragana.quiz.QuizScreen
-import com.effatheresoft.mindlesslyhiragana.result.ResultScreen
+import com.effatheresoft.mindlesslyhiragana.ui.home.HomeScreen
+import com.effatheresoft.mindlesslyhiragana.ui.learn.LearnScreen
+import com.effatheresoft.mindlesslyhiragana.ui.quiz.QuizScreen
+import com.effatheresoft.mindlesslyhiragana.ui.result.ResultScreen
 import kotlinx.serialization.Serializable
 
 sealed interface Route {

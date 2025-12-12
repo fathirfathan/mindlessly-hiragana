@@ -2,10 +2,10 @@ package com.effatheresoft.mindlesslyhiragana.navigation
 
 import androidx.activity.ComponentActivity
 import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory
-import com.effatheresoft.mindlesslyhiragana.home.HomeScreenRobot
-import com.effatheresoft.mindlesslyhiragana.learn.LearnScreenRobot
-import com.effatheresoft.mindlesslyhiragana.quiz.QuizScreenRobot
-import com.effatheresoft.mindlesslyhiragana.result.ResultScreenRobot
+import com.effatheresoft.mindlesslyhiragana.ui.home.HomeScreenRobot
+import com.effatheresoft.mindlesslyhiragana.ui.learn.LearnScreenRobot
+import com.effatheresoft.mindlesslyhiragana.ui.quiz.QuizScreenRobot
+import com.effatheresoft.mindlesslyhiragana.ui.result.ResultScreenRobot
 import org.junit.rules.TestRule
 
 class ScreenRobot <R : TestRule, A : ComponentActivity> (

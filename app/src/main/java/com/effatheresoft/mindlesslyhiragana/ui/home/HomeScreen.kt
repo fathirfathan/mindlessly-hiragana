@@ -1,4 +1,4 @@
-package com.effatheresoft.mindlesslyhiragana.home
+package com.effatheresoft.mindlesslyhiragana.ui.home
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row

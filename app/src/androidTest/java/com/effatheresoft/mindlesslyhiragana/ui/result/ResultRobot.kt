@@ -1,4 +1,4 @@
-package com.effatheresoft.mindlesslyhiragana.result
+package com.effatheresoft.mindlesslyhiragana.ui.result
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertIsDisplayed

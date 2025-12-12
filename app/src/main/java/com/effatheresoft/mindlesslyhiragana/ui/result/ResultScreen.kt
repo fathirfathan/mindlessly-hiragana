@@ -1,4 +1,4 @@
-package com.effatheresoft.mindlesslyhiragana.result
+package com.effatheresoft.mindlesslyhiragana.ui.result
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -28,7 +28,7 @@ import com.effatheresoft.mindlesslyhiragana.data.Hiragana.HI
 import com.effatheresoft.mindlesslyhiragana.data.Hiragana.MI
 import com.effatheresoft.mindlesslyhiragana.data.Hiragana.KA
 import com.effatheresoft.mindlesslyhiragana.data.Hiragana.SE
-import com.effatheresoft.mindlesslyhiragana.quiz.Quiz
+import com.effatheresoft.mindlesslyhiragana.ui.quiz.Quiz
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 
 @OptIn(ExperimentalMaterial3Api::class)

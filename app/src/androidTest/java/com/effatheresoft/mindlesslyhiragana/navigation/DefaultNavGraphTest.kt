@@ -13,10 +13,10 @@ import com.effatheresoft.mindlesslyhiragana.data.Hiragana.MI
 import com.effatheresoft.mindlesslyhiragana.data.Hiragana.SE
 import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.data.HiraganaCategory.HIMIKASE
-import com.effatheresoft.mindlesslyhiragana.home.HomeScreenRobot
-import com.effatheresoft.mindlesslyhiragana.learn.LearnScreenRobot
-import com.effatheresoft.mindlesslyhiragana.quiz.QuizScreenRobot
-import com.effatheresoft.mindlesslyhiragana.result.ResultScreenRobot
+import com.effatheresoft.mindlesslyhiragana.ui.home.HomeScreenRobot
+import com.effatheresoft.mindlesslyhiragana.ui.learn.LearnScreenRobot
+import com.effatheresoft.mindlesslyhiragana.ui.quiz.QuizScreenRobot
+import com.effatheresoft.mindlesslyhiragana.ui.result.ResultScreenRobot
 import com.effatheresoft.mindlesslyhiragana.sharedtest.util.performBackPress
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 import dagger.hilt.android.testing.HiltAndroidRule

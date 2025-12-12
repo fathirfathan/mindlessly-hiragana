@@ -1,4 +1,4 @@
-package com.effatheresoft.mindlesslyhiragana.quiz
+package com.effatheresoft.mindlesslyhiragana.ui.quiz
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

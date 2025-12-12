@@ -1,4 +1,4 @@
-package com.effatheresoft.mindlesslyhiragana.result
+package com.effatheresoft.mindlesslyhiragana.ui.result
 
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
@@ -16,7 +16,7 @@ import com.effatheresoft.mindlesslyhiragana.data.Hiragana.MI
 import com.effatheresoft.mindlesslyhiragana.data.Hiragana.KA
 import com.effatheresoft.mindlesslyhiragana.data.Hiragana.SE
 import com.effatheresoft.mindlesslyhiragana.data.repository.QuizRepository
-import com.effatheresoft.mindlesslyhiragana.learn.isButton
+import com.effatheresoft.mindlesslyhiragana.ui.learn.isButton
 import com.effatheresoft.mindlesslyhiragana.sharedtest.data.FakeQuizRepository
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -100,7 +100,10 @@ class ResultScreenTest {
     fun setContent(fakeQuizRepository: QuizRepository) {
         composeTestRule.setContent {
             MindlesslyHiraganaTheme {
-                ResultScreen(onNavigationIconClick = {}, viewModel = ResultViewModel(fakeQuizRepository))
+                ResultScreen(
+                    onNavigationIconClick = {},
+                    viewModel = ResultViewModel(fakeQuizRepository)
+                )
             }
         }
     }

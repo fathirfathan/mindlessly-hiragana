@@ -1,4 +1,4 @@
-package com.effatheresoft.mindlesslyhiragana.learn
+package com.effatheresoft.mindlesslyhiragana.ui.learn
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize

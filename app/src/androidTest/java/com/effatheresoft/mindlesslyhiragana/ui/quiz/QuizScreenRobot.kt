@@ -1,4 +1,4 @@
-package com.effatheresoft.mindlesslyhiragana.quiz
+package com.effatheresoft.mindlesslyhiragana.ui.quiz
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertIsDisplayed

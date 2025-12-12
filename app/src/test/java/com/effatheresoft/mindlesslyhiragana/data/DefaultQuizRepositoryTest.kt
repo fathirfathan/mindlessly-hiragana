@@ -4,8 +4,8 @@ import com.effatheresoft.mindlesslyhiragana.Constants.DEFAULT_LEARNING_SETS_COUN
 import com.effatheresoft.mindlesslyhiragana.MainCoroutineRule
 import com.effatheresoft.mindlesslyhiragana.data.repository.DefaultQuizRepository
 import com.effatheresoft.mindlesslyhiragana.data.repository.QuizRepository
-import com.effatheresoft.mindlesslyhiragana.quiz.PossibleAnswer
-import com.effatheresoft.mindlesslyhiragana.quiz.Quiz
+import com.effatheresoft.mindlesslyhiragana.ui.quiz.PossibleAnswer
+import com.effatheresoft.mindlesslyhiragana.ui.quiz.Quiz
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first

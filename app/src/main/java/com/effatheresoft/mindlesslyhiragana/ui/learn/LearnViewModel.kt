@@ -1,4 +1,4 @@
-package com.effatheresoft.mindlesslyhiragana.learn
+package com.effatheresoft.mindlesslyhiragana.ui.learn
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

@@ -1,7 +1,7 @@
 package com.effatheresoft.mindlesslyhiragana.data.repository
 
 import com.effatheresoft.mindlesslyhiragana.data.Hiragana
-import com.effatheresoft.mindlesslyhiragana.quiz.Quiz
+import com.effatheresoft.mindlesslyhiragana.ui.quiz.Quiz
 import kotlinx.coroutines.flow.Flow
 
 interface QuizRepository {
