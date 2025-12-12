@@ -13,11 +13,13 @@ import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.MI
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.SE
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.HIMIKASE
+import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
 import com.effatheresoft.mindlesslyhiragana.ui.home.HomeScreenRobot
 import com.effatheresoft.mindlesslyhiragana.ui.learn.LearnScreenRobot
 import com.effatheresoft.mindlesslyhiragana.ui.quiz.QuizScreenRobot
 import com.effatheresoft.mindlesslyhiragana.ui.result.ResultScreenRobot
 import com.effatheresoft.mindlesslyhiragana.sharedtest.util.performBackPress
+import com.effatheresoft.mindlesslyhiragana.ui.test.TestScreenRobot
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -26,6 +28,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import javax.inject.Inject
 
 @RunWith(AndroidJUnit4::class)
 @HiltAndroidTest
@@ -38,6 +41,9 @@ class DefaultNavGraphTest {
     val composeTestRule = createAndroidComposeRule<HiltTestActivity>()
     private val activity get() = composeTestRule.activity
 
+    @Inject
+    lateinit var fakeUserRepository: UserRepository
+
     private lateinit var screen: ScreenRobot<ActivityScenarioRule<HiltTestActivity>, HiltTestActivity>
 
     @Before
@@ -47,6 +53,7 @@ class DefaultNavGraphTest {
         val learnScreenRobot = LearnScreenRobot(composeTestRule)
         val quizScreenRobot = QuizScreenRobot(composeTestRule)
         val resultScreenRobot = ResultScreenRobot(composeTestRule)
+        val testScreenRobot = TestScreenRobot(composeTestRule, fakeUserRepository)
 
         learnScreenRobot.category = HIMIKASE
         learnScreenRobot.progressBarValue = DEFAULT_LEARNING_SETS_COUNT
@@ -55,7 +62,8 @@ class DefaultNavGraphTest {
             home = homeScreenRobot,
             learn = learnScreenRobot,
             quiz = quizScreenRobot,
-            result = resultScreenRobot
+            result = resultScreenRobot,
+            test = testScreenRobot
         )
     }
 
@@ -71,6 +79,12 @@ class DefaultNavGraphTest {
     fun homeScreen_onCategoryClicked_navigatesToLearnScreen() {
         setContent(Route.Home)
         screen.navigate_homeToLearn(HIMIKASE)
+    }
+
+    @Test
+    fun homeScreen_onTestAllLearnedButtonClicked_navigatesToTestScreen() {
+        setContent(Route.Home)
+        screen.navigate_homeToTest()
     }
 
     // endregion
@@ -163,6 +177,12 @@ class DefaultNavGraphTest {
         composeTestRule.performBackPress()
         screen.home.assert_onHomeScreen()
     }
+
+    // endregion
+
+    // region Test Screen Navigation
+
+
 
     // endregion
 

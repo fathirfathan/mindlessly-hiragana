@@ -22,7 +22,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.effatheresoft.mindlesslyhiragana.Constants.TEST_ALL_LEARNED_ID
 import com.effatheresoft.mindlesslyhiragana.R
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
@@ -31,6 +30,7 @@ import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 @Composable
 fun HomeScreen(
     onNavigateToLearn: (categoryId: String) -> Unit,
+    onNavigateToTest: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -48,6 +48,7 @@ fun HomeScreen(
             unlockedCategories = uiState.unlockedCategories,
             lockedCategories = uiState.lockedCategories,
             onNavigateToLearn = onNavigateToLearn,
+            onNavigateToTest = onNavigateToTest,
             modifier = Modifier.padding(paddingValues)
         )
     }
@@ -58,6 +59,7 @@ fun HomeContent(
     unlockedCategories: List<HiraganaCategory>,
     lockedCategories: List<HiraganaCategory>,
     onNavigateToLearn: (categoryId: String) -> Unit,
+    onNavigateToTest: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -76,7 +78,7 @@ fun HomeContent(
         CategoryItem(
             title = stringResource(R.string.test_all_learned),
             isLocked = false,
-            onClick = { onNavigateToLearn(TEST_ALL_LEARNED_ID) }
+            onClick = onNavigateToTest
         )
 
         for (category in lockedCategories) {
@@ -136,6 +138,7 @@ fun HomeScreenPreview() {
                     unlockedCategories = HiraganaCategory.entries.take(3),
                     lockedCategories = HiraganaCategory.entries.drop(3),
                     onNavigateToLearn = {},
+                    onNavigateToTest = {},
                     modifier = Modifier.padding(paddingValues)
                 )
 

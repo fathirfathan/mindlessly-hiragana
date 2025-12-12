@@ -6,6 +6,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.effatheresoft.mindlesslyhiragana.HiltTestActivity
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.HIMIKASE
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.FUWOYA
+import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -13,6 +14,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import javax.inject.Inject
 
 @RunWith(AndroidJUnit4::class)
 @HiltAndroidTest
@@ -25,12 +27,15 @@ class TestScreenTest {
     val composeTestRule = createAndroidComposeRule<HiltTestActivity>()
     private val activity get() = composeTestRule.activity
 
+    @Inject
+    lateinit var fakeUserRepository: UserRepository
+
     private lateinit var screen: TestScreenRobot<ActivityScenarioRule<HiltTestActivity>, HiltTestActivity>
 
     @Before
     fun init() {
         hiltRule.inject()
-        screen = TestScreenRobot(composeTestRule)
+        screen = TestScreenRobot(composeTestRule, fakeUserRepository)
         screen.categoryList = listOf(HIMIKASE, FUWOYA)
         screen.isTestUnlocked = false
     }

@@ -116,6 +116,7 @@ class HomeScreenTest {
                 Surface {
                     HomeScreen(
                         onNavigateToLearn = {},
+                        onNavigateToTest = {},
                         viewModel = HomeViewModel(fakeUserRepository)
                     )
                 }

@@ -7,10 +7,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.HIMIKASE
+import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.FUWOYA
 import com.effatheresoft.mindlesslyhiragana.ui.home.HomeScreen
 import com.effatheresoft.mindlesslyhiragana.ui.learn.LearnScreen
 import com.effatheresoft.mindlesslyhiragana.ui.quiz.QuizScreen
 import com.effatheresoft.mindlesslyhiragana.ui.result.ResultScreen
+import com.effatheresoft.mindlesslyhiragana.ui.test.TestScreen
 import kotlinx.serialization.Serializable
 
 sealed interface Route {
@@ -26,6 +29,9 @@ sealed interface Route {
 
     @Serializable
     data class Result(val categoryId: String): Route
+
+    @Serializable
+    object Test: Route
 }
 
 @Composable
@@ -41,7 +47,8 @@ fun DefaultNavGraph(
     ) {
         composable<Route.Home> {
             HomeScreen(
-                onNavigateToLearn = { navController.navigate(Route.Learn(it)) }
+                onNavigateToLearn = { navController.navigate(Route.Learn(it)) },
+                onNavigateToTest = { navController.navigate(Route.Test) }
             )
         }
 
@@ -72,6 +79,13 @@ fun DefaultNavGraph(
                 onNavigationIconClick = {
                     navController.popBackStack(route = learnRoute, inclusive = false)
                 }
+            )
+        }
+
+        composable<Route.Test> {
+            TestScreen(
+                categoryList = listOf(HIMIKASE, FUWOYA),
+                isTestUnlocked = false
             )
         }
     }

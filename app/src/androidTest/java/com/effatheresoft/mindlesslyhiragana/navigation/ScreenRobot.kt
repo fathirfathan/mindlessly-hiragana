@@ -6,18 +6,25 @@ import com.effatheresoft.mindlesslyhiragana.ui.home.HomeScreenRobot
 import com.effatheresoft.mindlesslyhiragana.ui.learn.LearnScreenRobot
 import com.effatheresoft.mindlesslyhiragana.ui.quiz.QuizScreenRobot
 import com.effatheresoft.mindlesslyhiragana.ui.result.ResultScreenRobot
+import com.effatheresoft.mindlesslyhiragana.ui.test.TestScreenRobot
 import org.junit.rules.TestRule
 
 class ScreenRobot <R : TestRule, A : ComponentActivity> (
     val home: HomeScreenRobot <R,A>,
     val learn: LearnScreenRobot <R,A>,
     val quiz: QuizScreenRobot <R,A>,
-    val result: ResultScreenRobot <R, A>
+    val result: ResultScreenRobot <R, A>,
+    val test: TestScreenRobot<R, A>,
 ) {
     fun navigate_homeToLearn(category: HiraganaCategory) {
         home.clickCategory(category)
         learn.category = category
         learn.assert_onLearnScreen()
+    }
+
+    fun navigate_homeToTest() {
+        home.clickTestAllLearnedButton()
+        test.assertOnTestScreen()
     }
 
     fun navigate_learnToQuiz() {

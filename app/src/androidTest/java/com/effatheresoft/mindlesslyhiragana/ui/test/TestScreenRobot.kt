@@ -10,17 +10,25 @@ import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.compose.ui.test.onAllNodesWithText
 import com.effatheresoft.mindlesslyhiragana.R
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
+import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
 import com.effatheresoft.mindlesslyhiragana.ui.learn.isButton
 import org.junit.rules.TestRule
 import kotlin.properties.Delegates
 
 class TestScreenRobot <TR : TestRule, CA : ComponentActivity> (
-    private val composeTestRule: AndroidComposeTestRule<TR, CA>
+    private val composeTestRule: AndroidComposeTestRule<TR, CA>,
+    private val userRepository: UserRepository
 ) {
 
     val activity get() = composeTestRule.activity
     lateinit var categoryList: List<HiraganaCategory>
     var isTestUnlocked by Delegates.notNull<Boolean>()
+
+    fun assertOnTestScreen() {
+        topAppBarTitle_assertIsDisplayed()
+        testButton_assertIsDisplayed()
+    }
+
 
     fun topAppBarTitle_assertIsDisplayed() {
         composeTestRule.onAllNodesWithText(activity.getString(R.string.test_all_learned))[0].assertIsDisplayed()
