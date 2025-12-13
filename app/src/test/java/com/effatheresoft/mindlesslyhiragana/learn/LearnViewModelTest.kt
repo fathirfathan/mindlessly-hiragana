@@ -32,7 +32,7 @@ class LearnViewModelTest {
 
     @Test
     fun uiState_containsLearningSetsCount() = runTest {
-        val localUser = User(LOCAL_USER_ID, HIMIKASE.id, learningSetsCount = DEFAULT_LEARNING_SETS_COUNT)
+        val localUser = User(LOCAL_USER_ID, HIMIKASE.id, learningSetsCount = DEFAULT_LEARNING_SETS_COUNT, false)
         fakeUserRepository.updateLocalUserLearningSetsCount(localUser.learningSetsCount)
 
         assertEquals(learnViewModel.uiState.first().learningSetsCount, localUser.learningSetsCount)

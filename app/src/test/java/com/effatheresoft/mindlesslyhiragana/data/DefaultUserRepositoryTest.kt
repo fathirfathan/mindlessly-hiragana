@@ -66,12 +66,12 @@ class DefaultUserRepositoryTest {
     @Test
     fun whileObservingLocalUser_whenProgressIsUpdated_thenLocalUserProgressIsUpdated() = runTest {
         // While observing local user
-        val localUser = User(LOCAL_USER_ID, HIMIKASE.id, DEFAULT_LEARNING_SETS_COUNT)
+        val localUser = User(LOCAL_USER_ID, HIMIKASE.id, DEFAULT_LEARNING_SETS_COUNT, false)
         defaultUserRepository.updateLocalUserProgress(localUser.progress)
         val observedLocalUser = defaultUserRepository.observeLocalUser()
 
         // And local user is updated
-        val newlocalUser = User(LOCAL_USER_ID, FUWOYA.id, DEFAULT_LEARNING_SETS_COUNT)
+        val newlocalUser = User(LOCAL_USER_ID, FUWOYA.id, DEFAULT_LEARNING_SETS_COUNT, false)
         defaultUserRepository.updateLocalUserProgress(newlocalUser.progress)
 
         // Then the observed user sends the updated values
@@ -83,7 +83,7 @@ class DefaultUserRepositoryTest {
     @Test
     fun whileObservingLocalUser_whenLearningSetsCountIsUpdated_thenLocalUserCountIsUpdated() = runTest {
         // While observing local user
-        val localUser = User(LOCAL_USER_ID, HIMIKASE.id, DEFAULT_LEARNING_SETS_COUNT)
+        val localUser = User(LOCAL_USER_ID, HIMIKASE.id, DEFAULT_LEARNING_SETS_COUNT, false)
         defaultUserRepository.updateLocalUserLearningSetsCount(localUser.learningSetsCount)
         val observedLocalUser = defaultUserRepository.observeLocalUser()
 
@@ -92,7 +92,7 @@ class DefaultUserRepositoryTest {
             DEFAULT_LEARNING_SETS_COUNT >= 10 -> 9
             else -> DEFAULT_LEARNING_SETS_COUNT + 1
         }
-        val newlocalUser = User(LOCAL_USER_ID, HIMIKASE.id, newLearningSetsCount)
+        val newlocalUser = User(LOCAL_USER_ID, HIMIKASE.id, newLearningSetsCount, false)
         defaultUserRepository.updateLocalUserLearningSetsCount(newlocalUser.learningSetsCount)
 
         // Then the observed user sends the updated values

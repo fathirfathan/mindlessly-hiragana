@@ -31,72 +31,86 @@ fun UserRoomEntity.toUser(): User {
         "1" -> User(
             id = id,
             progress = HIMIKASE.id,
-            learningSetsCount = learningSetsCount
+            learningSetsCount = learningSetsCount,
+            isTestUnlocked = isTestUnlocked
         )
         "2" -> User(
             id = id,
             progress = FUWOYA.id,
-            learningSetsCount = learningSetsCount
+            learningSetsCount = learningSetsCount,
+            isTestUnlocked = isTestUnlocked
         )
         "3" -> User(
             id = id,
             progress = AO.id,
-            learningSetsCount = learningSetsCount
+            learningSetsCount = learningSetsCount,
+            isTestUnlocked = isTestUnlocked
         )
         "4" -> User(
             id = id,
             progress = TSUUNE.id,
-            learningSetsCount = learningSetsCount
+            learningSetsCount = learningSetsCount,
+            isTestUnlocked = isTestUnlocked
         )
         "5" -> User(
             id = id,
             progress = KUHERIKE.id,
-            learningSetsCount = learningSetsCount
+            learningSetsCount = learningSetsCount,
+            isTestUnlocked = isTestUnlocked
         )
         "6" -> User(
             id = id,
             progress = KONITANA.id,
-            learningSetsCount = learningSetsCount
+            learningSetsCount = learningSetsCount,
+            isTestUnlocked = isTestUnlocked
         )
         "7" -> User(
             id = id,
             progress = SUMURORU.id,
-            learningSetsCount = learningSetsCount
+            learningSetsCount = learningSetsCount,
+            isTestUnlocked = isTestUnlocked
         )
         "8" -> User(
             id = id,
             progress = SHIIMO.id,
-            learningSetsCount = learningSetsCount
+            learningSetsCount = learningSetsCount,
+            isTestUnlocked = isTestUnlocked
         )
         "9" -> User(
             id = id,
             progress = TOTESO.id,
-            learningSetsCount = learningSetsCount
+            learningSetsCount = learningSetsCount,
+            isTestUnlocked = isTestUnlocked
         )
         "10" -> User(
             id = id,
             progress = WANERE.id,
-            learningSetsCount = learningSetsCount
+            learningSetsCount = learningSetsCount,
+            isTestUnlocked = isTestUnlocked
         )
         "11" -> User(
             id = id,
             progress = NOYUMENU.id,
-            learningSetsCount = learningSetsCount
+            learningSetsCount = learningSetsCount,
+            isTestUnlocked = isTestUnlocked
         )
         "12" -> User(
             id = id,
             progress = YOHAMAHO.id,
-            learningSetsCount = learningSetsCount
+            learningSetsCount = learningSetsCount,
+            isTestUnlocked = isTestUnlocked
         )
         "13" -> User(
             id = id,
             progress = SAKICHIRA.id,
-            learningSetsCount = learningSetsCount
+            learningSetsCount = learningSetsCount,
+            isTestUnlocked = isTestUnlocked
         )
         else -> User(
             id = id,
             progress = "-1",
-            learningSetsCount = learningSetsCount
+            learningSetsCount = learningSetsCount,
+            isTestUnlocked = isTestUnlocked
         )
     }
 }

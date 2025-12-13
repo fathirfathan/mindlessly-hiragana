@@ -14,7 +14,8 @@ class FakeUserRepository : UserRepository {
         User(
             LOCAL_USER_ID,
             HIMIKASE.id,
-            DEFAULT_LEARNING_SETS_COUNT
+            DEFAULT_LEARNING_SETS_COUNT,
+            false
         )
     )
     override fun observeLocalUser(): Flow<User> = _localUser

@@ -38,7 +38,7 @@ class HomeViewModelTest {
     fun uiState_containsLocalUser() = runTest {
         Dispatchers.setMain(StandardTestDispatcher())
 
-        val localUser = User(LOCAL_USER_ID, HIMIKASE.id, DEFAULT_LEARNING_SETS_COUNT)
+        val localUser = User(LOCAL_USER_ID, HIMIKASE.id, DEFAULT_LEARNING_SETS_COUNT, false)
         fakeUserRepository.updateLocalUserProgress(localUser.progress)
 
         assertEquals(homeViewModel.uiState.first().isLoading, true)
