@@ -74,8 +74,13 @@ fun DefaultNavGraph(
             val resultRoute: Route.Result = navBackStackEntry.toRoute()
             val learnRoute = Route.Learn(resultRoute.categoryId)
             ResultScreen(
-                onNavigationIconClick = {
+                onNavigateUp = {
                     navController.popBackStack(route = learnRoute, inclusive = false)
+                },
+                onTryAgain = {
+                    navController.navigate(Route.Quiz(resultRoute.categoryId)) {
+                        popUpTo(Route.Result(resultRoute.categoryId)) { inclusive = true }
+                    }
                 }
             )
         }

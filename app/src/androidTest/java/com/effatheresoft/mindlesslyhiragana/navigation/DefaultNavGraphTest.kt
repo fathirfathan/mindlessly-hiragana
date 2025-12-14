@@ -180,6 +180,20 @@ class DefaultNavGraphTest {
         screen.home.assert_onHomeScreen()
     }
 
+    @Test
+    fun resultScreen_whenTryAgainButtonClicked_navigatesToQuizScreen_thenWhenNavigatedUp_navigatesToLearnScreen() {
+        setContent(Route.Home)
+        screen.navigate_homeToLearn(HIMIKASE)
+        screen.navigate_learnToQuiz()
+        screen.navigate_quizToResult(isAllCorrect = true)
+
+        screen.result.click_tryAgainButton()
+        screen.quiz.assert_onQuizScreen()
+
+        screen.quiz.click_navigateUpButton()
+        screen.learn.assert_onLearnScreen()
+    }
+
     // endregion
 
     // region Test Screen Navigation

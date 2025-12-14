@@ -34,7 +34,8 @@ import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ResultScreen(
-    onNavigationIconClick: () -> Unit,
+    onNavigateUp: () -> Unit,
+    onTryAgain: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ResultViewModel = hiltViewModel()
 ) {
@@ -43,7 +44,7 @@ fun ResultScreen(
             TopAppBar(
                 title = { Text(stringResource(R.string.result)) },
                 navigationIcon = {
-                    IconButton(onClick = onNavigationIconClick) {
+                    IconButton(onClick = onNavigateUp) {
                         Icon(
                             painter = painterResource(R.drawable.arrow_back_24px),
                             contentDescription = stringResource(R.string.navigate_back)
@@ -61,6 +62,7 @@ fun ResultScreen(
             correctCounts = uiState.correctCounts,
             incorrectCounts = uiState.incorrectCounts,
             individualIncorrectCounts = uiState.individualIncorrectCounts,
+            onTryAgainButtonClick = onTryAgain,
             modifier = Modifier.padding(paddingValues)
         )
     }
@@ -79,6 +81,7 @@ fun ResultContent(
     correctCounts: Int,
     incorrectCounts: Int,
     individualIncorrectCounts: List<Pair<Hiragana, Int>>,
+    onTryAgainButtonClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -96,7 +99,7 @@ fun ResultContent(
         }
 
         Spacer(Modifier.weight(1f))
-        Button({}) { Text("Try Again") }
+        Button(onClick = onTryAgainButtonClick) { Text("Try Again") }
         Button(
             onClick = {},
             enabled = incorrectCounts == 0
@@ -135,6 +138,7 @@ fun ResultScreenPreview() {
                     KA to 0,
                     SE to 2
                 ),
+                onTryAgainButtonClick = {},
                 modifier = Modifier.padding(paddingValues)
             )
         }

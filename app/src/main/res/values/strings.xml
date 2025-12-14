@@ -14,4 +14,7 @@
     <string name="challenge_all_correct_on_learn">Challenge All Correct On Learn</string>
     <string name="including">Including:</string>
     <string name="questions">Questions: %1$s</string>
+    <string name="try_again">Try Again</string>
+    <string name="correct_n">Correct: %1$d</string>
+    <string name="incorrect_n">Incorrect: %1$d</string>
 </resources>
