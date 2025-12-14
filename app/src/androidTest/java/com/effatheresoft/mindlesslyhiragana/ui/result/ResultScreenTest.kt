@@ -2,12 +2,12 @@ package com.effatheresoft.mindlesslyhiragana.ui.result
 
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
+import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.effatheresoft.mindlesslyhiragana.HiltTestActivity
 import com.effatheresoft.mindlesslyhiragana.R
@@ -16,15 +16,18 @@ import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.MI
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.KA
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.SE
 import com.effatheresoft.mindlesslyhiragana.data.repository.QuizRepository
+import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
 import com.effatheresoft.mindlesslyhiragana.ui.learn.isButton
 import com.effatheresoft.mindlesslyhiragana.sharedtest.data.FakeQuizRepository
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import javax.inject.Inject
 
 @RunWith(AndroidJUnit4::class)
 @HiltAndroidTest
@@ -39,10 +42,15 @@ class ResultScreenTest {
 
     lateinit var fakeQuizRepository: QuizRepository
 
+    @Inject
+    lateinit var fakeUserRepository: UserRepository
+    lateinit var screen: ResultScreenRobot<ActivityScenarioRule<HiltTestActivity>, HiltTestActivity>
+
     @Before
     fun init() {
         hiltRule.inject()
         fakeQuizRepository = FakeQuizRepository(isPrepopulated = true)
+        screen = ResultScreenRobot(composeTestRule, fakeUserRepository)
     }
 
     @Test
@@ -81,13 +89,11 @@ class ResultScreenTest {
     }
 
     @Test
-    fun whenIncorrectIsZero_testAllLearnedButton_assertIsEnabled() {
-        fakeQuizRepository = FakeQuizRepository(isPrepopulated = true, isAllCorrect = true)
+    fun whenLocalUserIsTestUnlockedTrue_testAllLearnedButton_assertIsEnabled() = runTest {
+        screen.setLocalUserIsTestUnlocked(true)
         setContent(fakeQuizRepository)
-
-        composeTestRule.onNode(isButton() and hasText(activity.getString(R.string.test_all_learned))).assertIsEnabled()
+        screen.assert_testAllLearnedButton_enabled()
     }
-
 
     fun setContent() {
         composeTestRule.setContent {
@@ -103,7 +109,10 @@ class ResultScreenTest {
                 ResultScreen(
                     onNavigateUp = {},
                     onTryAgain = {},
-                    viewModel = ResultViewModel(fakeQuizRepository)
+                    viewModel = ResultViewModel(
+                        quizRepository = fakeQuizRepository,
+                        userRepository = fakeUserRepository
+                    )
                 )
             }
         }

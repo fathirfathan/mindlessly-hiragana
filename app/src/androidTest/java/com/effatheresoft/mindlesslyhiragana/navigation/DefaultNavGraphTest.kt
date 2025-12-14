@@ -52,7 +52,7 @@ class DefaultNavGraphTest {
         val homeScreenRobot = HomeScreenRobot(composeTestRule)
         val learnScreenRobot = LearnScreenRobot(composeTestRule)
         val quizScreenRobot = QuizScreenRobot(composeTestRule)
-        val resultScreenRobot = ResultScreenRobot(composeTestRule)
+        val resultScreenRobot = ResultScreenRobot(composeTestRule, fakeUserRepository)
         val testScreenRobot = TestScreenRobot(composeTestRule, fakeUserRepository)
 
         learnScreenRobot.category = HIMIKASE

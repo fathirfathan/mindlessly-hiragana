@@ -63,6 +63,7 @@ fun ResultScreen(
             incorrectCounts = uiState.incorrectCounts,
             individualIncorrectCounts = uiState.individualIncorrectCounts,
             onTryAgainButtonClick = onTryAgain,
+            isTestAllLearnedButtonEnabled = uiState.isTestUnlocked,
             modifier = Modifier.padding(paddingValues)
         )
     }
@@ -82,6 +83,7 @@ fun ResultContent(
     incorrectCounts: Int,
     individualIncorrectCounts: List<Pair<Hiragana, Int>>,
     onTryAgainButtonClick: () -> Unit,
+    isTestAllLearnedButtonEnabled: Boolean,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -102,8 +104,10 @@ fun ResultContent(
         Button(onClick = onTryAgainButtonClick) { Text("Try Again") }
         Button(
             onClick = {},
-            enabled = incorrectCounts == 0
-        ) { Text("Test All Learned") }
+            enabled = isTestAllLearnedButtonEnabled
+        ) {
+            Text("Test All Learned")
+        }
         Spacer(Modifier.height(16.dp))
     }
 }
@@ -139,6 +143,7 @@ fun ResultScreenPreview() {
                     SE to 2
                 ),
                 onTryAgainButtonClick = {},
+                isTestAllLearnedButtonEnabled = false,
                 modifier = Modifier.padding(paddingValues)
             )
         }
