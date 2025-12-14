@@ -25,11 +25,7 @@ class UserDaoTest {
             context = getApplicationContext(),
             klass = DefaultDatabase::class.java
         ).allowMainThreadQueries().build()
-    }
 
-    @Test
-    fun observedLocalUser_sendsNewData_whenLocalUserChanges() = runTest {
-        // Observe local user
         val localUser = UserRoomEntity(
             id = LOCAL_USER_ID,
             progress = "1",
@@ -37,6 +33,31 @@ class UserDaoTest {
             isTestUnlocked = false
         )
         defaultDatabase.userDao().upsertUser(localUser)
+    }
+
+    @Test
+    fun newUser_whenIsInserted_assertIsInserted() = runTest {
+        // GIVEN - A new user is inserted
+        val newUser = UserRoomEntity(
+            id = "newUser",
+            progress = "1",
+            learningSetsCount = 5,
+            isTestUnlocked = false
+        )
+        defaultDatabase.userDao().upsertUser(newUser)
+
+        // THEN - The loaded data contains the expected values
+        val loadedData = defaultDatabase.userDao().getUserById(newUser.id)
+        assertNotNull(loadedData as UserRoomEntity)
+        assertEquals(loadedData.id, newUser.id)
+        assertEquals(loadedData.progress, newUser.progress)
+        assertEquals(loadedData.learningSetsCount, newUser.learningSetsCount)
+        assertEquals(loadedData.isTestUnlocked, newUser.isTestUnlocked)
+    }
+
+    @Test
+    fun newLocalUserData_whenIsUpdated_newData_assertIsObserved() = runTest {
+        // Observe local user
         val observedLocalUser: Flow<UserRoomEntity> = defaultDatabase.userDao().observeLocalUser()
 
         // When local user is updated
@@ -53,24 +74,36 @@ class UserDaoTest {
         assertEquals(latestData.id, updatedLocalUser.id)
         assertEquals(latestData.progress, updatedLocalUser.progress)
         assertEquals(latestData.learningSetsCount, updatedLocalUser.learningSetsCount)
+        assertEquals(latestData.isTestUnlocked, updatedLocalUser.isTestUnlocked)
     }
 
     @Test
-    fun insertNewUser_ThenGetUserById() = runTest {
-        // GIVEN - A new user is inserted
-        val newUser = UserRoomEntity(
-            id = "newUser",
-            progress = "1",
-            learningSetsCount = 5,
-            isTestUnlocked = false
-        )
-        defaultDatabase.userDao().upsertUser(newUser)
+    fun localUser_progress_whenIsUpdated_progress_assertIsUpdated() = runTest {
+        val updatedProgress = "2" // HiraganaCategory.FUWOYA
+        defaultDatabase.userDao().updateLocalUserProgress(updatedProgress)
 
-        // THEN - The loaded data contains the expected values
-        val loadedData = defaultDatabase.userDao().getUserById(newUser.id)
+        val loadedData = defaultDatabase.userDao().getUserById(LOCAL_USER_ID)
         assertNotNull(loadedData as UserRoomEntity)
-        assertEquals(loadedData.id, newUser.id)
-        assertEquals(loadedData.progress, newUser.progress)
-        assertEquals(loadedData.learningSetsCount, newUser.learningSetsCount)
+        assertEquals(updatedProgress, loadedData.progress)
+    }
+
+    @Test
+    fun localUser_learningSetsCount_whenIsUpdated_count_assertIsUpdated() = runTest {
+        val updatedLearningSetsCount = 6
+        defaultDatabase.userDao().updateLocalUserLearningSetsCount(updatedLearningSetsCount)
+
+        val loadedData = defaultDatabase.userDao().getUserById(LOCAL_USER_ID)
+        assertNotNull(loadedData as UserRoomEntity)
+        assertEquals(updatedLearningSetsCount, loadedData.learningSetsCount)
+    }
+
+    @Test
+    fun localUser_isTestUnlocked_whenIsUpdated_isUnlocked_assertIsUpdated() = runTest {
+        val updatedIsTestUnlocked = true
+        defaultDatabase.userDao().updateLocalUserIsTestUnlocked(updatedIsTestUnlocked)
+
+        val loadedData = defaultDatabase.userDao().getUserById(LOCAL_USER_ID)
+        assertNotNull(loadedData as UserRoomEntity)
+        assertEquals(updatedIsTestUnlocked, loadedData.isTestUnlocked)
     }
 }

@@ -27,26 +27,30 @@ class FakeUserDao: UserDao {
         learningSetsCount = DEFAULT_LEARNING_SETS_COUNT,
         isTestUnlocked = false
     )
-    val localUserEntities = hashMapOf(localUserEntity.id to localUserEntity)
+    val userEntities = hashMapOf(localUserEntity.id to localUserEntity)
 
     override suspend fun upsertUser(user: UserRoomEntity) {
-        localUserEntities[user.id] = user
+        userEntities[user.id] = user
     }
 
     override suspend  fun updateLocalUserProgress(progress: String) {
-        localUserEntities[LOCAL_USER_ID] = localUserEntities[LOCAL_USER_ID]!!.copy(progress = progress)
+        userEntities[LOCAL_USER_ID] = userEntities[LOCAL_USER_ID]!!.copy(progress = progress)
     }
 
     override suspend fun updateLocalUserLearningSetsCount(count: Int) {
-        localUserEntities[LOCAL_USER_ID] = localUserEntities[LOCAL_USER_ID]!!.copy(learningSetsCount = count)
+        userEntities[LOCAL_USER_ID] = userEntities[LOCAL_USER_ID]!!.copy(learningSetsCount = count)
+    }
+
+    override suspend fun updateLocalUserIsTestUnlocked(isUnlocked: Boolean) {
+        userEntities[LOCAL_USER_ID] = userEntities[LOCAL_USER_ID]!!.copy(isTestUnlocked = isUnlocked)
     }
 
     override fun observeLocalUser(): Flow<UserRoomEntity> = flow {
-        emit(localUserEntities[LOCAL_USER_ID] ?: localUserEntity)
+        emit(userEntities[LOCAL_USER_ID] ?: localUserEntity)
     }
 
     override suspend fun getUserById(id: String): UserRoomEntity? {
-        return localUserEntities[id]
+        return userEntities[id]
     }
 
 }
@@ -59,32 +63,29 @@ class DefaultUserRepositoryTest {
     val mainCoroutineRule = MainCoroutineRule()
 
     @Before
-    fun setupRepository() {
+    fun setupRepository() = runTest {
         defaultUserRepository = DefaultUserRepository(FakeUserDao())
+
+        val localUser = User(LOCAL_USER_ID, HIMIKASE.id, DEFAULT_LEARNING_SETS_COUNT, false)
+        defaultUserRepository.updateLocalUserProgress(localUser.progress)
     }
 
     @Test
-    fun whileObservingLocalUser_whenProgressIsUpdated_thenLocalUserProgressIsUpdated() = runTest {
+    fun whileObservingLocalUser_whenProgressIsUpdated_thenLocalUserIsUpdated() = runTest {
         // While observing local user
-        val localUser = User(LOCAL_USER_ID, HIMIKASE.id, DEFAULT_LEARNING_SETS_COUNT, false)
-        defaultUserRepository.updateLocalUserProgress(localUser.progress)
         val observedLocalUser = defaultUserRepository.observeLocalUser()
 
         // And local user is updated
-        val newlocalUser = User(LOCAL_USER_ID, FUWOYA.id, DEFAULT_LEARNING_SETS_COUNT, false)
-        defaultUserRepository.updateLocalUserProgress(newlocalUser.progress)
+        val newProgress = FUWOYA.id
+        defaultUserRepository.updateLocalUserProgress(newProgress)
 
-        // Then the observed user sends the updated values
-        val latestData = observedLocalUser.first()
-        assertEquals(latestData.id, newlocalUser.id)
-        assertEquals(latestData.progress, newlocalUser.progress)
+        // Then the observed user sends the updated value
+        assertEquals(newProgress, observedLocalUser.first().progress)
     }
 
     @Test
-    fun whileObservingLocalUser_whenLearningSetsCountIsUpdated_thenLocalUserCountIsUpdated() = runTest {
+    fun whileObservingLocalUser_whenLearningSetsCountIsUpdated_thenLocalUserIsUpdated() = runTest {
         // While observing local user
-        val localUser = User(LOCAL_USER_ID, HIMIKASE.id, DEFAULT_LEARNING_SETS_COUNT, false)
-        defaultUserRepository.updateLocalUserLearningSetsCount(localUser.learningSetsCount)
         val observedLocalUser = defaultUserRepository.observeLocalUser()
 
         // And local user is updated
@@ -92,12 +93,22 @@ class DefaultUserRepositoryTest {
             DEFAULT_LEARNING_SETS_COUNT >= 10 -> 9
             else -> DEFAULT_LEARNING_SETS_COUNT + 1
         }
-        val newlocalUser = User(LOCAL_USER_ID, HIMIKASE.id, newLearningSetsCount, false)
-        defaultUserRepository.updateLocalUserLearningSetsCount(newlocalUser.learningSetsCount)
+        defaultUserRepository.updateLocalUserLearningSetsCount(newLearningSetsCount)
 
         // Then the observed user sends the updated values
-        val latestData = observedLocalUser.first()
-        assertEquals(latestData.id, newlocalUser.id)
-        assertEquals(latestData.learningSetsCount, newlocalUser.learningSetsCount)
+        assertEquals(newLearningSetsCount, observedLocalUser.first().learningSetsCount)
+    }
+
+    @Test
+    fun whileObservingLocalUser_whenIsTestUnlockedIsUpdated_thenLocalUserIsUpdated() = runTest {
+        // While observing local user
+        val observedLocalUser = defaultUserRepository.observeLocalUser()
+
+        // And local user is updated
+        val newIsTestUnlocked = true
+        defaultUserRepository.updateLocalUserIsTestUnlocked(newIsTestUnlocked)
+
+        // Then the observed user sends the updated value
+        assertEquals(newIsTestUnlocked, observedLocalUser.first().isTestUnlocked)
     }
 }

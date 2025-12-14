@@ -17,6 +17,9 @@ interface UserDao {
     @Query("UPDATE user SET learningSetsCount = :count WHERE id = '${Constants.LOCAL_USER_ID}'")
     suspend fun updateLocalUserLearningSetsCount(count: Int)
 
+    @Query("UPDATE user SET isTestUnlocked = :isUnlocked WHERE id = '${Constants.LOCAL_USER_ID}'")
+    suspend fun updateLocalUserIsTestUnlocked(isUnlocked: Boolean)
+
     @Query("SELECT * FROM user WHERE id = '${Constants.LOCAL_USER_ID}'")
     fun observeLocalUser(): Flow<UserRoomEntity>
 

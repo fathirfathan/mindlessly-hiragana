@@ -4,7 +4,6 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.effatheresoft.mindlesslyhiragana.HiltTestActivity
-import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.HIMIKASE
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.FUWOYA
 import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
@@ -38,7 +37,7 @@ class TestScreenTest {
         hiltRule.inject()
         screen = TestScreenRobot(composeTestRule, fakeUserRepository)
         screen.setProgress(FUWOYA.id)
-        screen.isTestUnlocked = false
+        screen.setIsTestUnlocked(false)
     }
 
     @Test
@@ -63,15 +62,15 @@ class TestScreenTest {
     }
 
     @Test
-    fun whenTestIsUnlocked_testButton_assertIsEnabled() {
-        screen.isTestUnlocked = true
+    fun whenTestIsUnlocked_testButton_assertIsEnabled() = runTest {
+        screen.setIsTestUnlocked(true)
         setContent()
         screen.testButton_assertIsEnabled()
     }
 
     @Test
-    fun whenTestIsLocked_testButton_assertIsDisabled() {
-        screen.isTestUnlocked = false
+    fun whenTestIsLocked_testButton_assertIsDisabled() = runTest {
+        screen.setIsTestUnlocked(false)
         setContent()
         screen.testButton_assertIsDisabled()
     }
@@ -80,8 +79,6 @@ class TestScreenTest {
         composeTestRule.setContent {
             MindlesslyHiraganaTheme {
                 TestScreen(
-                    categoryList = screen.categoryList,
-                    isTestUnlocked = screen.isTestUnlocked,
                     onNavigationIconClick = {}
                 )
             }

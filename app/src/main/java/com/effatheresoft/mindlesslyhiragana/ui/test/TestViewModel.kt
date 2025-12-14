@@ -4,10 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import javax.inject.Inject
 
 data class TestUiState(
     val loading: Boolean = false,
@@ -15,7 +17,8 @@ data class TestUiState(
     val isTestUnlocked: Boolean = false
 )
 
-class TestViewModel(val userRepository: UserRepository): ViewModel() {
+@HiltViewModel
+class TestViewModel @Inject constructor(userRepository: UserRepository): ViewModel() {
     private val _observedUser = userRepository.observeLocalUser()
     private val _loading = MutableStateFlow(false)
 

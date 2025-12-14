@@ -28,8 +28,13 @@ class DefaultUserRepository @Inject constructor(
 
     override suspend fun updateLocalUserProgress(progress: String) =
         localDataSource.updateLocalUserProgress(progress.toRoomEntityProgress())
+
     override suspend fun updateLocalUserLearningSetsCount(count: Int) =
         localDataSource.updateLocalUserLearningSetsCount(count)
+
+    override suspend fun updateLocalUserIsTestUnlocked(isUnlocked: Boolean) {
+        localDataSource.updateLocalUserIsTestUnlocked(isUnlocked)
+    }
 }
 
 private fun String.toRoomEntityProgress(): String {

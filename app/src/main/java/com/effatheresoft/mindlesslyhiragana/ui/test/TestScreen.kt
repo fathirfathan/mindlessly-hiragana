@@ -14,20 +14,22 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.effatheresoft.mindlesslyhiragana.R
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 
 @Composable
 fun TestScreen(
-    categoryList: List<HiraganaCategory>,
-    isTestUnlocked: Boolean,
+    viewModel: TestViewModel = hiltViewModel(),
     onNavigationIconClick: () -> Unit
 ) {
     DefaultScaffold(
@@ -39,9 +41,10 @@ fun TestScreen(
         }
     ) {
 
+        val uiState by viewModel.uiState.collectAsStateWithLifecycle()
         TestScreenContent(
-            categoryList = categoryList.map { it.kanaWithNakaguro },
-            isTestButtonEnabled = isTestUnlocked
+            categoryList = uiState.categoryList.map { it.kanaWithNakaguro },
+            isTestButtonEnabled = uiState.isTestUnlocked
         )
     }
 }

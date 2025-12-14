@@ -21,15 +21,20 @@ class TestScreenRobot <TR : TestRule, CA : ComponentActivity> (
     private val userRepository: UserRepository
 ) {
 
-    val activity get() = composeTestRule.activity
-    lateinit var progress: String
-    lateinit var categoryList: List<HiraganaCategory>
-    var isTestUnlocked by Delegates.notNull<Boolean>()
+    private val activity get() = composeTestRule.activity
+    private lateinit var progress: String
+    private lateinit var categoryList: List<HiraganaCategory>
+    private var isTestUnlocked by Delegates.notNull<Boolean>()
 
     suspend fun setProgress(progress: String) {
         userRepository.updateLocalUserProgress(progress)
         this.progress = progress
         categoryList = HiraganaCategory.progressToCategoryList(this.progress)
+    }
+
+    suspend fun setIsTestUnlocked(value: Boolean) {
+        userRepository.updateLocalUserIsTestUnlocked(value)
+        isTestUnlocked = value
     }
 
     fun assertOnTestScreen() {

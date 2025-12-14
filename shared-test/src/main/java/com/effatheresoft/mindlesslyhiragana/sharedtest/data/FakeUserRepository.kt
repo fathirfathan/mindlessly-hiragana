@@ -27,5 +27,9 @@ class FakeUserRepository : UserRepository {
     override suspend fun updateLocalUserLearningSetsCount(count: Int) {
         _localUser.value = _localUser.value.copy(learningSetsCount = count)
     }
+
+    override suspend fun updateLocalUserIsTestUnlocked(isUnlocked: Boolean) {
+        _localUser.value = _localUser.value.copy(isTestUnlocked = isUnlocked)
+    }
 }
 

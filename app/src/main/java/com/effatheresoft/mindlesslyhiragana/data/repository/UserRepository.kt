@@ -10,4 +10,6 @@ interface UserRepository {
     suspend fun updateLocalUserProgress(progress: String)
 
     suspend fun updateLocalUserLearningSetsCount(count: Int)
+
+    suspend fun updateLocalUserIsTestUnlocked(isUnlocked: Boolean)
 }
