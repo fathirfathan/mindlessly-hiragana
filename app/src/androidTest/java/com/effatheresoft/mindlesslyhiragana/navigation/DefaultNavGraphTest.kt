@@ -13,6 +13,7 @@ import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.MI
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.SE
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.HIMIKASE
+import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.FUWOYA
 import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
 import com.effatheresoft.mindlesslyhiragana.ui.home.HomeScreenRobot
 import com.effatheresoft.mindlesslyhiragana.ui.learn.LearnScreenRobot
@@ -24,6 +25,7 @@ import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import junit.framework.TestCase.assertTrue
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -49,7 +51,7 @@ class DefaultNavGraphTest {
     @Before
     fun init() {
         hiltRule.inject()
-        val homeScreenRobot = HomeScreenRobot(composeTestRule)
+        val homeScreenRobot = HomeScreenRobot(composeTestRule, fakeUserRepository)
         val learnScreenRobot = LearnScreenRobot(composeTestRule)
         val quizScreenRobot = QuizScreenRobot(composeTestRule)
         val resultScreenRobot = ResultScreenRobot(composeTestRule, fakeUserRepository)
@@ -162,6 +164,36 @@ class DefaultNavGraphTest {
         composeTestRule.onNodeWithText("${SE.kana}: 0").assertIsDisplayed()
     }
 
+    @Test
+    fun quizScreen_onLocalUserProgressCategory_whenAllQuizzesAreCorrectlyAnswered_navigatesToResultScreen_assertTestAllLearnedButtonIsEnabled() = runTest {
+        screen.home.setLocalUserProgress(FUWOYA.id)
+        screen.learn.category = FUWOYA
+        setContent(Route.Quiz(screen.learn.category.id))
+        screen.navigate_quizToResult(isAllCorrect = true)
+
+        screen.result.assert_testAllLearnedButton_enabled()
+    }
+
+    @Test
+    fun quizScreen_onLocalUserProgressCategory_whenQuizzesHaveIncorrectAnswer_navigatesToResultScreen_assertTestAllLearnedButtonIsDisabled() = runTest {
+        screen.home.setLocalUserProgress(FUWOYA.id)
+        screen.learn.category = FUWOYA
+        setContent(Route.Quiz(screen.learn.category.id))
+        screen.navigate_quizToResult(isAllCorrect = false)
+
+        screen.result.assert_testAllLearnedButton_disabled()
+    }
+
+    @Test
+    fun quizScreen_notOnLocalUserProgressCategory_whenAllQuizzesAreCorrectlyAnswered_navigatesToResultScreen_assertTestAllLearnedButtonIsDisabled() = runTest {
+        screen.home.setLocalUserProgress(FUWOYA.id)
+        screen.learn.category = HIMIKASE
+        setContent(Route.Quiz(screen.learn.category.id))
+        screen.navigate_quizToResult(isAllCorrect = true)
+
+        screen.result.assert_testAllLearnedButton_disabled()
+    }
+
     // endregion
 
     // region Result Screen Navigation
@@ -192,6 +224,19 @@ class DefaultNavGraphTest {
 
         screen.quiz.click_navigateUpButton()
         screen.learn.assert_onLearnScreen()
+    }
+
+    @Test
+    fun resultScreen_whenTestAllLearnedButtonClicked_navigatesToTestScreen_thenWhenNavigatedUp_navigatesToHomeScreen() {
+        setContent(Route.Home)
+        screen.navigate_homeToLearn(HIMIKASE)
+        screen.navigate_learnToQuiz()
+        screen.navigate_quizToResult(isAllCorrect = true)
+        screen.result.click_testAllLearnedButton()
+
+        screen.test.assertOnTestScreen()
+        screen.test.click_navigateUpButton()
+        screen.home.assert_onHomeScreen()
     }
 
     // endregion

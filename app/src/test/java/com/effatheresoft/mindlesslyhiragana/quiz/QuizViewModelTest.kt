@@ -2,13 +2,17 @@ package com.effatheresoft.mindlesslyhiragana.quiz
 
 import com.effatheresoft.mindlesslyhiragana.Constants.DEFAULT_LEARNING_SETS_COUNT
 import com.effatheresoft.mindlesslyhiragana.MainCoroutineRule
+import com.effatheresoft.mindlesslyhiragana.data.FakeUserRepository
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.HI
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.KA
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.MI
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.SE
+import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
+import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.FUWOYA
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.HIMIKASE
 import com.effatheresoft.mindlesslyhiragana.data.repository.QuizRepository
+import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
 import com.effatheresoft.mindlesslyhiragana.sharedtest.data.FakeQuizRepository
 import com.effatheresoft.mindlesslyhiragana.ui.quiz.PossibleAnswer
 import com.effatheresoft.mindlesslyhiragana.ui.quiz.Quiz
@@ -23,6 +27,7 @@ import org.junit.Test
 
 class QuizViewModelTest {
     private lateinit var fakeQuizRepository: QuizRepository
+    private lateinit var fakeUserRepository: UserRepository
     private lateinit var quizViewModel: QuizViewModel
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -32,7 +37,8 @@ class QuizViewModelTest {
     @Before
     fun setupViewModel() {
         fakeQuizRepository = FakeQuizRepository()
-        quizViewModel = QuizViewModel(fakeQuizRepository)
+        fakeUserRepository = FakeUserRepository()
+        quizViewModel = QuizViewModel(fakeQuizRepository, fakeUserRepository)
 
         quizViewModel.generateQuizzes(HIMIKASE.id)
     }
@@ -111,5 +117,47 @@ class QuizViewModelTest {
         }
 
         assertEquals(true, quizViewModel.uiState.first().isCompleted)
+    }
+
+    @Test
+    fun onLocalUserProgressCategory_whenAllQuizzesAreCorrectlyAnswered_assertLocalUserIsTestUnlockedTrue() = runTest {
+        answerAllQuizzesCorrectly(HIMIKASE)
+
+        assertEquals(true, fakeUserRepository.observeLocalUser().first().isTestUnlocked)
+    }
+
+    @Test
+    fun onLocalUserProgressCategory_whenQuizzesHaveIncorrectAnswer_assertLocalUserIsTestUnlockedFalse() = runTest {
+        val answers = mutableListOf<Hiragana>()
+        repeat(DEFAULT_LEARNING_SETS_COUNT - 1) {
+            answers.addAll(HIMIKASE.hiraganaList)
+        }
+        selectAnswers(listOf(HI, MI, MI, KA, SE))
+
+        assertEquals(false, fakeUserRepository.observeLocalUser().first().isTestUnlocked)
+    }
+
+    @Test
+    fun notOnLocalUserProgressCategory_whenAllQuizzesAreCorrectlyAnswered_assertLocalUserIsTestUnlockedFalse() = runTest {
+        fakeUserRepository.updateLocalUserProgress(FUWOYA.id)
+        answerAllQuizzesCorrectly(HIMIKASE)
+
+        assertEquals(false, fakeUserRepository.observeLocalUser().first().isTestUnlocked)
+    }
+
+    fun answerAllQuizzesCorrectly(category: HiraganaCategory) {
+        val correctAnswers = mutableListOf<Hiragana>()
+        repeat(DEFAULT_LEARNING_SETS_COUNT) {
+            correctAnswers.addAll(category.hiraganaList)
+        }
+        correctAnswers.forEach { answer ->
+            quizViewModel.selectCurrentQuizAnswer(answer)
+        }
+    }
+
+    fun selectAnswers(answers: List<Hiragana>) {
+        answers.forEach { answer ->
+            quizViewModel.selectCurrentQuizAnswer(answer)
+        }
     }
 }

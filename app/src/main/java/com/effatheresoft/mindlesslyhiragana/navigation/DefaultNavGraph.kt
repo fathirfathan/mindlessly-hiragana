@@ -81,6 +81,11 @@ fun DefaultNavGraph(
                     navController.navigate(Route.Quiz(resultRoute.categoryId)) {
                         popUpTo(Route.Result(resultRoute.categoryId)) { inclusive = true }
                     }
+                },
+                onTestAllLearned = {
+                    navController.navigate(Route.Test) {
+                        popUpTo(Route.Home)
+                    }
                 }
             )
         }

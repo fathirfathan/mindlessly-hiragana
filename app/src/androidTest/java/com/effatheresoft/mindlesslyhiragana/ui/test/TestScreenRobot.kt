@@ -8,6 +8,7 @@ import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.performClick
 import com.effatheresoft.mindlesslyhiragana.R
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
@@ -40,6 +41,10 @@ class TestScreenRobot <TR : TestRule, CA : ComponentActivity> (
     fun assertOnTestScreen() {
         topAppBarTitle_assertIsDisplayed()
         testButton_assertIsDisplayed()
+    }
+
+    fun click_navigateUpButton() {
+        composeTestRule.onNodeWithContentDescription(activity.getString(R.string.navigate_back)).performClick()
     }
 
     fun topAppBarTitle_assertIsDisplayed() {

@@ -38,6 +38,20 @@ class ScreenRobot <R : TestRule, A : ComponentActivity> (
                 quiz.click_answers(learn.category.hiraganaList)
             }
             result.assert_onResultScreen()
+        } else {
+            repeat(learn.progressBarValue - 1) {
+                quiz.click_answers(learn.category.hiraganaList)
+            }
+            learn.category.hiraganaList.forEachIndexed { index, answer ->
+                when(index) {
+                    1 -> {
+                        quiz.click_answer(learn.category.hiraganaList[0])
+                        quiz.click_answer(answer)
+                    }
+                    else -> quiz.click_answer(answer)
+                }
+            }
+            result.assert_onResultScreen()
         }
     }
 

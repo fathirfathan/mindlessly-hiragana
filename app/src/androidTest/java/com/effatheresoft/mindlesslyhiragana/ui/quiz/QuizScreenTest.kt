@@ -18,6 +18,7 @@ import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.MI
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.SE
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.HIMIKASE
 import com.effatheresoft.mindlesslyhiragana.data.repository.QuizRepository
+import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -42,6 +43,9 @@ class QuizScreenTest {
 
     @Inject
     lateinit var fakeQuizRepository: QuizRepository
+
+    @Inject
+    lateinit var fakeUserRepository: UserRepository
 
     @Before
     fun init() {
@@ -69,7 +73,7 @@ class QuizScreenTest {
 
     @Test
     fun remainingQuestionsCount_assertIsDisplayed() = runTest {
-        val viewModel = QuizViewModel(fakeQuizRepository)
+        val viewModel = QuizViewModel(fakeQuizRepository, fakeUserRepository)
         setContent(viewModel)
 
         val remainingQuestionsCount = viewModel.uiState.first().remainingQuestionsCount
@@ -100,7 +104,7 @@ class QuizScreenTest {
 
     @Test
     fun whenCorrectAnswerButtonsAreSelected_assertNextQuizDisplayed() = runTest {
-        val viewModel = QuizViewModel(fakeQuizRepository)
+        val viewModel = QuizViewModel(fakeQuizRepository, fakeUserRepository)
         setContent(viewModel)
 
         composeTestRule.onNodeWithText(HI.name).performClick()

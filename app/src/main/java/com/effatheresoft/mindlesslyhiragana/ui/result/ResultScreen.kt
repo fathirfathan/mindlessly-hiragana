@@ -36,6 +36,7 @@ import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 fun ResultScreen(
     onNavigateUp: () -> Unit,
     onTryAgain: () -> Unit,
+    onTestAllLearned: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ResultViewModel = hiltViewModel()
 ) {
@@ -63,6 +64,7 @@ fun ResultScreen(
             incorrectCounts = uiState.incorrectCounts,
             individualIncorrectCounts = uiState.individualIncorrectCounts,
             onTryAgainButtonClick = onTryAgain,
+            onTestAllLearnedButtonClick = onTestAllLearned,
             isTestAllLearnedButtonEnabled = uiState.isTestUnlocked,
             modifier = Modifier.padding(paddingValues)
         )
@@ -83,6 +85,7 @@ fun ResultContent(
     incorrectCounts: Int,
     individualIncorrectCounts: List<Pair<Hiragana, Int>>,
     onTryAgainButtonClick: () -> Unit,
+    onTestAllLearnedButtonClick: () -> Unit,
     isTestAllLearnedButtonEnabled: Boolean,
     modifier: Modifier = Modifier
 ) {
@@ -103,7 +106,7 @@ fun ResultContent(
         Spacer(Modifier.weight(1f))
         Button(onClick = onTryAgainButtonClick) { Text("Try Again") }
         Button(
-            onClick = {},
+            onClick = onTestAllLearnedButtonClick,
             enabled = isTestAllLearnedButtonEnabled
         ) {
             Text("Test All Learned")
@@ -143,6 +146,7 @@ fun ResultScreenPreview() {
                     SE to 2
                 ),
                 onTryAgainButtonClick = {},
+                onTestAllLearnedButtonClick = {},
                 isTestAllLearnedButtonEnabled = false,
                 modifier = Modifier.padding(paddingValues)
             )

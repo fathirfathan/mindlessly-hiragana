@@ -98,7 +98,7 @@ class ResultScreenTest {
     fun setContent() {
         composeTestRule.setContent {
             MindlesslyHiraganaTheme {
-                ResultScreen(onNavigateUp = {}, onTryAgain = {})
+                ResultScreen(onNavigateUp = {}, onTryAgain = {}, onTestAllLearned = {})
             }
         }
     }
@@ -109,6 +109,7 @@ class ResultScreenTest {
                 ResultScreen(
                     onNavigateUp = {},
                     onTryAgain = {},
+                    onTestAllLearned = {},
                     viewModel = ResultViewModel(
                         quizRepository = fakeQuizRepository,
                         userRepository = fakeUserRepository

@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana
 import com.effatheresoft.mindlesslyhiragana.data.repository.QuizRepository
+import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
+import com.effatheresoft.mindlesslyhiragana.ui.result.isCorrect
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -22,9 +24,13 @@ data class QuizUiState(
 )
 
 @HiltViewModel
-class QuizViewModel @Inject constructor(val quizRepository: QuizRepository): ViewModel() {
+class QuizViewModel @Inject constructor(
+    val quizRepository: QuizRepository,
+    val userRepository: UserRepository
+): ViewModel() {
 
     private val _isLoading = MutableStateFlow(false)
+    private val _categoryId = MutableStateFlow("")
     private val _quizzes = quizRepository.observeQuizzes()
     private val _currentQuizIndex = MutableStateFlow(0)
     private val _isCompleted = MutableStateFlow(false)
@@ -50,6 +56,11 @@ class QuizViewModel @Inject constructor(val quizRepository: QuizRepository): Vie
         val selectedAnswer = currentQuiz.possibleAnswers.first { it.answer == answer }
         if (selectedAnswer.isCorrect) {
             if (_currentQuizIndex.value == _quizzes.first().size - 1) {
+                val localUser = userRepository.observeLocalUser().first()
+                if (localUser.progress == _categoryId.value) {
+                    val isAllCorrect = _quizzes.first().firstOrNull { !it.isCorrect }.let { it == null }
+                    if (isAllCorrect) userRepository.updateLocalUserIsTestUnlocked(true)
+                }
                 _isCompleted.value = true
             } else {
                 _currentQuizIndex.value += 1
@@ -58,6 +69,7 @@ class QuizViewModel @Inject constructor(val quizRepository: QuizRepository): Vie
     }
 
     fun generateQuizzes(categoryId: String) = viewModelScope.launch {
+        _categoryId.value = categoryId
         quizRepository.generateQuizzes(categoryId)
     }
 }

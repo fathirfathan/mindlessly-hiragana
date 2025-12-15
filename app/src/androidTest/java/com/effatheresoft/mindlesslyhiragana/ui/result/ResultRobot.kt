@@ -3,6 +3,7 @@ package com.effatheresoft.mindlesslyhiragana.ui.result
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -43,5 +44,13 @@ class ResultScreenRobot <TR : TestRule, CA : ComponentActivity> (
 
     fun assert_testAllLearnedButton_enabled() {
         composeTestRule.onNodeWithText(activity.getString(R.string.test_all_learned)).assertIsEnabled()
+    }
+
+    fun assert_testAllLearnedButton_disabled() {
+        composeTestRule.onNodeWithText(activity.getString(R.string.test_all_learned)).assertIsNotEnabled()
+    }
+
+    fun click_testAllLearnedButton() {
+        composeTestRule.onNodeWithText(activity.getString(R.string.test_all_learned)).performClick()
     }
 }
