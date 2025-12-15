@@ -26,6 +26,7 @@ import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 
 @Composable
 fun TestQuizScreen(
+    onNavigateUp: () -> Unit,
     question: String = "ひ",
     remainingQuestionsCount: Int = 3,
     modifier: Modifier = Modifier
@@ -35,7 +36,7 @@ fun TestQuizScreen(
         topAppBar = {
             DefaultTopAppBar(
                 title = R.string.test_all_learned,
-                onNavigationIconClick = {}
+                onNavigationIconClick = onNavigateUp
             )
         },
         modifier = modifier

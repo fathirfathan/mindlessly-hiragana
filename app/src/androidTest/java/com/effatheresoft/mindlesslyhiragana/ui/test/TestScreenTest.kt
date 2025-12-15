@@ -79,7 +79,8 @@ class TestScreenTest {
             MindlesslyHiraganaTheme {
                 TestScreen(
                     onNavigationIconClick = {},
-                    onChallengeLearn = {}
+                    onChallengeLearn = {},
+                    onTestAllLearned = {}
                 )
             }
         }

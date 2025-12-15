@@ -94,4 +94,8 @@ class TestScreenRobot <TR : TestRule, CA : ComponentActivity> (
     fun testButton_assertIsDisabled() {
         composeTestRule.onNode(isButton() and hasText(activity.getString(R.string.test_all_learned))).assertIsNotEnabled()
     }
+
+    fun testButton_click() {
+        composeTestRule.onNode(isButton() and hasText(activity.getString(R.string.test_all_learned))).performClick()
+    }
 }

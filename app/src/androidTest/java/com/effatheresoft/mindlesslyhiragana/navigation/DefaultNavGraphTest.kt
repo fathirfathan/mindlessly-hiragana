@@ -21,6 +21,7 @@ import com.effatheresoft.mindlesslyhiragana.ui.quiz.QuizScreenRobot
 import com.effatheresoft.mindlesslyhiragana.ui.result.ResultScreenRobot
 import com.effatheresoft.mindlesslyhiragana.sharedtest.util.performBackPress
 import com.effatheresoft.mindlesslyhiragana.ui.test.TestScreenRobot
+import com.effatheresoft.mindlesslyhiragana.ui.testquiz.TestQuizScreenRobot
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -56,6 +57,7 @@ class DefaultNavGraphTest {
         val quizScreenRobot = QuizScreenRobot(composeTestRule)
         val resultScreenRobot = ResultScreenRobot(composeTestRule, fakeUserRepository)
         val testScreenRobot = TestScreenRobot(composeTestRule, fakeUserRepository)
+        val testQuizScreenRobot = TestQuizScreenRobot(composeTestRule, fakeUserRepository)
 
         learnScreenRobot.category = HIMIKASE
         learnScreenRobot.progressBarValue = DEFAULT_LEARNING_SETS_COUNT
@@ -65,7 +67,8 @@ class DefaultNavGraphTest {
             learn = learnScreenRobot,
             quiz = quizScreenRobot,
             result = resultScreenRobot,
-            test = testScreenRobot
+            test = testScreenRobot,
+            testQuiz = testQuizScreenRobot
         )
     }
 
@@ -264,6 +267,18 @@ class DefaultNavGraphTest {
 
         screen.learn.click_navigateUpButton()
         screen.home.assert_onHomeScreen()
+    }
+
+    @Test
+    fun testScreen_whenTestButtonClicked_navigatesToTestQuizScreen_thenWhenNavigatedUp_navigatesToTestScreen() = runTest {
+        screen.test.setIsTestUnlocked(true)
+        setContent(Route.Test(HIMIKASE.id))
+
+        screen.test.testButton_click()
+        screen.testQuiz.assertOnTestQuizScreen()
+
+        screen.testQuiz.topAppBarNavButton_click()
+        screen.test.assertOnTestScreen()
     }
 
     // endregion

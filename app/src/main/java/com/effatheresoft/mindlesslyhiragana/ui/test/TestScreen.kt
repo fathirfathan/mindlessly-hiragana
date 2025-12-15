@@ -30,7 +30,8 @@ import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 fun TestScreen(
     viewModel: TestViewModel = hiltViewModel(),
     onNavigationIconClick: () -> Unit,
-    onChallengeLearn: () -> Unit
+    onChallengeLearn: () -> Unit,
+    onTestAllLearned: () -> Unit
 ) {
     DefaultScaffold(
         topAppBar = {
@@ -45,7 +46,8 @@ fun TestScreen(
         TestScreenContent(
             categoryList = uiState.categoryList.map { it.kanaWithNakaguro },
             isTestButtonEnabled = uiState.isTestUnlocked,
-            onChallengeButtonClick = onChallengeLearn
+            onChallengeButtonClick = onChallengeLearn,
+            onTestAllLearnedButtonClick = onTestAllLearned
         )
     }
 }
@@ -55,6 +57,7 @@ fun TestScreenContent(
     categoryList: List<String>,
     isTestButtonEnabled: Boolean,
     onChallengeButtonClick: () -> Unit,
+    onTestAllLearnedButtonClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -71,7 +74,7 @@ fun TestScreenContent(
         }
         Spacer(modifier = Modifier.weight(1f))
         Button(onChallengeButtonClick) { Text(stringResource(R.string.challenge_all_correct_on_learn)) }
-        Button(onClick = {}, enabled = isTestButtonEnabled) { Text(stringResource(R.string.test_all_learned)) }
+        Button(onTestAllLearnedButtonClick, enabled = isTestButtonEnabled) { Text(stringResource(R.string.test_all_learned)) }
     }
 }
 
@@ -90,7 +93,8 @@ fun TestScreenContentPreview() {
             TestScreenContent(
                 categoryList = listOf("ひみかせ", "ふをや"),
                 isTestButtonEnabled = false,
-                onChallengeButtonClick = {}
+                onChallengeButtonClick = {},
+                onTestAllLearnedButtonClick = {}
             )
         }
     }

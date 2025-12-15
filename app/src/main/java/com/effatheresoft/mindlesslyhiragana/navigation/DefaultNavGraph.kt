@@ -12,6 +12,7 @@ import com.effatheresoft.mindlesslyhiragana.ui.learn.LearnScreen
 import com.effatheresoft.mindlesslyhiragana.ui.quiz.QuizScreen
 import com.effatheresoft.mindlesslyhiragana.ui.result.ResultScreen
 import com.effatheresoft.mindlesslyhiragana.ui.test.TestScreen
+import com.effatheresoft.mindlesslyhiragana.ui.testquiz.TestQuizScreen
 import kotlinx.serialization.Serializable
 
 sealed interface Route {
@@ -30,6 +31,9 @@ sealed interface Route {
 
     @Serializable
     data class Test(val categoryId: String): Route
+
+    @Serializable
+    object TestQuiz: Route
 }
 
 @Composable
@@ -98,8 +102,15 @@ fun DefaultNavGraph(
                     navController.navigate(Route.Learn(testRoute.categoryId))  {
                         popUpTo(Route.Test(testRoute.categoryId)) { inclusive = true }
                     }
+                },
+                onTestAllLearned = {
+                    navController.navigate(Route.TestQuiz)
                 }
             )
+        }
+
+        composable<Route.TestQuiz> {
+            TestQuizScreen(onNavigateUp = navController::navigateUp)
         }
     }
 }
