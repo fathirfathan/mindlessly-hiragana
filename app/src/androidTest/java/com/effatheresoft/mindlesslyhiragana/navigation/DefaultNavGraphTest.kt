@@ -49,7 +49,7 @@ class DefaultNavGraphTest {
     private lateinit var screen: ScreenRobot<ActivityScenarioRule<HiltTestActivity>, HiltTestActivity>
 
     @Before
-    fun init() {
+    fun init() = runTest {
         hiltRule.inject()
         val homeScreenRobot = HomeScreenRobot(composeTestRule, fakeUserRepository)
         val learnScreenRobot = LearnScreenRobot(composeTestRule)
@@ -255,11 +255,16 @@ class DefaultNavGraphTest {
         assertTrue(activity.isFinishing || activity.isDestroyed)
     }
 
-//    @Test
-//    fun testScreen_whenChallengeButtonClicked_navigatesToLearnScreen() {
-//        setContent(Route.Test)
-//        screen.navigate_testToLearn()
-//    }
+    @Test
+    fun testScreen_whenChallengeButtonClicked_navigatesToLearnScreen_thenWhenNavigatedUp_navigatesToHomeScreen() = runTest {
+        setContent(Route.Home)
+        screen.navigate_homeToTest()
+        screen.test.setProgress(HIMIKASE.id)
+        screen.navigate_testToLearn()
+
+        screen.learn.click_navigateUpButton()
+        screen.home.assert_onHomeScreen()
+    }
 
     // endregion
 

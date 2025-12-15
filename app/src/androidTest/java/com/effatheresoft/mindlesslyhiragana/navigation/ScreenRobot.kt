@@ -55,10 +55,10 @@ class ScreenRobot <R : TestRule, A : ComponentActivity> (
         }
     }
 
-//    fun navigate_testToLearn() {
-//        test.challengeButton_click()
-//        learn.assert_onLearnScreen(test.categoryList.last())
-//    }
+    fun navigate_testToLearn() {
+        test.challengeButton_click()
+        learn.assert_onLearnScreen(test.categoryList.last())
+    }
 
     fun navigateBack_learnToHome() {
         learn.click_navigateUpButton()

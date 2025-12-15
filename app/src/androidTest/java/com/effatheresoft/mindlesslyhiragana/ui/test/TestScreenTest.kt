@@ -25,7 +25,6 @@ class TestScreenTest {
 
     @get:Rule(order = 1)
     val composeTestRule = createAndroidComposeRule<HiltTestActivity>()
-    private val activity get() = composeTestRule.activity
 
     @Inject
     lateinit var fakeUserRepository: UserRepository
@@ -79,7 +78,8 @@ class TestScreenTest {
         composeTestRule.setContent {
             MindlesslyHiraganaTheme {
                 TestScreen(
-                    onNavigationIconClick = {}
+                    onNavigationIconClick = {},
+                    onChallengeLearn = {}
                 )
             }
         }

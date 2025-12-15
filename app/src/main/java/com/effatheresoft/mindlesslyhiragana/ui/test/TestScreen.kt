@@ -24,13 +24,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.effatheresoft.mindlesslyhiragana.R
-import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 
 @Composable
 fun TestScreen(
     viewModel: TestViewModel = hiltViewModel(),
-    onNavigationIconClick: () -> Unit
+    onNavigationIconClick: () -> Unit,
+    onChallengeLearn: () -> Unit
 ) {
     DefaultScaffold(
         topAppBar = {
@@ -44,7 +44,8 @@ fun TestScreen(
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
         TestScreenContent(
             categoryList = uiState.categoryList.map { it.kanaWithNakaguro },
-            isTestButtonEnabled = uiState.isTestUnlocked
+            isTestButtonEnabled = uiState.isTestUnlocked,
+            onChallengeButtonClick = onChallengeLearn
         )
     }
 }
@@ -53,6 +54,7 @@ fun TestScreen(
 fun TestScreenContent(
     categoryList: List<String>,
     isTestButtonEnabled: Boolean,
+    onChallengeButtonClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -68,7 +70,7 @@ fun TestScreenContent(
             Text(text = category)
         }
         Spacer(modifier = Modifier.weight(1f))
-        Button({}) { Text(stringResource(R.string.challenge_all_correct_on_learn)) }
+        Button(onChallengeButtonClick) { Text(stringResource(R.string.challenge_all_correct_on_learn)) }
         Button(onClick = {}, enabled = isTestButtonEnabled) { Text(stringResource(R.string.test_all_learned)) }
     }
 }
@@ -87,7 +89,8 @@ fun TestScreenContentPreview() {
         ) {
             TestScreenContent(
                 categoryList = listOf("ひみかせ", "ふをや"),
-                isTestButtonEnabled = false
+                isTestButtonEnabled = false,
+                onChallengeButtonClick = {}
             )
         }
     }

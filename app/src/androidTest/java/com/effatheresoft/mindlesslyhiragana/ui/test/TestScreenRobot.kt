@@ -24,7 +24,7 @@ class TestScreenRobot <TR : TestRule, CA : ComponentActivity> (
 
     private val activity get() = composeTestRule.activity
     private lateinit var progress: String
-    private lateinit var categoryList: List<HiraganaCategory>
+    lateinit var categoryList: List<HiraganaCategory>
     private var isTestUnlocked by Delegates.notNull<Boolean>()
 
     suspend fun setProgress(progress: String) {

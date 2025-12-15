@@ -29,7 +29,7 @@ sealed interface Route {
     data class Result(val categoryId: String): Route
 
     @Serializable
-    object Test: Route
+    data class Test(val categoryId: String): Route
 }
 
 @Composable
@@ -46,7 +46,7 @@ fun DefaultNavGraph(
         composable<Route.Home> {
             HomeScreen(
                 onNavigateToLearn = { navController.navigate(Route.Learn(it)) },
-                onNavigateToTest = { navController.navigate(Route.Test) }
+                onNavigateToTest = { navController.navigate(Route.Test(it)) }
             )
         }
 
@@ -83,16 +83,22 @@ fun DefaultNavGraph(
                     }
                 },
                 onTestAllLearned = {
-                    navController.navigate(Route.Test) {
+                    navController.navigate(Route.Test(resultRoute.categoryId)) {
                         popUpTo(Route.Home)
                     }
                 }
             )
         }
 
-        composable<Route.Test> {
+        composable<Route.Test> { navBackStackEntry ->
+            val testRoute: Route.Result = navBackStackEntry.toRoute()
             TestScreen(
-                onNavigationIconClick = { navController.navigateUp() }
+                onNavigationIconClick = { navController.navigateUp() },
+                onChallengeLearn = {
+                    navController.navigate(Route.Learn(testRoute.categoryId))  {
+                        popUpTo(Route.Test(testRoute.categoryId)) { inclusive = true }
+                    }
+                }
             )
         }
     }

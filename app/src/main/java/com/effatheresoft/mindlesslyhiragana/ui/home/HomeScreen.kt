@@ -30,7 +30,7 @@ import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 @Composable
 fun HomeScreen(
     onNavigateToLearn: (categoryId: String) -> Unit,
-    onNavigateToTest: () -> Unit,
+    onNavigateToTest: (categoryId: String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -48,7 +48,7 @@ fun HomeScreen(
             unlockedCategories = uiState.unlockedCategories,
             lockedCategories = uiState.lockedCategories,
             onNavigateToLearn = onNavigateToLearn,
-            onNavigateToTest = onNavigateToTest,
+            onNavigateToTest = { onNavigateToTest(uiState.progress) },
             modifier = Modifier.padding(paddingValues)
         )
     }
