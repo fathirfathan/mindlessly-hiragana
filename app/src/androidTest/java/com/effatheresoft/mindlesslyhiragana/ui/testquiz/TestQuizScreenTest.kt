@@ -4,6 +4,8 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.effatheresoft.mindlesslyhiragana.HiltTestActivity
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana
+import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -31,6 +33,7 @@ class TestQuizScreenTest {
     @Before
     fun init() = runTest {
         hiltRule.inject()
+        fakeUserRepository.updateLocalUserProgress(HiraganaCategory.HIMIKASE.id)
         screen = TestQuizScreenRobot(composeTestRule, fakeUserRepository)
     }
 
@@ -55,6 +58,32 @@ class TestQuizScreenTest {
         val remainingQuestionsCount = 3
         setContent()
         screen.remainingText_assertIsDisplayed(remainingQuestionsCount)
+    }
+
+    @Test
+    fun answerButton_whenClicked_assertIsDisabled() {
+        val answer = Hiragana.A
+        setContent()
+        screen.answerButton_click(answer)
+        screen.answerButton_assertIsDisabled(answer)
+    }
+
+    @Test
+    fun correctAnswerButton_whenClicked_assertAllButtonsAreEnabled() {
+        setContent()
+        screen.answerButton_click(Hiragana.A)
+        screen.answerButton_click(Hiragana.PO)
+        screen.answerButton_click(Hiragana.HI)
+
+        screen.answerButton_assertIsEnabled(Hiragana.A)
+        screen.answerButton_assertIsEnabled(Hiragana.HI)
+    }
+
+    @Test
+    fun correctAnswerButton_whenClicked_remainingTextIsUpdated() {
+        setContent()
+        screen.answerButton_click(Hiragana.HI)
+        screen.remainingText_assertIsDisplayed(2)
     }
 
     fun setContent() {

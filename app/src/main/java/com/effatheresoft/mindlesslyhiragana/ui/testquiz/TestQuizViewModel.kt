@@ -22,7 +22,7 @@ data class QuestionState(
 data class TestQuizUiState(
     val loading: Boolean = false,
     val currentQuestion: Hiragana? = null,
-    val remainingQuestionsCount: Int = -1
+    val remainingQuestionsCount: Int = -1,
 )
 
 @HiltViewModel
@@ -55,10 +55,14 @@ class TestQuizViewModel @Inject constructor(userRepository: UserRepository): Vie
 
     fun selectAnswer(hiragana: Hiragana) {
         val currentQuestionState = _questionStates.value[_currentQuestionIndex.value]
+        val isCurrentQuestionCorrect = hiragana == currentQuestionState.question
         val updatedQuestionState = currentQuestionState.copy(answerAttempts = currentQuestionState.answerAttempts + hiragana)
         _questionStates.value = _questionStates.value.toMutableList().apply {
             set(_currentQuestionIndex.value, updatedQuestionState)
         }
 
+        if (isCurrentQuestionCorrect) {
+            _currentQuestionIndex.value += 1
+        }
     }
 }

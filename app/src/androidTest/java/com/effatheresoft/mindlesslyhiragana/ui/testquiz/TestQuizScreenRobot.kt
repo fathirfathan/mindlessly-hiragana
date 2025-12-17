@@ -2,10 +2,14 @@ package com.effatheresoft.mindlesslyhiragana.ui.testquiz
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasContentDescription
+import androidx.compose.ui.test.hasScrollToKeyAction
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollToKey
 import com.effatheresoft.mindlesslyhiragana.R
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana
 import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
@@ -49,9 +53,29 @@ class TestQuizScreenRobot<TR : TestRule, CA : ComponentActivity> (
     }
 
     fun answerButtons_assertAreDisplayed() {
-        val buttonTexts = Hiragana.entries.take(5).map { it.name }
-        buttonTexts.forEach { buttonText ->
-            composeTestRule.onNodeWithText(buttonText).assertIsDisplayed()
+        val answerButtons = Hiragana.entries
+        answerButtons.forEach { answer ->
+            hiraganaKeyboard_scrollToAnswer(answer)
+            composeTestRule.onNodeWithText(answer.name).assertIsDisplayed()
         }
+    }
+
+    fun answerButton_assertIsEnabled(answer: Hiragana) {
+        hiraganaKeyboard_scrollToAnswer(answer)
+        composeTestRule.onNodeWithText(answer.name).assertIsEnabled()
+    }
+
+    fun answerButton_assertIsDisabled(answer: Hiragana) {
+        hiraganaKeyboard_scrollToAnswer(answer)
+        composeTestRule.onNodeWithText(answer.name).assertIsNotEnabled()
+    }
+
+    fun answerButton_click(answer: Hiragana) {
+        hiraganaKeyboard_scrollToAnswer(answer)
+        composeTestRule.onNodeWithText(answer.name).performClick()
+    }
+
+    fun hiraganaKeyboard_scrollToAnswer(answer: Hiragana) {
+        composeTestRule.onNode(hasScrollToKeyAction()).performScrollToKey(answer)
     }
 }
