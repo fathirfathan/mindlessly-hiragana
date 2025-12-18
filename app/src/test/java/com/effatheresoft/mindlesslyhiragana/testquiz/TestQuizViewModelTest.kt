@@ -43,14 +43,14 @@ class TestQuizViewModelTest {
 
     @Test
     fun whenIncorrectAnswerIsSelected_currentQuestion_And_remainingQuestionsCount_assertAreNotUpdated() = runTest {
-        viewModel.selectAnswer(Hiragana.A)
+        viewModel.selectAnswer(Hiragana.A, {})
         assertEquals(Hiragana.HI, uiState().currentQuestion)
         assertEquals(3, uiState().remainingQuestionsCount)
     }
 
     @Test
     fun whenCorrectAnswerIsSelected_currentQuestion_And_remainingQuestionsCount_assertAreUpdated() = runTest {
-        viewModel.selectAnswer(Hiragana.HI)
+        viewModel.selectAnswer(Hiragana.HI, {})
         assertEquals(Hiragana.MI, uiState().currentQuestion)
         assertEquals(2, uiState().remainingQuestionsCount)
     }

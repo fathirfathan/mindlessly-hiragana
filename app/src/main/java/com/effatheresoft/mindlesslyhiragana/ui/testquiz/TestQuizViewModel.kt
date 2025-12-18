@@ -9,6 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -26,7 +27,7 @@ data class TestQuizUiState(
 )
 
 @HiltViewModel
-class TestQuizViewModel @Inject constructor(userRepository: UserRepository): ViewModel() {
+class TestQuizViewModel @Inject constructor(val userRepository: UserRepository): ViewModel() {
     private val _userProgress = userRepository.observeLocalUser().map { it.progress }
     private val _loading = MutableStateFlow(false)
     private val _questionStates = MutableStateFlow<List<QuestionState>>(emptyList())
@@ -53,7 +54,7 @@ class TestQuizViewModel @Inject constructor(userRepository: UserRepository): Vie
         initialValue = TestQuizUiState(loading = true)
     )
 
-    fun selectAnswer(hiragana: Hiragana) {
+    fun selectAnswer(hiragana: Hiragana, onAllQuestionsAnswered: (List<QuestionState>) -> Unit) = viewModelScope.launch {
         val currentQuestionState = _questionStates.value[_currentQuestionIndex.value]
         val isCurrentQuestionCorrect = hiragana == currentQuestionState.question
         val updatedQuestionState = currentQuestionState.copy(answerAttempts = currentQuestionState.answerAttempts + hiragana)
@@ -63,6 +64,20 @@ class TestQuizViewModel @Inject constructor(userRepository: UserRepository): Vie
 
         if (isCurrentQuestionCorrect) {
             _currentQuestionIndex.value += 1
+        }
+
+        if (_currentQuestionIndex.value == _questionStates.value.size) {
+            val isAllAnswersCorrect = _questionStates.value.run {
+                count { it.answerAttempts.size == 1 } == size
+            }
+
+            if (isAllAnswersCorrect) {
+                val nextHiraganaCategoryIndex = HiraganaCategory.entries.indexOfFirst { it.id == _userProgress.first() } + 1
+                userRepository.updateLocalUserProgress(HiraganaCategory.entries[nextHiraganaCategoryIndex].id)
+                userRepository.updateLocalUserIsTestUnlocked(false)
+            }
+
+            onAllQuestionsAnswered(_questionStates.value)
         }
     }
 }

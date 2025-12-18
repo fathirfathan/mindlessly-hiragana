@@ -22,6 +22,7 @@ import com.effatheresoft.mindlesslyhiragana.ui.result.ResultScreenRobot
 import com.effatheresoft.mindlesslyhiragana.sharedtest.util.performBackPress
 import com.effatheresoft.mindlesslyhiragana.ui.test.TestScreenRobot
 import com.effatheresoft.mindlesslyhiragana.ui.testquiz.TestQuizScreenRobot
+import com.effatheresoft.mindlesslyhiragana.ui.testresult.TestResultScreenRobot
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -58,6 +59,7 @@ class DefaultNavGraphTest {
         val resultScreenRobot = ResultScreenRobot(composeTestRule, fakeUserRepository)
         val testScreenRobot = TestScreenRobot(composeTestRule, fakeUserRepository)
         val testQuizScreenRobot = TestQuizScreenRobot(composeTestRule, fakeUserRepository)
+        val testResultScreenRobot = TestResultScreenRobot(composeTestRule, fakeUserRepository)
 
         learnScreenRobot.category = HIMIKASE
         learnScreenRobot.progressBarValue = DEFAULT_LEARNING_SETS_COUNT
@@ -68,7 +70,8 @@ class DefaultNavGraphTest {
             quiz = quizScreenRobot,
             result = resultScreenRobot,
             test = testScreenRobot,
-            testQuiz = testQuizScreenRobot
+            testQuiz = testQuizScreenRobot,
+            testResult = testResultScreenRobot
         )
     }
 
@@ -279,6 +282,54 @@ class DefaultNavGraphTest {
 
         screen.testQuiz.topAppBarNavButton_click()
         screen.test.assertOnTestScreen()
+    }
+
+    // endregion
+
+    // region TestQuiz Screen Navigation
+
+    @Test
+    fun testQuizScreen_whenAllAnswersCorrect_navigatesToResultScreen_continueLearningButton_assertIsEnabled() = runTest {
+        screen.test.setIsTestUnlocked(true)
+        screen.test.setProgress(HIMIKASE.id)
+        setContent(Route.TestQuiz(HIMIKASE.id))
+        listOf(HI, MI, KA, SE).forEach { answer ->
+            screen.testQuiz.answerButton_click(answer)
+        }
+
+        screen.testResult.assert_onTestResultScreen()
+        screen.testResult.continueLearningButton_assertIsEnabled()
+    }
+
+    @Test
+    fun testQuizScreen_whenAllAnswersNotCorrect_navigatesToResultScreen_continueLearningButton_assertIsDisabled() = runTest {
+        screen.test.setIsTestUnlocked(true)
+        screen.test.setProgress(HIMIKASE.id)
+        setContent(Route.TestQuiz(HIMIKASE.id))
+        listOf(HI, MI, KA).forEach { answer ->
+            screen.testQuiz.answerButton_click(answer)
+        }
+        screen.testQuiz.answerButton_click(KA)
+        screen.testQuiz.answerButton_click(SE)
+
+        screen.testResult.assert_onTestResultScreen()
+        screen.testResult.continueLearningButton_assertIsDisabled()
+    }
+
+    @Test
+    fun testQuizScreen_navigatesToTestResultScreen_countTexts_And_incorrectHiraganaList_assertAreCorrect() = runTest {
+        screen.test.setIsTestUnlocked(true)
+        screen.test.setProgress(HIMIKASE.id)
+        setContent(Route.TestQuiz(HIMIKASE.id))
+        listOf(HI, MI, KA).forEach { answer ->
+            screen.testQuiz.answerButton_click(answer)
+        }
+        screen.testQuiz.answerButton_click(KA)
+        screen.testQuiz.answerButton_click(SE)
+
+        screen.testResult.correctCountText_assertIsDisplayed(3)
+        screen.testResult.incorrectCountText_assertIsDisplayed(1)
+        screen.testResult.incorrectHiraganaList_assertIsDisplayed(listOf(SE))
     }
 
     // endregion

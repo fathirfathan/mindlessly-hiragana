@@ -2,6 +2,7 @@ package com.effatheresoft.mindlesslyhiragana.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -13,6 +14,7 @@ import com.effatheresoft.mindlesslyhiragana.ui.quiz.QuizScreen
 import com.effatheresoft.mindlesslyhiragana.ui.result.ResultScreen
 import com.effatheresoft.mindlesslyhiragana.ui.test.TestScreen
 import com.effatheresoft.mindlesslyhiragana.ui.testquiz.TestQuizScreen
+import com.effatheresoft.mindlesslyhiragana.ui.testresult.TestResultScreen
 import kotlinx.serialization.Serializable
 
 sealed interface Route {
@@ -33,7 +35,10 @@ sealed interface Route {
     data class Test(val categoryId: String): Route
 
     @Serializable
-    object TestQuiz: Route
+    data class TestQuiz(val categoryId: String): Route
+
+    @Serializable
+    object TestResult: Route
 }
 
 @Composable
@@ -42,6 +47,8 @@ fun DefaultNavGraph(
     navController: NavHostController = rememberNavController(),
     startDestination: Route = Route.Home
 ) {
+    val navigationViewModel: NavigationViewModel = hiltViewModel()
+
     NavHost(
         navController = navController,
         startDestination = startDestination,
@@ -95,7 +102,7 @@ fun DefaultNavGraph(
         }
 
         composable<Route.Test> { navBackStackEntry ->
-            val testRoute: Route.Result = navBackStackEntry.toRoute()
+            val testRoute: Route.Test = navBackStackEntry.toRoute()
             TestScreen(
                 onNavigationIconClick = { navController.navigateUp() },
                 onChallengeLearn = {
@@ -104,13 +111,26 @@ fun DefaultNavGraph(
                     }
                 },
                 onTestAllLearned = {
-                    navController.navigate(Route.TestQuiz)
+                    navController.navigate(Route.TestQuiz(testRoute.categoryId))
                 }
             )
         }
 
-        composable<Route.TestQuiz> {
-            TestQuizScreen(onNavigateUp = navController::navigateUp)
+        composable<Route.TestQuiz> { navBackStackEntry ->
+            val testQuizRoute: Route.TestQuiz = navBackStackEntry.toRoute()
+            TestQuizScreen(
+                onNavigateUp = navController::navigateUp,
+                onAllQuestionsAnswered = { questionStates ->
+                    navigationViewModel.setQuestionStates(questionStates)
+                    navController.navigate(Route.TestResult) {
+                        popUpTo(Route.Test(testQuizRoute.categoryId)) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable<Route.TestResult> {
+            TestResultScreen(navigationViewModel)
         }
     }
 }

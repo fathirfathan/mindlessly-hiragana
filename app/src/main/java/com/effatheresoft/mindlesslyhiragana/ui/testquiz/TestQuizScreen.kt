@@ -33,6 +33,7 @@ import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 @Composable
 fun TestQuizScreen(
     onNavigateUp: () -> Unit,
+    onAllQuestionsAnswered: (List<QuestionState>) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: TestQuizViewModel = hiltViewModel()
 ) {
@@ -52,7 +53,9 @@ fun TestQuizScreen(
                 question = question,
                 remainingQuestionsCount = uiState.remainingQuestionsCount,
                 resetAnswersEffectKey = uiState.remainingQuestionsCount,
-                onAnswerSelected = viewModel::selectAnswer
+                onAnswerSelected = { answer ->
+                    viewModel.selectAnswer(answer, onAllQuestionsAnswered)
+                }
             )
         }
     }

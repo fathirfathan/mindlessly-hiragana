@@ -89,7 +89,7 @@ class TestQuizScreenTest {
     fun setContent() {
         composeTestRule.setContent {
             MindlesslyHiraganaTheme {
-                TestQuizScreen(onNavigateUp = {})
+                TestQuizScreen(onNavigateUp = {}, onAllQuestionsAnswered = {})
             }
         }
     }
