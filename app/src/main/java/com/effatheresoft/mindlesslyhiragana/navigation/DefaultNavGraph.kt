@@ -133,6 +133,7 @@ fun DefaultNavGraph(
             val categoryId = (navBackStackEntry.toRoute() as Route.TestResult).categoryId
 
             TestResultScreen(
+                onNavigateUp = navController::navigateUp,
                 onTryAgain = {
                     navController.navigate(Route.Test(categoryId)) {
                         popUpTo(Route.TestResult(categoryId)) { inclusive = true }

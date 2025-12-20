@@ -75,4 +75,8 @@ class TestResultScreenRobot <TR : TestRule, CA : ComponentActivity> (
     fun tryAgainButton_click() {
         composeTestRule.onNode(isButton() and hasText(activity.getString(R.string.try_again))).performClick()
     }
+
+    fun topAppBarNavButton_click() {
+        composeTestRule.onNode(hasContentDescription(activity.getString(R.string.navigate_back))).performClick()
+    }
 }

@@ -90,6 +90,7 @@ class TestResultScreenTest {
             )
             MindlesslyHiraganaTheme {
                 TestResultScreen(
+                    onNavigateUp = {},
                     onTryAgain = {},
                     navigationViewModel = navigationViewModel
                 )

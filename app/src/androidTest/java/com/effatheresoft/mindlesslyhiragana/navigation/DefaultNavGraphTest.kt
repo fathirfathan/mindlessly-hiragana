@@ -356,6 +356,23 @@ class DefaultNavGraphTest {
         screen.home.assert_onHomeScreen()
     }
 
+    @Test
+    fun testResultScreen_whenNavigatedUp_navigatesToHomeScreen() = runTest {
+        screen.setLocalUser(
+            progress = HIMIKASE.id,
+            learningSetsCount = DEFAULT_LEARNING_SETS_COUNT,
+            isTestUnlocked = true
+        )
+        setContent(Route.Home)
+
+        screen.navigate_homeToTest()
+        screen.navigate_testToTestQuiz()
+        screen.navigate_testQuizToTestResult()
+        screen.testResult.topAppBarNavButton_click()
+
+        screen.home.assert_onHomeScreen()
+    }
+
     // endregion
 
     fun setContent(startDestination: Route? = null) {

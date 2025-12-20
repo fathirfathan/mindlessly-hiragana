@@ -24,6 +24,7 @@ import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 
 @Composable
 fun TestResultScreen(
+    onNavigateUp: () -> Unit,
     onTryAgain: () -> Unit,
     modifier: Modifier = Modifier,
     navigationViewModel: NavigationViewModel = hiltViewModel(),
@@ -36,7 +37,7 @@ fun TestResultScreen(
         topAppBar = {
             DefaultTopAppBar(
                 title = R.string.result,
-                onNavigationIconClick = {}
+                onNavigationIconClick = onNavigateUp
             )
         },
         modifier = modifier
