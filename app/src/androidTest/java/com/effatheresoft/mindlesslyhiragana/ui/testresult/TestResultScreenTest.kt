@@ -89,7 +89,10 @@ class TestResultScreenTest {
                 }
             )
             MindlesslyHiraganaTheme {
-                TestResultScreen(navigationViewModel = navigationViewModel)
+                TestResultScreen(
+                    onTryAgain = {},
+                    navigationViewModel = navigationViewModel
+                )
             }
         }
     }

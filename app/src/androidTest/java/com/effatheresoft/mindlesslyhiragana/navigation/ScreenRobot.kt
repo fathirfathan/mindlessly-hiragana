@@ -2,6 +2,7 @@ package com.effatheresoft.mindlesslyhiragana.navigation
 
 import androidx.activity.ComponentActivity
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
+import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
 import com.effatheresoft.mindlesslyhiragana.ui.home.HomeScreenRobot
 import com.effatheresoft.mindlesslyhiragana.ui.learn.LearnScreenRobot
 import com.effatheresoft.mindlesslyhiragana.ui.quiz.QuizScreenRobot
@@ -9,9 +10,12 @@ import com.effatheresoft.mindlesslyhiragana.ui.result.ResultScreenRobot
 import com.effatheresoft.mindlesslyhiragana.ui.test.TestScreenRobot
 import com.effatheresoft.mindlesslyhiragana.ui.testquiz.TestQuizScreenRobot
 import com.effatheresoft.mindlesslyhiragana.ui.testresult.TestResultScreenRobot
+import junit.framework.TestCase.assertNotNull
+import kotlinx.coroutines.flow.first
 import org.junit.rules.TestRule
 
 class ScreenRobot <R : TestRule, A : ComponentActivity> (
+    val fakeUserRepository: UserRepository,
     val home: HomeScreenRobot <R,A>,
     val learn: LearnScreenRobot <R,A>,
     val quiz: QuizScreenRobot <R,A>,
@@ -20,6 +24,12 @@ class ScreenRobot <R : TestRule, A : ComponentActivity> (
     val testQuiz: TestQuizScreenRobot<R, A>,
     val testResult: TestResultScreenRobot<R, A>
 ) {
+    suspend fun setLocalUser(progress: String, learningSetsCount: Int, isTestUnlocked: Boolean) {
+        fakeUserRepository.updateLocalUserProgress(progress)
+        fakeUserRepository.updateLocalUserLearningSetsCount(learningSetsCount)
+        fakeUserRepository.updateLocalUserIsTestUnlocked(isTestUnlocked)
+    }
+
     fun navigate_homeToLearn(category: HiraganaCategory) {
         home.clickCategory(category)
         learn.category = category
@@ -77,5 +87,25 @@ class ScreenRobot <R : TestRule, A : ComponentActivity> (
     fun navigateBack_testToHome() {
         test.topAppBarNavButton_click()
         home.assert_onHomeScreen()
+    }
+
+    fun navigate_testToTestQuiz() {
+        test.testButton_click()
+        testQuiz.assertOnTestQuizScreen()
+    }
+
+    suspend fun navigate_testQuizToTestResult() {
+        val answers = fakeUserRepository.observeLocalUser().first()
+            .progress.toHiraganaCategory()?.hiraganaList
+        assertNotNull(answers)
+
+        answers?.forEach { answer ->
+            testQuiz.answerButton_click(answer)
+        }
+        testResult.assert_onTestResultScreen()
+    }
+
+    fun String.toHiraganaCategory(): HiraganaCategory? {
+        return HiraganaCategory.entries.firstOrNull { it.id == this }
     }
 }

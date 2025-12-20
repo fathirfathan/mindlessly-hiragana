@@ -24,8 +24,9 @@ import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 
 @Composable
 fun TestResultScreen(
-    navigationViewModel: NavigationViewModel = hiltViewModel(),
+    onTryAgain: () -> Unit,
     modifier: Modifier = Modifier,
+    navigationViewModel: NavigationViewModel = hiltViewModel(),
     viewModel: TestResultViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -44,7 +45,8 @@ fun TestResultScreen(
             correctCount = navigationUiState.correctCount,
             incorrectCount = navigationUiState.incorrectCount,
             incorrectHiraganaList = navigationUiState.incorrectHiraganaList,
-            isContinueLearningButtonEnabled = uiState.canContinueLearning
+            isContinueLearningButtonEnabled = uiState.canContinueLearning,
+            onTryAgainButtonClick = onTryAgain
         )
     }
 }
@@ -55,6 +57,7 @@ fun TestResultContent(
     incorrectCount: Int,
     incorrectHiraganaList: List<Hiragana>,
     isContinueLearningButtonEnabled: Boolean,
+    onTryAgainButtonClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -75,7 +78,7 @@ fun TestResultContent(
             )
         }
         Spacer(modifier = Modifier.weight(1f))
-        Button({}) { Text(stringResource(R.string.try_again)) }
+        Button(onClick = onTryAgainButtonClick) { Text(stringResource(R.string.try_again)) }
         Button(
             onClick = {},
             enabled = isContinueLearningButtonEnabled
@@ -99,7 +102,8 @@ fun TestResultScreenPreview() {
                 correctCount = 4,
                 incorrectCount = 0,
                 incorrectHiraganaList = listOf(Hiragana.HI),
-                isContinueLearningButtonEnabled = false
+                isContinueLearningButtonEnabled = false,
+                onTryAgainButtonClick = {}
             )
         }
     }

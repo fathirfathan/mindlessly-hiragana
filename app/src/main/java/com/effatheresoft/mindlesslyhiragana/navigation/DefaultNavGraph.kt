@@ -38,7 +38,7 @@ sealed interface Route {
     data class TestQuiz(val categoryId: String): Route
 
     @Serializable
-    object TestResult: Route
+    data class TestResult(val categoryId: String): Route
 }
 
 @Composable
@@ -122,15 +122,24 @@ fun DefaultNavGraph(
                 onNavigateUp = navController::navigateUp,
                 onAllQuestionsAnswered = { questionStates ->
                     navigationViewModel.setQuestionStates(questionStates)
-                    navController.navigate(Route.TestResult) {
+                    navController.navigate(Route.TestResult(testQuizRoute.categoryId)) {
                         popUpTo(Route.Test(testQuizRoute.categoryId)) { inclusive = true }
                     }
                 }
             )
         }
 
-        composable<Route.TestResult> {
-            TestResultScreen(navigationViewModel)
+        composable<Route.TestResult> { navBackStackEntry ->
+            val categoryId = (navBackStackEntry.toRoute() as Route.TestResult).categoryId
+
+            TestResultScreen(
+                onTryAgain = {
+                    navController.navigate(Route.Test(categoryId)) {
+                        popUpTo(Route.TestResult(categoryId)) { inclusive = true }
+                    }
+                },
+                navigationViewModel = navigationViewModel
+            )
         }
     }
 }

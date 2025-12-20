@@ -65,6 +65,7 @@ class DefaultNavGraphTest {
         learnScreenRobot.progressBarValue = DEFAULT_LEARNING_SETS_COUNT
 
         screen = ScreenRobot(
+            fakeUserRepository = fakeUserRepository,
             home = homeScreenRobot,
             learn = learnScreenRobot,
             quiz = quizScreenRobot,
@@ -330,6 +331,29 @@ class DefaultNavGraphTest {
         screen.testResult.correctCountText_assertIsDisplayed(3)
         screen.testResult.incorrectCountText_assertIsDisplayed(1)
         screen.testResult.incorrectHiraganaList_assertIsDisplayed(listOf(SE))
+    }
+
+    // endregion
+
+    // region TestResult Screen Navigation
+
+    @Test
+    fun testResultScreen_whenTryAgainButtonClicked_navigatesToTestScreen_thenWhenNavigatedUp_navigatesToHomeScreen() = runTest {
+        screen.setLocalUser(
+            progress = HIMIKASE.id,
+            learningSetsCount = DEFAULT_LEARNING_SETS_COUNT,
+            isTestUnlocked = true
+        )
+        setContent(Route.Home)
+
+        screen.navigate_homeToTest()
+        screen.navigate_testToTestQuiz()
+        screen.navigate_testQuizToTestResult()
+        screen.testResult.tryAgainButton_click()
+
+        screen.test.assertOnTestScreen()
+        screen.test.topAppBarNavButton_click()
+        screen.home.assert_onHomeScreen()
     }
 
     // endregion
