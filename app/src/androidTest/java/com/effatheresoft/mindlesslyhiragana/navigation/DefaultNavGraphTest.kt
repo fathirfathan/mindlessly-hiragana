@@ -348,7 +348,7 @@ class DefaultNavGraphTest {
 
         screen.navigate_homeToTest()
         screen.navigate_testToTestQuiz()
-        screen.navigate_testQuizToTestResult()
+        screen.navigate_testQuizToTestResult(isAllAnswersCorrect = false)
         screen.testResult.tryAgainButton_click()
 
         screen.test.assertOnTestScreen()

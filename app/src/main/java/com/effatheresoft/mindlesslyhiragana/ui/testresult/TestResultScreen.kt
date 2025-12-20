@@ -82,7 +82,10 @@ fun TestResultContent(
             )
         }
         Spacer(modifier = Modifier.weight(1f))
-        Button(onClick = onTryAgainButtonClick) { Text(stringResource(R.string.try_again)) }
+        Button(
+            onClick = onTryAgainButtonClick,
+            enabled = !isContinueLearningButtonEnabled
+        ) { Text(stringResource(R.string.try_again)) }
         Button(
             onClick = onContinueLearningButtonClick,
             enabled = isContinueLearningButtonEnabled

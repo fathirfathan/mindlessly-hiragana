@@ -83,4 +83,12 @@ class TestResultScreenRobot <TR : TestRule, CA : ComponentActivity> (
     fun continueLearningButton_click() {
         composeTestRule.onNode(isButton() and hasText(activity.getString(R.string.continue_learning))).performClick()
     }
+
+    fun tryAgainButton_assertIsEnabled() {
+        composeTestRule.onNode(isButton() and hasText(activity.getString(R.string.try_again))).assertIsEnabled()
+    }
+
+    fun tryAgainButton_assertIsDisabled() {
+        composeTestRule.onNode(isButton() and hasText(activity.getString(R.string.try_again))).assertIsNotEnabled()
+    }
 }

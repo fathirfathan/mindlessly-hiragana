@@ -94,13 +94,25 @@ class ScreenRobot <R : TestRule, A : ComponentActivity> (
         testQuiz.assertOnTestQuizScreen()
     }
 
-    suspend fun navigate_testQuizToTestResult() {
+    suspend fun navigate_testQuizToTestResult(isAllAnswersCorrect: Boolean = true) {
         val answers = fakeUserRepository.observeLocalUser().first()
             .progress.toHiraganaCategory()?.hiraganaList
         assertNotNull(answers)
 
-        answers?.forEach { answer ->
-            testQuiz.answerButton_click(answer)
+        if (isAllAnswersCorrect) {
+            answers?.forEach { answer ->
+                testQuiz.answerButton_click(answer)
+            }
+        } else {
+            answers?.forEachIndexed { index, answer ->
+                when (index) {
+                    1 -> {
+                        testQuiz.answerButton_click(answers[0])
+                        testQuiz.answerButton_click(answer)
+                    }
+                    else -> testQuiz.answerButton_click(answer)
+                }
+            }
         }
         testResult.assert_onTestResultScreen()
     }

@@ -65,19 +65,21 @@ class TestResultScreenTest {
     }
 
     @Test
-    fun whenCanContinueLearningFalse_continueLearningButton_assertIsDisabled() = runTest {
+    fun whenCanContinueLearningFalse_continueLearningButton_And_tryAgainButton_assertEnabledState() = runTest {
         screen.setCanContinueLearning(false)
         setContent()
 
         screen.continueLearningButton_assertIsDisabled()
+        screen.tryAgainButton_assertIsEnabled()
     }
 
     @Test
-    fun whenCanContinueLearningTrue_continueLearningButton_assertIsEnabled() = runTest {
+    fun whenCanContinueLearningTrue_continueLearningButton_And_tryAgainButton_assertEnabledState() = runTest {
         screen.setCanContinueLearning(true)
         setContent()
 
         screen.continueLearningButton_assertIsEnabled()
+        screen.tryAgainButton_assertIsDisabled()
     }
 
     fun setContent() {
