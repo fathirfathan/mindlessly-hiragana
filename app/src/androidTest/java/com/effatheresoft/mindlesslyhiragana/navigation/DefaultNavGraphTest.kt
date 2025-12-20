@@ -373,6 +373,19 @@ class DefaultNavGraphTest {
         screen.home.assert_onHomeScreen()
     }
 
+    @Test
+    fun testResultScreen_whenContinueButtonClicked_withNewProgress_navigatesToLearnScreen() = runTest {
+        screen.setLocalUser(
+            progress = HIMIKASE.id,
+            learningSetsCount = DEFAULT_LEARNING_SETS_COUNT,
+            isTestUnlocked = true
+        )
+        setContent(Route.TestQuiz(HIMIKASE.id))
+        screen.navigate_testQuizToTestResult()
+        screen.testResult.continueLearningButton_click()
+        screen.learn.assert_onLearnScreen(FUWOYA)
+    }
+
     // endregion
 
     fun setContent(startDestination: Route? = null) {

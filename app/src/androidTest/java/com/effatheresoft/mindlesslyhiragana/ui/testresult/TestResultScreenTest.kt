@@ -92,7 +92,8 @@ class TestResultScreenTest {
                 TestResultScreen(
                     onNavigateUp = {},
                     onTryAgain = {},
-                    navigationViewModel = navigationViewModel
+                    onContinueLearning = {},
+                    navigationViewModel = navigationViewModel,
                 )
             }
         }

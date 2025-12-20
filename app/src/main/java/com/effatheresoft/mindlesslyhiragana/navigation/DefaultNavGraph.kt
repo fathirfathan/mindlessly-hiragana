@@ -139,6 +139,11 @@ fun DefaultNavGraph(
                         popUpTo(Route.TestResult(categoryId)) { inclusive = true }
                     }
                 },
+                onContinueLearning = { newProgress ->
+                    navController.navigate(Route.Learn(newProgress)) {
+                        popUpTo(Route.TestResult(categoryId)) { inclusive = true }
+                    }
+                },
                 navigationViewModel = navigationViewModel
             )
         }

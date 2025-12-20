@@ -14,6 +14,7 @@ import javax.inject.Inject
 data class TestResultUiState(
     val loading: Boolean = false,
     val canContinueLearning: Boolean = false,
+    val progress: String = ""
 )
 
 @HiltViewModel
@@ -21,12 +22,15 @@ class TestResultViewModel @Inject constructor(
     userRepository: UserRepository
 ): ViewModel() {
     private val _loading = MutableStateFlow(false)
-    private val _canContinueLearning = userRepository.observeLocalUser().map { !it.isTestUnlocked }
+    private val _observedLocalUser = userRepository.observeLocalUser()
+    private val _canContinueLearning = _observedLocalUser.map { !it.isTestUnlocked }
+    private val _progress = _observedLocalUser.map { it.progress }
 
-    val uiState = combine(_loading, _canContinueLearning) { loading, canContinueLearning ->
+    val uiState = combine(_loading, _canContinueLearning, _progress) { loading, canContinueLearning, progress ->
         TestResultUiState(
             loading = loading,
-            canContinueLearning = canContinueLearning
+            canContinueLearning = canContinueLearning,
+            progress = progress
         )
     }.stateIn(
         scope = viewModelScope,

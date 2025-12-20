@@ -79,4 +79,8 @@ class TestResultScreenRobot <TR : TestRule, CA : ComponentActivity> (
     fun topAppBarNavButton_click() {
         composeTestRule.onNode(hasContentDescription(activity.getString(R.string.navigate_back))).performClick()
     }
+
+    fun continueLearningButton_click() {
+        composeTestRule.onNode(isButton() and hasText(activity.getString(R.string.continue_learning))).performClick()
+    }
 }

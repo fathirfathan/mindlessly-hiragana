@@ -43,4 +43,9 @@ class TestResultViewModelTest {
         fakeUserRepository.updateLocalUserIsTestUnlocked(false)
         assertEquals(true, uiState().canContinueLearning)
     }
+
+    @Test
+    fun progress_assertState() = runTest {
+        assertEquals(HiraganaCategory.HIMIKASE.id, uiState().progress)
+    }
 }
