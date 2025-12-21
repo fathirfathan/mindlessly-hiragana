@@ -59,9 +59,17 @@ class DefaultQuizRepository @Inject constructor(
 
             val generatedQuizzes = mutableListOf<Quiz>()
             val learningSetsCount = observedLearningSetsCount.first()
+
             repeat(learningSetsCount) {
-                generatedQuizzes.addAll(possibleQuizzes)
+                val shuffledPossibleQuizzes = possibleQuizzes.shuffled().toMutableList()
+                while (generatedQuizzes.lastOrNull() == shuffledPossibleQuizzes.first()) {
+                    shuffledPossibleQuizzes.shuffle()
+                }
+                generatedQuizzes.addAll(shuffledPossibleQuizzes)
             }
+//            repeat(learningSetsCount) {
+//                generatedQuizzes.addAll(possibleQuizzes)
+//            }
             _quizzes.value = generatedQuizzes
         }
     }

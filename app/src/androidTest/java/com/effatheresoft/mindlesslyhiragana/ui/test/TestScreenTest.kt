@@ -56,7 +56,7 @@ class TestScreenTest {
     @Test
     fun givenCategoryList_categoryList_QuestionsCount_assertAreDisplayed() = runTest {
         setContent()
-        screen.questionsText_assertIsDisplayed(2)
+        screen.questionsText_assertIsDisplayed(7)
         screen.categoryText_assertIsDisplayed()
     }
 
