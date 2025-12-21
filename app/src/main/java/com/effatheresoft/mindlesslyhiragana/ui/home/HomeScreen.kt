@@ -1,5 +1,6 @@
 package com.effatheresoft.mindlesslyhiragana.ui.home
 
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -7,6 +8,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
@@ -51,7 +54,8 @@ fun HomeScreen(
 
     DefaultDrawer(
         title = R.string.mindlessly_hiragana,
-        drawerState = drawerState
+        drawerState = drawerState,
+        onResetButtonClick = viewModel::onDrawerResetButtonClick
     ) {
         HomeScaffold(
             topAppBar = {
@@ -74,6 +78,55 @@ fun HomeScreen(
                 lockedCategories = uiState.lockedCategories,
                 onNavigateToLearn = onNavigateToLearn,
                 onNavigateToTest = { onNavigateToTest(uiState.progress) }
+            )
+
+            when {
+                uiState.isResetDialogOpen -> DefaultDialog(
+                    onConfirm = viewModel::onResetDialogConfirm,
+                    onConfirmLabel = R.string.reset,
+                    onDismiss = viewModel::onResetDialogDismiss,
+                    title = R.string.reset_progress,
+                    text = R.string.reset_dialog_text,
+                    icon = R.drawable.delete_24px
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun DefaultDialog(
+    onConfirm: () -> Unit,
+    @StringRes onConfirmLabel: Int,
+    onDismiss: () -> Unit,
+    @StringRes title: Int,
+    @StringRes text: Int,
+    @DrawableRes icon: Int,
+    modifier: Modifier = Modifier
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = { Button(onConfirm) { Text(stringResource(onConfirmLabel)) } },
+        dismissButton = { Button(onConfirm) { Text(stringResource(R.string.cancel)) } },
+        title = { Text(stringResource(title)) },
+        text = { Text(stringResource(text)) },
+        icon = { Icon(painterResource(icon), null) },
+        modifier = modifier
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DefaultDialogPreview() {
+    MindlesslyHiraganaTheme {
+        Surface {
+            DefaultDialog(
+                onConfirm = {},
+                onConfirmLabel = R.string.reset,
+                onDismiss = {},
+                title = R.string.reset,
+                text = R.string.reset_dialog_text,
+                icon = R.drawable.delete_24px
             )
         }
     }
@@ -120,6 +173,7 @@ fun HomeContent(
 fun DefaultDrawer(
     @StringRes title: Int,
     drawerState: DrawerState,
+    onResetButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
@@ -136,7 +190,7 @@ fun DefaultDrawer(
                 NavigationDrawerItem(
                     label = { Text(stringResource(R.string.reset_progress)) },
                     selected = false,
-                    onClick = {},
+                    onClick = onResetButtonClick,
                     icon = { Icon(
                         painter = painterResource(R.drawable.delete_24px),
                         contentDescription = null
@@ -225,7 +279,8 @@ fun HomeScreenPreview() {
         Surface {
             DefaultDrawer(
                 title = R.string.mindlessly_hiragana,
-                drawerState = rememberDrawerState(initialValue = DrawerValue.Open)
+                drawerState = rememberDrawerState(initialValue = DrawerValue.Open),
+                onResetButtonClick = {}
             ) {
                 HomeScaffold(
                     topAppBar = {

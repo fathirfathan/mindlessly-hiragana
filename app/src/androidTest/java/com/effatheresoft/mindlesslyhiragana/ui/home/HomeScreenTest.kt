@@ -20,6 +20,8 @@ import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import junit.framework.TestCase.assertEquals
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -134,6 +136,64 @@ class HomeScreenTest {
 
         screen.drawerTitleText_assertIsDisplayed()
         screen.drawerResetProgressButton_assertIsDisplayed()
+    }
+
+    @Test
+    fun drawerResetProgressButton_whenIsClicked_resetDialog_assertIsDisplayed() {
+        setContent()
+        screen.topAppBarMenu_click()
+
+        screen.drawerResetProgressButton_click()
+        screen.resetDialog_assertIsDisplayed()
+    }
+
+    @Test
+    fun resetDialogStatelessUiElements_assertIsDisplayed() {
+        setContent()
+        screen.topAppBarMenu_click()
+        screen.drawerResetProgressButton_click()
+
+        screen.resetDialogTitleText_assertIsDisplayed()
+        screen.resetDialogText_assertIsDisplayed()
+        screen.resetDialogConfirmButton_assertIsDisplayed()
+        screen.resetDialogCancelButton_assertIsDisplayed()
+    }
+
+    @Test
+    fun resetDialog_whenCancelButtonIsClicked_dialog_assertIsDismissed() {
+        setContent()
+        screen.topAppBarMenu_click()
+        screen.drawerResetProgressButton_click()
+
+        screen.resetDialogCancelButton_click()
+        screen.resetDialog_assertIsNotDisplayed()
+    }
+
+    @Test
+    fun resetDialog_whenConfirmButtonIsClicked_dialog_assertIsDismissed() {
+        setContent()
+        screen.topAppBarMenu_click()
+        screen.drawerResetProgressButton_click()
+
+        screen.resetDialogConfirmButton_click()
+        screen.resetDialog_assertIsNotDisplayed()
+    }
+
+    @Test
+    fun resetDialog_whenConfirmButtonIsClicked_localUserProgress_assertIsReset() = runTest {
+        screen.setLocalUserProgress(FUWOYA.id)
+        screen.setLocalUserLearningSetsCount(1)
+        screen.setIsTestUnlocked(true)
+        setContent()
+
+        screen.topAppBarMenu_click()
+        screen.drawerResetProgressButton_click()
+        screen.resetDialogConfirmButton_click()
+
+        val localUser = fakeUserRepository.observeLocalUser().first()
+        assertEquals(HIMIKASE.id, localUser.progress)
+        assertEquals(5, localUser.learningSetsCount)
+        assertEquals(false, localUser.isTestUnlocked)
     }
 
     fun setContent() {
