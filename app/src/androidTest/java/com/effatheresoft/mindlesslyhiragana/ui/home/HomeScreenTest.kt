@@ -5,9 +5,11 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.effatheresoft.mindlesslyhiragana.HiltTestActivity
 import com.effatheresoft.mindlesslyhiragana.R
@@ -37,17 +39,20 @@ class HomeScreenTest {
 
     @Inject
     lateinit var fakeUserRepository: UserRepository
+    private lateinit var screen: HomeScreenRobot<ActivityScenarioRule<HiltTestActivity>, HiltTestActivity>
 
     @Before
-    fun initialize() {
+    fun initialize() = runTest {
         hiltRule.inject()
+        screen = HomeScreenRobot(composeTestRule, fakeUserRepository)
+        screen.setLocalUserProgress(HIMIKASE.id)
     }
 
     @Test
     fun assertTopAppBarDisplayed() = runTest {
         setContent()
 
-        composeTestRule.onNodeWithText(activity.getString(R.string.mindlessly_hiragana)).assertIsDisplayed()
+        composeTestRule.onAllNodesWithText(activity.getString(R.string.mindlessly_hiragana))[0].assertIsDisplayed()
     }
 
     @Test
@@ -94,7 +99,7 @@ class HomeScreenTest {
         val lockedCategories = HiraganaCategory.entries.drop(1).map { it.kanaWithNakaguro }
         for (category in lockedCategories) {
             composeTestRule.onNodeWithText(category).performClick()
-            composeTestRule.onNodeWithText(activity.getString(R.string.mindlessly_hiragana)).assertIsDisplayed()
+            composeTestRule.onAllNodesWithText(activity.getString(R.string.mindlessly_hiragana))[0].assertIsDisplayed()
         }
     }
 
@@ -109,6 +114,27 @@ class HomeScreenTest {
             .positionInRoot
     }
 
+    @Test
+    fun topAppBarMenu_assertIsDisplayed() {
+        setContent()
+        screen.topAppBarMenu_assertIsDisplayed()
+    }
+
+    @Test
+    fun topAppBarMenu_whenIsClicked_drawer_assertIsDisplayed() {
+        setContent()
+        screen.topAppBarMenu_click()
+        screen.drawer_assertIsDisplayed()
+    }
+
+    @Test
+    fun drawerStatelessUiElements_assertIsDisplayed() {
+        setContent()
+        screen.topAppBarMenu_click()
+
+        screen.drawerTitleText_assertIsDisplayed()
+        screen.drawerResetProgressButton_assertIsDisplayed()
+    }
 
     fun setContent() {
         composeTestRule.setContent {

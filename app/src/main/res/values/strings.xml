@@ -19,4 +19,6 @@
     <string name="incorrect_n">Incorrect: %1$d</string>
     <string name="continue_learning">Continue Learning</string>
     <string name="incorrect_hiragana">Incorrect Hiragana:</string>
+    <string name="open_menu">Open menu</string>
+    <string name="reset_progress">Reset Progress</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.effatheresoft.mindlesslyhiragana.ui.home
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -7,14 +8,24 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -25,6 +36,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.effatheresoft.mindlesslyhiragana.R
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,25 +44,38 @@ fun HomeScreen(
     onNavigateToLearn: (categoryId: String) -> Unit,
     onNavigateToTest: (categoryId: String) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel(),
+    drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 ) {
-    Scaffold(
-        modifier = modifier.fillMaxSize(),
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text(stringResource(R.string.mindlessly_hiragana)) }
+    val scope = rememberCoroutineScope()
+
+    DefaultDrawer(
+        title = R.string.mindlessly_hiragana,
+        drawerState = drawerState
+    ) {
+        HomeScaffold(
+            topAppBar = {
+                HomeTopAppBar(
+                    title = R.string.mindlessly_hiragana,
+                    onMenuIconClick = { scope.launch {
+                        when (drawerState.currentValue) {
+                            DrawerValue.Closed -> drawerState.open()
+                            DrawerValue.Open -> drawerState.close()
+                        }
+                    } }
+                )
+            },
+            modifier = modifier
+        ) {
+            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+            HomeContent(
+                unlockedCategories = uiState.unlockedCategories,
+                lockedCategories = uiState.lockedCategories,
+                onNavigateToLearn = onNavigateToLearn,
+                onNavigateToTest = { onNavigateToTest(uiState.progress) }
             )
         }
-    ) { paddingValues ->
-        val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-        HomeContent(
-            unlockedCategories = uiState.unlockedCategories,
-            lockedCategories = uiState.lockedCategories,
-            onNavigateToLearn = onNavigateToLearn,
-            onNavigateToTest = { onNavigateToTest(uiState.progress) },
-            modifier = Modifier.padding(paddingValues)
-        )
     }
 }
 
@@ -92,6 +117,78 @@ fun HomeContent(
 }
 
 @Composable
+fun DefaultDrawer(
+    @StringRes title: Int,
+    drawerState: DrawerState,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            ModalDrawerSheet {
+                Text(
+                    text = stringResource(title),
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.padding(16.dp)
+                )
+                HorizontalDivider()
+                NavigationDrawerItem(
+                    label = { Text(stringResource(R.string.reset_progress)) },
+                    selected = false,
+                    onClick = {},
+                    icon = { Icon(
+                        painter = painterResource(R.drawable.delete_24px),
+                        contentDescription = null
+                    ) }
+                )
+            }
+        },
+        modifier = modifier
+    ) {
+        content()
+    }
+}
+
+@Composable
+fun HomeScaffold(
+    modifier: Modifier = Modifier,
+    topAppBar: @Composable () -> Unit,
+    content: @Composable () -> Unit
+) {
+    Scaffold(
+        topBar = { topAppBar() },
+        modifier = modifier.fillMaxSize(),
+    ) { paddingValues ->
+
+        Surface(modifier = Modifier.padding(paddingValues)) {
+            content()
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HomeTopAppBar(
+    @StringRes title: Int,
+    onMenuIconClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    CenterAlignedTopAppBar(
+        title = { Text(stringResource(title)) },
+        navigationIcon = {
+            IconButton(onClick = onMenuIconClick) {
+                Icon(
+                    painter = painterResource(R.drawable.menu_24px),
+                    contentDescription = stringResource(R.string.open_menu)
+                )
+            }
+        },
+        modifier = modifier
+    )
+}
+
+@Composable
 fun CategoryItem(
     title: String,
     isLocked: Boolean,
@@ -126,22 +223,25 @@ fun CategoryItem(
 fun HomeScreenPreview() {
     MindlesslyHiraganaTheme {
         Surface {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                topBar = {
-                    CenterAlignedTopAppBar(
-                        title = { Text(stringResource(R.string.mindlessly_hiragana)) }
+            DefaultDrawer(
+                title = R.string.mindlessly_hiragana,
+                drawerState = rememberDrawerState(initialValue = DrawerValue.Open)
+            ) {
+                HomeScaffold(
+                    topAppBar = {
+                        HomeTopAppBar(
+                            title = R.string.mindlessly_hiragana,
+                            onMenuIconClick = {}
+                        )
+                    }
+                ) {
+                    HomeContent(
+                        unlockedCategories = HiraganaCategory.entries.take(3),
+                        lockedCategories = HiraganaCategory.entries.drop(3),
+                        onNavigateToLearn = {},
+                        onNavigateToTest = {}
                     )
                 }
-            ) { paddingValues ->
-                HomeContent(
-                    unlockedCategories = HiraganaCategory.entries.take(3),
-                    lockedCategories = HiraganaCategory.entries.drop(3),
-                    onNavigateToLearn = {},
-                    onNavigateToTest = {},
-                    modifier = Modifier.padding(paddingValues)
-                )
-
             }
         }
     }
