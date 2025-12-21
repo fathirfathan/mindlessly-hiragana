@@ -71,13 +71,14 @@ class TestQuizViewModel @Inject constructor(val userRepository: UserRepository):
                 count { it.answerAttempts.size == 1 } == size
             }
 
+            val questionStatesBeforeProgressUpdate = _questionStates.value
             if (isAllAnswersCorrect) {
                 val nextHiraganaCategoryIndex = HiraganaCategory.entries.indexOfFirst { it.id == _userProgress.first() } + 1
                 userRepository.updateLocalUserProgress(HiraganaCategory.entries[nextHiraganaCategoryIndex].id)
                 userRepository.updateLocalUserIsTestUnlocked(false)
             }
 
-            onAllQuestionsAnswered(_questionStates.value)
+            onAllQuestionsAnswered(questionStatesBeforeProgressUpdate)
         }
     }
 }
