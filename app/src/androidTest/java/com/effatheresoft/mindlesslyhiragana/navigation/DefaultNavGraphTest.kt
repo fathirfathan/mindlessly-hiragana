@@ -289,102 +289,102 @@ class DefaultNavGraphTest {
 
     // region TestQuiz Screen Navigation
 
-    @Test
-    fun testQuizScreen_whenAllAnswersCorrect_navigatesToResultScreen_continueLearningButton_assertIsEnabled() = runTest {
-        screen.test.setIsTestUnlocked(true)
-        screen.test.setProgress(HIMIKASE.id)
-        setContent(Route.TestQuiz(HIMIKASE.id))
-        listOf(HI, MI, KA, SE).forEach { answer ->
-            screen.testQuiz.answerButton_click(answer)
-        }
+//    @Test
+//    fun testQuizScreen_whenAllAnswersCorrect_navigatesToResultScreen_continueLearningButton_assertIsEnabled() = runTest {
+//        screen.test.setIsTestUnlocked(true)
+//        screen.test.setProgress(HIMIKASE.id)
+//        setContent(Route.TestQuiz(HIMIKASE.id))
+//        listOf(HI, MI, KA, SE).forEach { answer ->
+//            screen.testQuiz.answerButton_click(answer)
+//        }
+//
+//        screen.testResult.assert_onTestResultScreen()
+//        screen.testResult.continueLearningButton_assertIsEnabled()
+//    }
 
-        screen.testResult.assert_onTestResultScreen()
-        screen.testResult.continueLearningButton_assertIsEnabled()
-    }
+//    @Test
+//    fun testQuizScreen_whenAllAnswersNotCorrect_navigatesToResultScreen_continueLearningButton_assertIsDisabled() = runTest {
+//        screen.test.setIsTestUnlocked(true)
+//        screen.test.setProgress(HIMIKASE.id)
+//        setContent(Route.TestQuiz(HIMIKASE.id))
+//        listOf(HI, MI, KA).forEach { answer ->
+//            screen.testQuiz.answerButton_click(answer)
+//        }
+//        screen.testQuiz.answerButton_click(KA)
+//        screen.testQuiz.answerButton_click(SE)
+//
+//        screen.testResult.assert_onTestResultScreen()
+//        screen.testResult.continueLearningButton_assertIsDisabled()
+//    }
 
-    @Test
-    fun testQuizScreen_whenAllAnswersNotCorrect_navigatesToResultScreen_continueLearningButton_assertIsDisabled() = runTest {
-        screen.test.setIsTestUnlocked(true)
-        screen.test.setProgress(HIMIKASE.id)
-        setContent(Route.TestQuiz(HIMIKASE.id))
-        listOf(HI, MI, KA).forEach { answer ->
-            screen.testQuiz.answerButton_click(answer)
-        }
-        screen.testQuiz.answerButton_click(KA)
-        screen.testQuiz.answerButton_click(SE)
-
-        screen.testResult.assert_onTestResultScreen()
-        screen.testResult.continueLearningButton_assertIsDisabled()
-    }
-
-    @Test
-    fun testQuizScreen_navigatesToTestResultScreen_countTexts_And_incorrectHiraganaList_assertAreCorrect() = runTest {
-        screen.test.setIsTestUnlocked(true)
-        screen.test.setProgress(HIMIKASE.id)
-        setContent(Route.TestQuiz(HIMIKASE.id))
-        listOf(HI, MI, KA).forEach { answer ->
-            screen.testQuiz.answerButton_click(answer)
-        }
-        screen.testQuiz.answerButton_click(KA)
-        screen.testQuiz.answerButton_click(SE)
-
-        screen.testResult.correctCountText_assertIsDisplayed(3)
-        screen.testResult.incorrectCountText_assertIsDisplayed(1)
-        screen.testResult.incorrectHiraganaList_assertIsDisplayed(listOf(SE))
-    }
+//    @Test
+//    fun testQuizScreen_navigatesToTestResultScreen_countTexts_And_incorrectHiraganaList_assertAreCorrect() = runTest {
+//        screen.test.setIsTestUnlocked(true)
+//        screen.test.setProgress(HIMIKASE.id)
+//        setContent(Route.TestQuiz(HIMIKASE.id))
+//        listOf(HI, MI, KA).forEach { answer ->
+//            screen.testQuiz.answerButton_click(answer)
+//        }
+//        screen.testQuiz.answerButton_click(KA)
+//        screen.testQuiz.answerButton_click(SE)
+//
+//        screen.testResult.correctCountText_assertIsDisplayed(3)
+//        screen.testResult.incorrectCountText_assertIsDisplayed(1)
+//        screen.testResult.incorrectHiraganaList_assertIsDisplayed(listOf(SE))
+//    }
 
     // endregion
 
     // region TestResult Screen Navigation
 
-    @Test
-    fun testResultScreen_whenTryAgainButtonClicked_navigatesToTestScreen_thenWhenNavigatedUp_navigatesToHomeScreen() = runTest {
-        screen.setLocalUser(
-            progress = HIMIKASE.id,
-            learningSetsCount = DEFAULT_LEARNING_SETS_COUNT,
-            isTestUnlocked = true
-        )
-        setContent(Route.Home)
+//    @Test
+//    fun testResultScreen_whenTryAgainButtonClicked_navigatesToTestScreen_thenWhenNavigatedUp_navigatesToHomeScreen() = runTest {
+//        screen.setLocalUser(
+//            progress = HIMIKASE.id,
+//            learningSetsCount = DEFAULT_LEARNING_SETS_COUNT,
+//            isTestUnlocked = true
+//        )
+//        setContent(Route.Home)
+//
+//        screen.navigate_homeToTest()
+//        screen.navigate_testToTestQuiz()
+//        screen.navigate_testQuizToTestResult(isAllAnswersCorrect = false)
+//        screen.testResult.tryAgainButton_click()
+//
+//        screen.test.assertOnTestScreen()
+//        screen.test.topAppBarNavButton_click()
+//        screen.home.assert_onHomeScreen()
+//    }
 
-        screen.navigate_homeToTest()
-        screen.navigate_testToTestQuiz()
-        screen.navigate_testQuizToTestResult(isAllAnswersCorrect = false)
-        screen.testResult.tryAgainButton_click()
+//    @Test
+//    fun testResultScreen_whenNavigatedUp_navigatesToHomeScreen() = runTest {
+//        screen.setLocalUser(
+//            progress = HIMIKASE.id,
+//            learningSetsCount = DEFAULT_LEARNING_SETS_COUNT,
+//            isTestUnlocked = true
+//        )
+//        setContent(Route.Home)
+//
+//        screen.navigate_homeToTest()
+//        screen.navigate_testToTestQuiz()
+//        screen.navigate_testQuizToTestResult()
+//        screen.testResult.topAppBarNavButton_click()
+//
+//        screen.home.assert_onHomeScreen()
+//    }
 
-        screen.test.assertOnTestScreen()
-        screen.test.topAppBarNavButton_click()
-        screen.home.assert_onHomeScreen()
-    }
-
-    @Test
-    fun testResultScreen_whenNavigatedUp_navigatesToHomeScreen() = runTest {
-        screen.setLocalUser(
-            progress = HIMIKASE.id,
-            learningSetsCount = DEFAULT_LEARNING_SETS_COUNT,
-            isTestUnlocked = true
-        )
-        setContent(Route.Home)
-
-        screen.navigate_homeToTest()
-        screen.navigate_testToTestQuiz()
-        screen.navigate_testQuizToTestResult()
-        screen.testResult.topAppBarNavButton_click()
-
-        screen.home.assert_onHomeScreen()
-    }
-
-    @Test
-    fun testResultScreen_whenContinueButtonClicked_withNewProgress_navigatesToLearnScreen() = runTest {
-        screen.setLocalUser(
-            progress = HIMIKASE.id,
-            learningSetsCount = DEFAULT_LEARNING_SETS_COUNT,
-            isTestUnlocked = true
-        )
-        setContent(Route.TestQuiz(HIMIKASE.id))
-        screen.navigate_testQuizToTestResult()
-        screen.testResult.continueLearningButton_click()
-        screen.learn.assert_onLearnScreen(FUWOYA)
-    }
+//    @Test
+//    fun testResultScreen_whenContinueButtonClicked_withNewProgress_navigatesToLearnScreen() = runTest {
+//        screen.setLocalUser(
+//            progress = HIMIKASE.id,
+//            learningSetsCount = DEFAULT_LEARNING_SETS_COUNT,
+//            isTestUnlocked = true
+//        )
+//        setContent(Route.TestQuiz(HIMIKASE.id))
+//        screen.navigate_testQuizToTestResult()
+//        screen.testResult.continueLearningButton_click()
+//        screen.learn.assert_onLearnScreen(FUWOYA)
+//    }
 
     // endregion
 

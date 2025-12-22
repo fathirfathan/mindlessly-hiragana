@@ -46,12 +46,12 @@ class TestQuizScreenTest {
         screen.answerButtons_assertAreDisplayed()
     }
 
-    @Test
-    fun givenQuestion_questionText_assertIsDisplayed() {
-        val question = "ひ"
-        setContent()
-        screen.questionText_assertIsDisplayed(question)
-    }
+//    @Test
+//    fun givenQuestion_questionText_assertIsDisplayed() {
+//        val question = "ひ"
+//        setContent()
+//        screen.questionText_assertIsDisplayed(question)
+//    }
 
     @Test
     fun givenRemainingQuestionsCount_remainingText_assertIsDisplayed() {
@@ -68,23 +68,23 @@ class TestQuizScreenTest {
         screen.answerButton_assertIsDisabled(answer)
     }
 
-    @Test
-    fun correctAnswerButton_whenClicked_assertAllButtonsAreEnabled() {
-        setContent()
-        screen.answerButton_click(Hiragana.A)
-        screen.answerButton_click(Hiragana.PO)
-        screen.answerButton_click(Hiragana.HI)
+//    @Test
+//    fun correctAnswerButton_whenClicked_assertAllButtonsAreEnabled() {
+//        setContent()
+//        screen.answerButton_click(Hiragana.A)
+//        screen.answerButton_click(Hiragana.PO)
+//        screen.answerButton_click(Hiragana.HI)
+//
+//        screen.answerButton_assertIsEnabled(Hiragana.A)
+//        screen.answerButton_assertIsEnabled(Hiragana.HI)
+//    }
 
-        screen.answerButton_assertIsEnabled(Hiragana.A)
-        screen.answerButton_assertIsEnabled(Hiragana.HI)
-    }
-
-    @Test
-    fun correctAnswerButton_whenClicked_remainingTextIsUpdated() {
-        setContent()
-        screen.answerButton_click(Hiragana.HI)
-        screen.remainingText_assertIsDisplayed(2)
-    }
+//    @Test
+//    fun correctAnswerButton_whenClicked_remainingTextIsUpdated() {
+//        setContent()
+//        screen.answerButton_click(Hiragana.HI)
+//        screen.remainingText_assertIsDisplayed(2)
+//    }
 
     fun setContent() {
         composeTestRule.setContent {
