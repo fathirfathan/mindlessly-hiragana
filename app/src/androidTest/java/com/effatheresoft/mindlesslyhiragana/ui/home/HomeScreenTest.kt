@@ -11,6 +11,11 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.effatheresoft.annotations.RunThen
+import com.effatheresoft.annotations.RunWhen
+import com.effatheresoft.annotations.Scenario
+import com.effatheresoft.annotations.Then
+import com.effatheresoft.annotations.When
 import com.effatheresoft.mindlesslyhiragana.HiltTestActivity
 import com.effatheresoft.mindlesslyhiragana.R
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
@@ -28,6 +33,58 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import javax.inject.Inject
+
+@RunWith(AndroidJUnit4::class)
+@HiltAndroidTest
+open class HomeScreenSteps {
+    @get:Rule(order = 0)
+    var hiltRule = HiltAndroidRule(this)
+
+    @get:Rule(order = 1)
+    val composeTestRule = createAndroidComposeRule<HiltTestActivity>()
+    private val activity get() = composeTestRule.activity
+
+    @Inject
+    lateinit var fakeUserRepository: UserRepository
+    private lateinit var screen: HomeScreenRobot<ActivityScenarioRule<HiltTestActivity>, HiltTestActivity>
+
+    @Before
+    fun initialize() = runTest {
+        hiltRule.inject()
+        screen = HomeScreenRobot(composeTestRule, fakeUserRepository)
+        screen.setLocalUserProgress(HIMIKASE.id)
+    }
+
+    @When("top app bar title is displayed")
+    fun topAppBarTitleIsDisplayed() {
+//        setContent()
+        composeTestRule.onAllNodesWithText("Mindlessly Hiragana")[0].assertIsDisplayed()
+    }
+
+    @Then("menu button is displayed")
+    fun menuButtonIsDisplayed() {
+        composeTestRule.onNodeWithContentDescription("Open menu").assertIsDisplayed()
+    }
+
+    @Scenario
+    @RunWhen("top app bar title is displayed")
+    @RunThen("menu button is displayed")
+    open fun scenario_menuButtonExists() {}
+
+    fun setContent() {
+        composeTestRule.setContent {
+            MindlesslyHiraganaTheme {
+                Surface {
+                    HomeScreen(
+                        onNavigateToLearn = {},
+                        onNavigateToTest = {},
+                        viewModel = HomeViewModel(fakeUserRepository)
+                    )
+                }
+            }
+        }
+    }
+}
 
 @RunWith(AndroidJUnit4::class)
 @HiltAndroidTest

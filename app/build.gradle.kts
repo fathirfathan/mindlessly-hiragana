@@ -59,6 +59,10 @@ dependencies {
     testImplementation(project(":shared-test"))
     androidTestImplementation(project(":shared-test"))
 
+    //gherkin
+    androidTestImplementation(project(":annotations"))
+    kspAndroidTest(project(":gherkinprocessor"))
+
     // room
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.room.runtime)
