@@ -16,6 +16,7 @@ kotlinxCoroutines = "1.10.2"
 appcompat = "1.7.1"
 material = "1.10.0"
 kotlinxSerializationJson = "1.9.0"
+cucumber = "7.33.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -45,6 +46,8 @@ kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+cucumber-java = { group = "io.cucumber", name = "cucumber-java", version.ref = "cucumber"}
+cucumber-junit = { group = "io.cucumber", name = "cucumber-junit", version.ref = "cucumber"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

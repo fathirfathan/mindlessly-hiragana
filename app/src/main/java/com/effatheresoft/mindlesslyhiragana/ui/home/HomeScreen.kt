@@ -279,7 +279,7 @@ fun HomeScreenPreview() {
         Surface {
             DefaultDrawer(
                 title = R.string.mindlessly_hiragana,
-                drawerState = rememberDrawerState(initialValue = DrawerValue.Open),
+                drawerState = rememberDrawerState(initialValue = DrawerValue.Closed),
                 onResetButtonClick = {}
             ) {
                 HomeScaffold(

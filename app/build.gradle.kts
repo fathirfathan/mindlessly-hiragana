@@ -43,6 +43,13 @@ android {
             )
         }
     }
+
+    sourceSets {
+        getByName("test") {
+            assets.srcDir(file("src/test/assets"))
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -58,6 +65,10 @@ android {
 dependencies {
     testImplementation(project(":shared-test"))
     androidTestImplementation(project(":shared-test"))
+
+    // cucumber
+    testImplementation(libs.cucumber.java)
+    testImplementation(libs.cucumber.junit)
 
     // room
     implementation(libs.androidx.room.ktx)
