@@ -57,7 +57,7 @@ class HomeViewModel @Inject constructor(
         initialValue = HomeUiState(isLoading = true)
     )
 
-    fun selectCategory(category: QuizCategory) = {
+    fun selectCategory(category: QuizCategory) {
         val isSuccess = quizRepository.selectCategory(category)
         if (isSuccess) _selectedCategory.value = category
     }

@@ -60,8 +60,8 @@ fun DefaultNavGraph(
                 onNavigateToTest = { navController.navigate(Route.Test(it)) },
                 onNavigateToCategory = { category ->
                     when(category.title) {
-                        "Test All Learned" -> navController.navigate(Route.Test(category.title))
-                        else -> navController.navigate(Route.Learn(category.title))
+                        "Test All Learned" -> navController.navigate(Route.Test(category.id))
+                        else -> navController.navigate(Route.Learn(category.id))
                     }
                 }
             )

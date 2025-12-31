@@ -14,7 +14,25 @@ import javax.inject.Inject
 data class QuizCategory(
     val title: String,
     val isLocked: Boolean
-)
+) {
+    val id = when(title){
+        "ひみかせ" -> "himikase"
+        "ふをや" -> "fuwoya"
+        "あお" -> "ao"
+        "つう・んえ" -> "tsuune"
+        "くへ・りけ" -> "kuherike"
+        "こに・たな" -> "konitana"
+        "すむ・ろる" -> "sumuroru"
+        "しいも" -> "shiimo"
+        "とてそ" -> "toteso"
+        "わねれ" -> "wanere"
+        "のゆめぬ" -> "noyumenu"
+        "よはまほ" -> "yohamaho"
+        "さきちら" -> "sakichira"
+        "Test All Learned" -> "Test All Learned"
+        else -> ""
+    }
+}
 
 fun List<QuizCategory>.isCategoryUnlocked(category: QuizCategory): Boolean {
     return !first { it.title == category.title }.isLocked
