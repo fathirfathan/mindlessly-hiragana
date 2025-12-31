@@ -2,8 +2,9 @@ package com.effatheresoft.mindlesslyhiragana.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.HIMIKASE
+import com.effatheresoft.mindlesslyhiragana.data.repository.QuizCategory
+import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredQuizRepository
 import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,28 +18,37 @@ import javax.inject.Inject
 data class HomeUiState(
     val progress: String = HIMIKASE.id,
     val isLoading: Boolean = false,
-    val unlockedCategories: List<HiraganaCategory> = emptyList(),
-    val lockedCategories: List<HiraganaCategory> = emptyList(),
+    val categories: List<QuizCategory> = emptyList(),
+    val selectedCategory: QuizCategory? = null,
     val isResetDialogOpen: Boolean = false
 )
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(val userRepository: UserRepository) : ViewModel() {
+class HomeViewModel @Inject constructor(
+    private val quizRepository: RefactoredQuizRepository,
+    private val userRepository: UserRepository
+) : ViewModel() {
 
-    private val hiraganaCategories = HiraganaCategory.entries
+    private val _categories = quizRepository.observeQuizCategories()
 
     private val _localUser = userRepository.observeLocalUser()
     private val _isLoading = MutableStateFlow(false)
     private val _isResetDialogOpen = MutableStateFlow(false)
+    private val _selectedCategory = MutableStateFlow<QuizCategory?>(null)
 
-    val uiState: StateFlow<HomeUiState> = combine(_localUser, _isLoading, _isResetDialogOpen) { localUser, isLoading, isResetDialogOpen ->
-        val currentProgressCategoryIndex = hiraganaCategories.indexOfFirst { it.id == localUser.progress }
+    val uiState: StateFlow<HomeUiState> = combine(
+        _localUser,
+        _isLoading,
+        _isResetDialogOpen,
+        _categories,
+        _selectedCategory
+    ) { localUser, isLoading, isResetDialogOpen, categories, selectedCategory ->
 
         HomeUiState(
             progress = localUser.progress,
             isLoading = isLoading,
-            unlockedCategories = hiraganaCategories.take(currentProgressCategoryIndex + 1),
-            lockedCategories = hiraganaCategories.drop(currentProgressCategoryIndex + 1),
+            categories = categories,
+            selectedCategory = selectedCategory,
             isResetDialogOpen = isResetDialogOpen
         )
     }.stateIn(
@@ -46,6 +56,11 @@ class HomeViewModel @Inject constructor(val userRepository: UserRepository) : Vi
         started = SharingStarted.WhileSubscribed(5000L),
         initialValue = HomeUiState(isLoading = true)
     )
+
+    fun selectCategory(category: QuizCategory) = {
+        val isSuccess = quizRepository.selectCategory(category)
+        if (isSuccess) _selectedCategory.value = category
+    }
 
     fun onDrawerResetButtonClick() {
         _isResetDialogOpen.value = true

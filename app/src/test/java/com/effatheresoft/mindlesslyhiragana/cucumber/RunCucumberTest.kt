@@ -10,4 +10,4 @@ import org.junit.runner.RunWith
     glue = ["com.effatheresoft.mindlesslyhiragana.home"],
     plugin = ["pretty"]
 )
-class RunCucumberTest {}
+class HomeScreenCucumberTest {}

@@ -27,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -37,7 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.effatheresoft.mindlesslyhiragana.R
-import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
+import com.effatheresoft.mindlesslyhiragana.data.repository.QuizCategory
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 import kotlinx.coroutines.launch
 
@@ -46,6 +47,7 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     onNavigateToLearn: (categoryId: String) -> Unit,
     onNavigateToTest: (categoryId: String) -> Unit,
+    onNavigateToCategory: (category: QuizCategory) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
     drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -73,11 +75,15 @@ fun HomeScreen(
         ) {
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+            LaunchedEffect(uiState.selectedCategory) {
+                uiState.selectedCategory?.let {
+                    onNavigateToCategory(it)
+                }
+            }
+
             HomeContent(
-                unlockedCategories = uiState.unlockedCategories,
-                lockedCategories = uiState.lockedCategories,
-                onNavigateToLearn = onNavigateToLearn,
-                onNavigateToTest = { onNavigateToTest(uiState.progress) }
+                categories = uiState.categories,
+                onCategoryClicked = viewModel::selectCategory,
             )
 
             when {
@@ -134,36 +140,16 @@ fun DefaultDialogPreview() {
 
 @Composable
 fun HomeContent(
-    unlockedCategories: List<HiraganaCategory>,
-    lockedCategories: List<HiraganaCategory>,
-    onNavigateToLearn: (categoryId: String) -> Unit,
-    onNavigateToTest: () -> Unit,
+    categories: List<QuizCategory>,
+    onCategoryClicked: (category: QuizCategory) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp)
-    ) {
-        for (category in unlockedCategories) {
+    Column(modifier = modifier.fillMaxSize().padding(horizontal = 16.dp)) {
+        for (category in categories) {
             CategoryItem(
-                title = category.toHiraganaStringWithNakaguro(),
-                isLocked = false,
-                onClick = { onNavigateToLearn(category.id) }
-            )
-        }
-
-        CategoryItem(
-            title = stringResource(R.string.test_all_learned),
-            isLocked = false,
-            onClick = onNavigateToTest
-        )
-
-        for (category in lockedCategories) {
-            CategoryItem(
-                title = category.toHiraganaStringWithNakaguro(),
-                isLocked = true,
-                onClick = {}
+                title = category.title,
+                isLocked = category.isLocked,
+                onClick = { onCategoryClicked(category) }
             )
         }
     }
@@ -291,10 +277,23 @@ fun HomeScreenPreview() {
                     }
                 ) {
                     HomeContent(
-                        unlockedCategories = HiraganaCategory.entries.take(3),
-                        lockedCategories = HiraganaCategory.entries.drop(3),
-                        onNavigateToLearn = {},
-                        onNavigateToTest = {}
+                        categories = listOf(
+                            QuizCategory("ひみかせ", false),
+                            QuizCategory("Test All Learned", false),
+                            QuizCategory("ふをや", true),
+                            QuizCategory("あお", true),
+                            QuizCategory("つう・んえ", true),
+                            QuizCategory("くへ・りけ", true),
+                            QuizCategory("こに・たな", true),
+                            QuizCategory("すむ・ろる", true),
+                            QuizCategory("しいも", true),
+                            QuizCategory("とてそ", true),
+                            QuizCategory("わねれ", true),
+                            QuizCategory("のゆめぬ", true),
+                            QuizCategory("よはまほ", true),
+                            QuizCategory("さきちら", true)
+                        ),
+                        onCategoryClicked = {}
                     )
                 }
             }

@@ -57,7 +57,13 @@ fun DefaultNavGraph(
         composable<Route.Home> {
             HomeScreen(
                 onNavigateToLearn = { navController.navigate(Route.Learn(it)) },
-                onNavigateToTest = { navController.navigate(Route.Test(it)) }
+                onNavigateToTest = { navController.navigate(Route.Test(it)) },
+                onNavigateToCategory = { category ->
+                    when(category.title) {
+                        "Test All Learned" -> navController.navigate(Route.Test(category.title))
+                        else -> navController.navigate(Route.Learn(category.title))
+                    }
+                }
             )
         }
 
