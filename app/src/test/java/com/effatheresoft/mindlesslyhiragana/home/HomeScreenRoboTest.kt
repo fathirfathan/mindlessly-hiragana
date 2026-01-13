@@ -1,13 +1,16 @@
 package com.effatheresoft.mindlesslyhiragana.home
 
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onParent
+import androidx.compose.ui.test.performScrollToNode
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.effatheresoft.mindlesslyhiragana.HiltTestActivity
+import com.effatheresoft.mindlesslyhiragana.R
+import com.effatheresoft.mindlesslyhiragana.ui.home.HomeScreen
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -26,37 +29,38 @@ class HomeScreenRoboTest {
 
     @get:Rule(order = 1)
     val composeTestRule = createAndroidComposeRule<HiltTestActivity>()
+    val activity get() = composeTestRule.activity
 
     @Test
-    fun correctTest() {
+    fun `user open home screen for the first time`() {
+        // given user progress is `himikase`
+        // when user open home screen
+        // then `himikase` category is unlocked
+        // and `Test All Learned` category is
+        // and categories after `Test All Learned` are locked
         setContent()
-        composeTestRule.onNodeWithText("Hello World").assertIsDisplayed()
-    }
 
-    @Test
-    fun incorrectTest1() {
-        setContent()
-        composeTestRule.onNodeWithText("Hello World!").assertIsDisplayed()
-    }
+        val categoryTitles = listOf("ひみかせ", "Test All Learned", "ふをや", "あお", "つう・んえ", "くへ・りけ", "こに・たな", "すむ・ろる", "しいも", "とてそ", "わねれ", "のゆめぬ", "よはまほ", "さきちら")
+        for (title in categoryTitles) {
+            composeTestRule.onNodeWithText(title).onParent().performScrollToNode(hasText(title))
+            composeTestRule.onNodeWithText(title).assertIsDisplayed()
 
-    @Test
-    fun incorrectTest2() {
-        setContent()
-        composeTestRule.onNodeWithText("Hello World!").assertIsDisplayed()
+            when (title) {
+                "ひみかせ" -> composeTestRule.onNodeWithContentDescription(activity.getString(R.string.x_category_unlocked, title)).assertIsDisplayed()
+                "Test All Learned" -> composeTestRule.onNodeWithContentDescription(activity.getString(R.string.x_category_unlocked, "Test All Learned")).assertIsDisplayed()
+                else -> composeTestRule.onNodeWithContentDescription(activity.getString(R.string.x_category_locked, title)).assertIsDisplayed()
+            }
+        }
     }
 
     fun setContent() {
         composeTestRule.setContent {
             MindlesslyHiraganaTheme {
-                Surface {
-                    TestComposable()
-                }
+                HomeScreen(
+                    onNavigateToLearn = {},
+                    onNavigateToTest = {}
+                )
             }
         }
     }
-}
-
-@Composable
-fun TestComposable() {
-    Text("Hello World")
 }

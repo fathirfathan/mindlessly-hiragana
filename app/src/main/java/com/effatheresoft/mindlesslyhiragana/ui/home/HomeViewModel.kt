@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.HIMIKASE
-import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
+import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredUserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -17,28 +17,22 @@ import javax.inject.Inject
 data class HomeUiState(
     val progress: String = HIMIKASE.id,
     val isLoading: Boolean = false,
-    val unlockedCategories: List<HiraganaCategory> = emptyList(),
-    val lockedCategories: List<HiraganaCategory> = emptyList(),
+    val categories: List<HomeCategory> = emptyList(),
     val isResetDialogOpen: Boolean = false
 )
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(val userRepository: UserRepository) : ViewModel() {
-
-    private val hiraganaCategories = HiraganaCategory.entries
+class HomeViewModel @Inject constructor(val userRepository: RefactoredUserRepository) : ViewModel() {
 
     private val _localUser = userRepository.observeLocalUser()
     private val _isLoading = MutableStateFlow(false)
     private val _isResetDialogOpen = MutableStateFlow(false)
 
     val uiState: StateFlow<HomeUiState> = combine(_localUser, _isLoading, _isResetDialogOpen) { localUser, isLoading, isResetDialogOpen ->
-        val currentProgressCategoryIndex = hiraganaCategories.indexOfFirst { it.id == localUser.progress }
-
         HomeUiState(
             progress = localUser.progress,
             isLoading = isLoading,
-            unlockedCategories = hiraganaCategories.take(currentProgressCategoryIndex + 1),
-            lockedCategories = hiraganaCategories.drop(currentProgressCategoryIndex + 1),
+            categories = getCategories(localUser.progress),
             isResetDialogOpen = isResetDialogOpen
         )
     }.stateIn(
@@ -46,6 +40,40 @@ class HomeViewModel @Inject constructor(val userRepository: UserRepository) : Vi
         started = SharingStarted.WhileSubscribed(5000L),
         initialValue = HomeUiState(isLoading = true)
     )
+
+    fun getCategories(userProgress: String): List<HomeCategory> {
+        val hiraganaCategories = HiraganaCategory.entries
+        val categories = mutableListOf<HomeCategory>()
+
+        val categoryOnProgressIndex = hiraganaCategories.indexOfFirst { category -> category.id == userProgress }
+        val unlockedCategories = hiraganaCategories.take(categoryOnProgressIndex + 1)
+            .map {
+                HomeCategory(
+                    id = it.id,
+                    title = it.kanaWithNakaguro,
+                    isLocked = false
+                )
+            }
+        val testAllLearnedCategory = HomeCategory(
+            id = "Test All Learned",
+            title = "Test All Learned",
+            isLocked = false
+        )
+        val lockedCategories = hiraganaCategories.drop(categoryOnProgressIndex + 1)
+            .map {
+                HomeCategory(
+                    id = it.id,
+                    title = it.kanaWithNakaguro,
+                    isLocked = true
+                )
+            }
+
+        categories.addAll(unlockedCategories)
+        categories.add(testAllLearnedCategory)
+        categories.addAll(lockedCategories)
+
+        return categories
+    }
 
     fun onDrawerResetButtonClick() {
         _isResetDialogOpen.value = true

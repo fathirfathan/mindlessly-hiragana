@@ -10,6 +10,7 @@ import com.effatheresoft.mindlesslyhiragana.data.local.UserDao
 import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
 import com.effatheresoft.mindlesslyhiragana.data.repository.DefaultQuizRepository
 import com.effatheresoft.mindlesslyhiragana.data.repository.QuizRepository
+import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredUserRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -29,6 +30,15 @@ abstract class RepositoryModule {
     @Singleton
     @Binds
     abstract fun bindQuizRepository(repository: DefaultQuizRepository): QuizRepository
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+object RepositoryProviderModule {
+    @Singleton
+    @Provides
+    fun provideRefactoredUserRepository(userDao: UserDao) =
+        RefactoredUserRepository(userDao)
 }
 
 @Module

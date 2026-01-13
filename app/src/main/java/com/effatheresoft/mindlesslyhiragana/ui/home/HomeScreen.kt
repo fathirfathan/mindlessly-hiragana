@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -74,8 +76,7 @@ fun HomeScreen(
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
             HomeContent(
-                unlockedCategories = uiState.unlockedCategories,
-                lockedCategories = uiState.lockedCategories,
+                categories = uiState.categories,
                 onNavigateToLearn = onNavigateToLearn,
                 onNavigateToTest = { onNavigateToTest(uiState.progress) }
             )
@@ -132,38 +133,31 @@ fun DefaultDialogPreview() {
     }
 }
 
+data class HomeCategory(
+    val id: String,
+    val title: String,
+    val isLocked: Boolean
+)
+
 @Composable
 fun HomeContent(
-    unlockedCategories: List<HiraganaCategory>,
-    lockedCategories: List<HiraganaCategory>,
+    categories: List<HomeCategory>,
     onNavigateToLearn: (categoryId: String) -> Unit,
     onNavigateToTest: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val scrollState = rememberScrollState()
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp)
+            .verticalScroll(scrollState)
     ) {
-        for (category in unlockedCategories) {
+        for (category in categories) {
             CategoryItem(
-                title = category.toHiraganaStringWithNakaguro(),
-                isLocked = false,
+                title = category.title,
+                isLocked = category.isLocked,
                 onClick = { onNavigateToLearn(category.id) }
-            )
-        }
-
-        CategoryItem(
-            title = stringResource(R.string.test_all_learned),
-            isLocked = false,
-            onClick = onNavigateToTest
-        )
-
-        for (category in lockedCategories) {
-            CategoryItem(
-                title = category.toHiraganaStringWithNakaguro(),
-                isLocked = true,
-                onClick = {}
             )
         }
     }
@@ -279,7 +273,7 @@ fun HomeScreenPreview() {
         Surface {
             DefaultDrawer(
                 title = R.string.mindlessly_hiragana,
-                drawerState = rememberDrawerState(initialValue = DrawerValue.Open),
+                drawerState = rememberDrawerState(initialValue = DrawerValue.Closed),
                 onResetButtonClick = {}
             ) {
                 HomeScaffold(
@@ -291,8 +285,28 @@ fun HomeScreenPreview() {
                     }
                 ) {
                     HomeContent(
-                        unlockedCategories = HiraganaCategory.entries.take(3),
-                        lockedCategories = HiraganaCategory.entries.drop(3),
+                        categories = listOf(
+                            HomeCategory(
+                                id = HiraganaCategory.HIMIKASE.id,
+                                title = HiraganaCategory.HIMIKASE.kanaWithNakaguro,
+                                isLocked = false
+                            ),
+                            HomeCategory(
+                                id = "Test All Learned",
+                                title = "Test All Learned",
+                                isLocked = false
+                            ),
+                            HomeCategory(
+                                id = HiraganaCategory.FUWOYA.id,
+                                title = HiraganaCategory.FUWOYA.kanaWithNakaguro,
+                                isLocked = true
+                            ),
+                            HomeCategory(
+                                id = HiraganaCategory.AO.id,
+                                title = HiraganaCategory.AO.kanaWithNakaguro,
+                                isLocked = true
+                            )
+                        ),
                         onNavigateToLearn = {},
                         onNavigateToTest = {}
                     )
