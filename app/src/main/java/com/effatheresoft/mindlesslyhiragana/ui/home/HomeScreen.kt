@@ -154,11 +154,20 @@ fun HomeContent(
             .verticalScroll(scrollState)
     ) {
         for (category in categories) {
-            CategoryItem(
-                title = category.title,
-                isLocked = category.isLocked,
-                onClick = { onNavigateToLearn(category.id) }
-            )
+            when(category.id) {
+                stringResource(R.string.test_all_learned) -> {
+                    CategoryItem(
+                        title = category.title,
+                        isLocked = category.isLocked,
+                        onClick = onNavigateToTest
+                    )
+                }
+                else -> CategoryItem(
+                    title = category.title,
+                    isLocked = category.isLocked,
+                    onClick = { if (!category.isLocked) onNavigateToLearn(category.id) }
+                )
+            }
         }
     }
 }
