@@ -90,6 +90,19 @@ class HomeScreenRoboTest {
         composeTestRule.onNodeWithText("ふをや").assertIsNotDisplayed()
     }
 
+    @Test
+    fun `user open reset progress dialog scenario`() {
+        // given user progress is `himikase`
+        // when user click top app bar menu icon
+        // and user click reset progress button
+        // then user sees reset progress dialog
+        setContent()
+        composeTestRule.onNodeWithContentDescription(activity.getString(R.string.open_menu)).performClick()
+        composeTestRule.onNodeWithText(activity.getString(R.string.reset_progress)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(activity.getString(R.string.reset_progress)).performClick()
+        composeTestRule.onNodeWithText(activity.getString(R.string.reset)).assertIsDisplayed()
+    }
+
     fun setContent() {
         composeTestRule.setContent {
             MindlesslyHiraganaTheme {

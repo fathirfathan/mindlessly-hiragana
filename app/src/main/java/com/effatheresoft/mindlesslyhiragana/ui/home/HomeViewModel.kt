@@ -1,11 +1,14 @@
 package com.effatheresoft.mindlesslyhiragana.ui.home
 
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.HIMIKASE
 import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredUserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -77,6 +80,15 @@ class HomeViewModel @Inject constructor(val userRepository: RefactoredUserReposi
 
     fun onDrawerResetButtonClick() {
         _isResetDialogOpen.value = true
+    }
+
+    fun onMenuItemClick(drawerState: DrawerState, drawerScope: CoroutineScope) {
+        drawerScope.launch {
+            when (drawerState.currentValue) {
+                DrawerValue.Closed -> drawerState.open()
+                DrawerValue.Open -> drawerState.close()
+            }
+        }
     }
 
     fun onResetDialogDismiss() {

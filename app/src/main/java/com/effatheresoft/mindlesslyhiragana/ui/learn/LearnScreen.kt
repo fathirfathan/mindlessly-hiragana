@@ -23,14 +23,12 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.effatheresoft.mindlesslyhiragana.Constants.DEFAULT_LEARNING_SETS_COUNT
 import com.effatheresoft.mindlesslyhiragana.R
-import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.HIMIKASE
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LearnScreen(
-    categoryId: String,
     onNavigationIconClick: () -> Unit,
     onLearnButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -55,7 +53,7 @@ fun LearnScreen(
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
         LearnScreenContent(
-            category = HiraganaCategory.entries.first { it.id == categoryId }.toHiraganaStringWithNakaguro(),
+            category = uiState.category?.toHiraganaStringWithNakaguro() ?: "",
             learningSetsCount = uiState.learningSetsCount,
             onLearningSetsCountChange = { viewModel.updateLearningSetsCount(it) },
             onLearnButtonClick = onLearnButtonClick,

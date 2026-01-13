@@ -56,15 +56,18 @@ fun DefaultNavGraph(
     ) {
         composable<Route.Home> {
             HomeScreen(
-                onNavigateToLearn = { navController.navigate(Route.Learn(it)) },
-                onNavigateToTest = { navController.navigate(Route.Test(it)) }
+                onNavigateToLearnOrTest = {
+                    when (it) {
+                        "Test All Learned" -> navController.navigate(Route.Test(it))
+                        else -> navController.navigate(Route.Learn(it))
+                    }
+                }
             )
         }
 
         composable<Route.Learn> { navBackStackEntry ->
             val learnRoute: Route.Learn = navBackStackEntry.toRoute()
             LearnScreen(
-                categoryId = learnRoute.categoryId,
                 onNavigationIconClick = { navController.navigateUp() },
                 onLearnButtonClick = { navController.navigate(Route.Quiz(learnRoute.categoryId)) }
             )

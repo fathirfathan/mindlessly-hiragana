@@ -3,6 +3,7 @@ package com.effatheresoft.mindlesslyhiragana.ui.learn
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.effatheresoft.mindlesslyhiragana.Constants.DEFAULT_LEARNING_SETS_COUNT
+import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,6 +16,7 @@ import javax.inject.Inject
 
 data class LearnUiState(
     val isLoading: Boolean = false,
+    val category: HiraganaCategory? = null,
     val learningSetsCount: Int = DEFAULT_LEARNING_SETS_COUNT
 )
 
@@ -27,6 +29,7 @@ class LearnViewModel @Inject constructor(val userRepository: UserRepository) : V
     val uiState: StateFlow<LearnUiState> = combine(_localUser, _isLoading) { localUser, isLoading ->
         LearnUiState(
             isLoading = isLoading,
+            category = HiraganaCategory.entries.first { it.id == localUser.progress },
             learningSetsCount = localUser.learningSetsCount
         )
     }.stateIn(
