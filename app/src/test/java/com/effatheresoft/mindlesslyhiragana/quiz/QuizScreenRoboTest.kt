@@ -13,16 +13,21 @@ import androidx.compose.ui.test.performSemanticsAction
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.effatheresoft.mindlesslyhiragana.HiltTestActivity
 import com.effatheresoft.mindlesslyhiragana.R
+import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredQuizRepository
+import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredUserRepository
 import com.effatheresoft.mindlesslyhiragana.navigation.DefaultNavGraph
 import com.effatheresoft.mindlesslyhiragana.sharedtest.util.isButton
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
+import kotlinx.coroutines.test.runTest
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
+import javax.inject.Inject
 
 @RunWith(AndroidJUnit4::class)
 @HiltAndroidTest
@@ -35,39 +40,47 @@ class QuizScreenRoboTest {
     val composeTestRule = createAndroidComposeRule<HiltTestActivity>()
     val activity get() = composeTestRule.activity
 
+    @Inject lateinit var userRepository: RefactoredUserRepository
+    @Inject lateinit var quizRepository: RefactoredQuizRepository
+
+    @Before
+    fun init() {
+        hiltRule.inject()
+    }
+
     @Test
-    fun `user select incorrect answer scenario`() {
+    fun `user select incorrect answer scenario`() = runTest {
         // given user progress is `himikase`
-        // and selected category is `himikase`
+        // and selected category is `ひみかせ`
         // and learning sets count is 1
-        // and shown quizzes are ひ, み, か, せ in order
-        // when user click incorrect answer button
-        // then user sees incorrect answer button disabled
-        setContentAndNavigateToQuiz()
+        // and shown quizzes are `ひみかせ` category in order
+        // when user select `MI` answer button
+        // then user sees `MI` answer button disabled
+        setContentAndNavigateToQuiz("ひみかせ", 1)
         composeTestRule.onNodeWithText("MI").performClick()
         composeTestRule.onNodeWithText("MI").assertIsNotEnabled()
     }
 
     @Test
-    fun `user select correct answer scenario`() {
+    fun `user select correct answer scenario`() = runTest {
         // given user progress is `himikase`
-        // and selected category is `himikase`
+        // and selected category is `ひみかせ`
         // and learning sets count is 1
-        // and shown quizzes are ひ, み, か, せ in order
-        // when user click correct answer button
-        // then user sees next quiz question
-        setContentAndNavigateToQuiz()
+        // and shown quizzes are `ひみかせ` category in order
+        // when user select `HI` answer button
+        // then user sees `み` quiz question
+        setContentAndNavigateToQuiz("ひみかせ", 1)
         composeTestRule.onNodeWithText("HI").performClick()
         composeTestRule.onNodeWithText("み").assertIsDisplayed()
     }
 
-    fun setContentAndNavigateToQuiz() {
+    fun setContentAndNavigateToQuiz(category: String, learningSetsCount: Int) {
         composeTestRule.setContent {
             MindlesslyHiraganaTheme {
                 DefaultNavGraph()
             }
         }
-        composeTestRule.onNodeWithText("ひみかせ").performClick()
+        composeTestRule.onNodeWithText(category).performClick()
         composeTestRule.onNode(
             hasProgressBarRangeInfo(
                 ProgressBarRangeInfo(
@@ -76,7 +89,7 @@ class QuizScreenRoboTest {
                     steps = 8
                 )
             )
-        ).performSemanticsAction(SemanticsActions.SetProgress) { it(1f) }
+        ).performSemanticsAction(SemanticsActions.SetProgress) { it(learningSetsCount.toFloat()) }
         composeTestRule.onNode(isButton() and hasText(activity.getString(R.string.learn))).performClick()
     }
 }

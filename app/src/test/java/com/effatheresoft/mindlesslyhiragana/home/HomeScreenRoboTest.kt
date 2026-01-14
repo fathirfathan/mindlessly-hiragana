@@ -45,14 +45,13 @@ class HomeScreenRoboTest {
     }
 
     @Test
-    fun `user open home screen for the first time scenario`() {
+    fun `user open home screen for the first time scenario`() = runTest {
         // given user progress is `himikase`
         // when user open home screen
         // then `himikase` category is unlocked
         // and `Test All Learned` category is
         // and categories after `Test All Learned` are locked
         setContent()
-
         val categoryTitles = listOf("ひみかせ", "Test All Learned", "ふをや", "あお", "つう・んえ", "くへ・りけ", "こに・たな", "すむ・ろる", "しいも", "とてそ", "わねれ", "のゆめぬ", "よはまほ", "さきちら")
         for (title in categoryTitles) {
             composeTestRule.onNodeWithText(title).onParent().performScrollToNode(hasText(title))
@@ -67,11 +66,12 @@ class HomeScreenRoboTest {
     }
 
     @Test
-    fun `user click unlocked category scenario`() {
+    fun `user click unlocked category scenario`() = runTest {
         // given user progress is `himikase`
         // when user click unlocked category `himikase`
         // then user navigates to learn screen
         setContent()
+
         composeTestRule.onNodeWithText("ひみかせ").performClick()
         composeTestRule.onNodeWithText("Learning Sets", substring = true).assertIsDisplayed()
         composeTestRule.onNodeWithText("ひみかせ").assertIsDisplayed()
@@ -84,17 +84,19 @@ class HomeScreenRoboTest {
         // then user navigates to learn screen
         userRepository.updateLocalUserProgress("ao")
         setContent()
+
         composeTestRule.onNodeWithText("ふをや").performClick()
         composeTestRule.onNodeWithText("Learning Sets", substring = true).assertIsDisplayed()
         composeTestRule.onNodeWithText("ふをや").assertIsDisplayed()
     }
 
     @Test
-    fun `user click locked category scenario`() {
+    fun `user click locked category scenario`() = runTest {
         // given user progress is `himikase`
         // when user click locked category `fuwoya`
         // then nothing happens
         setContent()
+
         composeTestRule.onNodeWithText("ふをや").performClick()
         composeTestRule.onNodeWithText("ひみかせ").assertIsDisplayed()
         composeTestRule.onNodeWithText("ふをや").assertIsDisplayed()
@@ -102,11 +104,12 @@ class HomeScreenRoboTest {
     }
 
     @Test
-    fun `user click test category scenario`() {
+    fun `user click test category scenario`() = runTest {
         // given user progress is `himikase`
         // when user click Test All Learned category
         // then user navigates to test screen
         setContent()
+
         composeTestRule.onNodeWithText(activity.getString(R.string.test_all_learned)).performClick()
         composeTestRule.onNodeWithText(activity.getString(R.string.including)).assertIsDisplayed()
         composeTestRule.onNodeWithText("ひみかせ").assertIsDisplayed()
@@ -114,12 +117,13 @@ class HomeScreenRoboTest {
     }
 
     @Test
-    fun `user open reset progress dialog scenario`() {
+    fun `user open reset progress dialog scenario`() = runTest {
         // given user progress is `himikase`
         // when user click top app bar menu icon
         // and user click reset progress button
         // then user sees reset progress dialog
         setContent()
+
         composeTestRule.onNodeWithContentDescription(activity.getString(R.string.open_menu)).performClick()
         composeTestRule.onNodeWithText(activity.getString(R.string.reset_progress)).assertIsDisplayed()
         composeTestRule.onNodeWithText(activity.getString(R.string.reset_progress)).performClick()

@@ -12,12 +12,16 @@ import androidx.compose.ui.test.performSemanticsAction
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.effatheresoft.mindlesslyhiragana.HiltTestActivity
 import com.effatheresoft.mindlesslyhiragana.R
+import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredUserRepository
 import com.effatheresoft.mindlesslyhiragana.navigation.DefaultNavGraph
 import com.effatheresoft.mindlesslyhiragana.sharedtest.util.isButton
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
+import jakarta.inject.Inject
+import kotlinx.coroutines.test.runTest
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -34,13 +38,20 @@ class LearnScreenRoboTest {
     val composeTestRule = createAndroidComposeRule<HiltTestActivity>()
     val activity get() = composeTestRule.activity
 
+    @Inject lateinit var userRepository: RefactoredUserRepository
+
+    @Before
+    fun init() {
+        hiltRule.inject()
+    }
+
     @Test
-    fun `user change learning sets count scenario`() {
+    fun `user change learning sets count scenario`() = runTest {
         // given user progress is `himikase`
-        // and selected category is `himikase`
+        // and selected category is `ひみかせ`
         // when user change learning sets count to 6
         // then user learning sets count becomes 6
-        setContentAndNavigateToLearn()
+        setContentAndNavigateToLearn("ひみかせ")
         composeTestRule.onNode(
             hasProgressBarRangeInfo(
                 ProgressBarRangeInfo(
@@ -54,24 +65,28 @@ class LearnScreenRoboTest {
     }
 
     @Test
-    fun `user click learn button scenario`() {
+    fun `user click learn button scenario`() = runTest {
         // given user progress is `himikase`
-        // and selected category is `himikase`
-        // and learning sets count is 5
+        // and selected category is `ひみかせ`
+        // and learning sets count is 6
+        // and shown quizzes are `ひみかせ` category in order
         // when user click learn button
         // then user navigates to quiz screen
-        val learningSetsCount = 5
-        setContentAndNavigateToLearn()
+        setContentAndNavigateToLearn("ひみかせ")
+        val learningSetsCount = 6
+        composeTestRule.onNode(
+            hasProgressBarRangeInfo(
+                ProgressBarRangeInfo(
+                    current = 5f,
+                    range = 1f..10f,
+                    steps = 8
+                )
+            )
+        ).performSemanticsAction(SemanticsActions.SetProgress) { it(learningSetsCount.toFloat()) }
         composeTestRule.onNode(isButton() and hasText(activity.getString(R.string.learn))).performClick()
 
         composeTestRule.onNodeWithText(activity.getString(R.string.learn)).assertIsDisplayed()
-
-        composeTestRule.onNode(
-            hasText("ひ") or
-                    hasText("み") or
-                    hasText("か") or
-                    hasText("せ")
-        ).assertIsDisplayed()
+        composeTestRule.onNodeWithText("ひ").assertIsDisplayed()
 
         val answerButtonTexts = listOf("HI", "MI", "KA", "SE")
         composeTestRule.onNodeWithText(activity.getString(R.string.remaining_n, (answerButtonTexts.size * learningSetsCount) - 1)).assertIsDisplayed()
@@ -81,12 +96,12 @@ class LearnScreenRoboTest {
         }
     }
 
-    fun setContentAndNavigateToLearn() {
+    fun setContentAndNavigateToLearn(categoryTitle: String) {
         composeTestRule.setContent {
             MindlesslyHiraganaTheme {
                 DefaultNavGraph()
             }
         }
-        composeTestRule.onNodeWithText("ひみかせ").performClick()
+        composeTestRule.onNodeWithText(categoryTitle).performClick()
     }
 }
