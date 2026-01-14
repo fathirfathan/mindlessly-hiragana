@@ -10,7 +10,9 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.effatheresoft.mindlesslyhiragana.ui.home.HomeScreen
 import com.effatheresoft.mindlesslyhiragana.ui.learn.LearnScreen
+import com.effatheresoft.mindlesslyhiragana.ui.learn.LearnViewModel
 import com.effatheresoft.mindlesslyhiragana.ui.quiz.QuizScreen
+import com.effatheresoft.mindlesslyhiragana.ui.quiz.QuizViewModel
 import com.effatheresoft.mindlesslyhiragana.ui.result.ResultScreen
 import com.effatheresoft.mindlesslyhiragana.ui.test.TestScreen
 import com.effatheresoft.mindlesslyhiragana.ui.testquiz.TestQuizScreen
@@ -56,12 +58,13 @@ fun DefaultNavGraph(
     ) {
         composable<Route.Home> {
             HomeScreen(
-                onNavigateToLearnOrTest = {
-                    when (it) {
-                        "Test All Learned" -> navController.navigate(Route.Test(it))
-                        else -> navController.navigate(Route.Learn(it))
+                onNavigateToLearnOrTest = { categoryId ->
+                    when (categoryId) {
+                        "Test All Learned" -> navController.navigate(Route.Test(categoryId))
+                        else -> navController.navigate(Route.Learn(categoryId))
                     }
-                }
+                },
+                viewModel = hiltViewModel()
             )
         }
 
@@ -69,18 +72,23 @@ fun DefaultNavGraph(
             val learnRoute: Route.Learn = navBackStackEntry.toRoute()
             LearnScreen(
                 onNavigationIconClick = { navController.navigateUp() },
-                onLearnButtonClick = { navController.navigate(Route.Quiz(learnRoute.categoryId)) }
+                onLearnButtonClick = { navController.navigate(Route.Quiz(learnRoute.categoryId)) },
+                viewModel = hiltViewModel<LearnViewModel, LearnViewModel.Factory>(
+                    creationCallback = { factory -> factory.create(learnRoute.categoryId)}
+                )
             )
         }
 
         composable<Route.Quiz> { navBackStackEntry ->
             val quizRoute: Route.Quiz = navBackStackEntry.toRoute()
             QuizScreen(
-                categoryId = quizRoute.categoryId,
                 onNavigationIconClick = { navController.navigateUp() },
                 onCompleted = { navController.navigate(Route.Result(quizRoute.categoryId)) {
                     popUpTo(Route.Quiz(quizRoute.categoryId)) { inclusive = true }
-                } }
+                } },
+                viewModel = hiltViewModel<QuizViewModel, QuizViewModel.Factory>(
+                    creationCallback = { factory -> factory.create(quizRoute.categoryId)}
+                )
             )
         }
 

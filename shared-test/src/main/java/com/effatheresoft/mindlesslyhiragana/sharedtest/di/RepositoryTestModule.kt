@@ -1,6 +1,7 @@
 package com.effatheresoft.mindlesslyhiragana.di
 
 import com.effatheresoft.mindlesslyhiragana.data.local.UserDao
+import com.effatheresoft.mindlesslyhiragana.data.repository.QuizVolatileDataSource
 import com.effatheresoft.mindlesslyhiragana.sharedtest.data.FakeQuizVolatileDataSource
 import com.effatheresoft.mindlesslyhiragana.sharedtest.data.FakeUserDao
 import dagger.Module
@@ -28,7 +29,7 @@ object DatabaseTestModule {
 object VolatileDataSourceTestModule {
     @Singleton
     @Provides
-    fun provideFakeQuizVolatileDataSource() = FakeQuizVolatileDataSource()
+    fun provideFakeQuizVolatileDataSource(): QuizVolatileDataSource = FakeQuizVolatileDataSource()
 }
 
 //@Module

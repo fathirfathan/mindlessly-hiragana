@@ -2,6 +2,7 @@ package com.effatheresoft.mindlesslyhiragana.quiz
 
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasProgressBarRangeInfo
 import androidx.compose.ui.test.hasText
@@ -45,6 +46,19 @@ class QuizScreenRoboTest {
         setContentAndNavigateToQuiz()
         composeTestRule.onNodeWithText("MI").performClick()
         composeTestRule.onNodeWithText("MI").assertIsNotEnabled()
+    }
+
+    @Test
+    fun `user select correct answer scenario`() {
+        // given user progress is `himikase`
+        // and selected category is `himikase`
+        // and learning sets count is 1
+        // and shown quizzes are ひ, み, か, せ in order
+        // when user click correct answer button
+        // then user sees next quiz question
+        setContentAndNavigateToQuiz()
+        composeTestRule.onNodeWithText("HI").performClick()
+        composeTestRule.onNodeWithText("み").assertIsDisplayed()
     }
 
     fun setContentAndNavigateToQuiz() {

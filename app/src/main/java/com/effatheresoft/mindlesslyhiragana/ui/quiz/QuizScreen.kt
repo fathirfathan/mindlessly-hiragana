@@ -24,7 +24,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.effatheresoft.mindlesslyhiragana.Constants.DEFAULT_LEARNING_SETS_COUNT
 import com.effatheresoft.mindlesslyhiragana.R
@@ -33,38 +32,25 @@ import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.HI
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.KA
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.MI
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.SE
-import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.HIMIKASE
+import com.effatheresoft.mindlesslyhiragana.ui.component.DefaultScaffold
+import com.effatheresoft.mindlesslyhiragana.ui.component.DefaultTopAppBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QuizScreen(
-    categoryId: String,
     modifier: Modifier = Modifier,
     onNavigationIconClick: () -> Unit,
     onCompleted: () -> Unit,
-    viewModel: QuizViewModel = hiltViewModel()
+    viewModel: QuizViewModel
 ) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.learn)) },
-                navigationIcon = {
-                    IconButton(onClick = onNavigationIconClick) {
-                        Icon(
-                            painter = painterResource(R.drawable.arrow_back_24px),
-                            contentDescription = stringResource(R.string.navigate_back)
-                        )
-                    }
-                }
-            )
-        },
-        modifier = modifier.fillMaxSize(),
-    ) { paddingValues ->
-
-        LaunchedEffect(categoryId) {
-            viewModel.generateQuizzes(categoryId)
-        }
+    DefaultScaffold(
+        topAppBar = { DefaultTopAppBar(
+            title = R.string.learn,
+            onNavigationIconClick = onNavigationIconClick
+        ) },
+        modifier = modifier
+    ) {
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
         val currentQuiz = uiState.currentQuiz
         LaunchedEffect(uiState.isCompleted) {
@@ -76,17 +62,11 @@ fun QuizScreen(
                 question = currentQuiz.question,
                 remainingQuestionsCount = uiState.remainingQuestionsCount,
                 possibleAnswers = currentQuiz.possibleAnswers,
-                onAnswerSelected = viewModel::selectCurrentQuizAnswer,
-                modifier = Modifier.padding(paddingValues)
+                onAnswerSelected = viewModel::selectCurrentQuizAnswer
             )
         }
     }
 }
-
-data class QuizHistory(
-    val category: HiraganaCategory,
-    val quizzes: List<Quiz>
-)
 
 data class Quiz(
     val question: Hiragana,

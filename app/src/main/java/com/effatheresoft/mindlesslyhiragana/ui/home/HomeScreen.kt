@@ -15,7 +15,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.effatheresoft.mindlesslyhiragana.R
 import com.effatheresoft.mindlesslyhiragana.ui.component.DefaultScaffold
@@ -31,8 +30,8 @@ data class HomeCategory(
 @Composable
 fun HomeScreen(
     onNavigateToLearnOrTest: (categoryId: String) -> Unit,
+    viewModel: HomeViewModel,
     modifier: Modifier = Modifier,
-    viewModel: HomeViewModel = hiltViewModel(),
     drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 ) {
     val scope = rememberCoroutineScope()

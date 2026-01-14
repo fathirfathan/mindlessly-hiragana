@@ -12,11 +12,15 @@ import androidx.compose.ui.test.performScrollToNode
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.effatheresoft.mindlesslyhiragana.HiltTestActivity
 import com.effatheresoft.mindlesslyhiragana.R
+import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredUserRepository
 import com.effatheresoft.mindlesslyhiragana.navigation.DefaultNavGraph
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
+import jakarta.inject.Inject
+import kotlinx.coroutines.test.runTest
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -32,6 +36,13 @@ class HomeScreenRoboTest {
     @get:Rule(order = 1)
     val composeTestRule = createAndroidComposeRule<HiltTestActivity>()
     val activity get() = composeTestRule.activity
+
+    @Inject lateinit var userRepository: RefactoredUserRepository
+
+    @Before
+    fun init() {
+        hiltRule.inject()
+    }
 
     @Test
     fun `user open home screen for the first time scenario`() {
@@ -64,6 +75,18 @@ class HomeScreenRoboTest {
         composeTestRule.onNodeWithText("ひみかせ").performClick()
         composeTestRule.onNodeWithText("Learning Sets", substring = true).assertIsDisplayed()
         composeTestRule.onNodeWithText("ひみかせ").assertIsDisplayed()
+    }
+
+    @Test
+    fun `user click unlocked category different from progress scenario`() = runTest {
+        // given user progress is `ao`
+        // when user click unlocked category `fuwoya`
+        // then user navigates to learn screen
+        userRepository.updateLocalUserProgress("ao")
+        setContent()
+        composeTestRule.onNodeWithText("ふをや").performClick()
+        composeTestRule.onNodeWithText("Learning Sets", substring = true).assertIsDisplayed()
+        composeTestRule.onNodeWithText("ふをや").assertIsDisplayed()
     }
 
     @Test

@@ -5,6 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.effatheresoft.mindlesslyhiragana.Constants.DEFAULT_LEARNING_SETS_COUNT
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredUserRepository
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -12,7 +15,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 data class LearnUiState(
     val isLoading: Boolean = false,
@@ -20,8 +22,14 @@ data class LearnUiState(
     val learningSetsCount: Int = DEFAULT_LEARNING_SETS_COUNT
 )
 
-@HiltViewModel
-class LearnViewModel @Inject constructor(val userRepository: RefactoredUserRepository) : ViewModel() {
+@HiltViewModel(assistedFactory = LearnViewModel.Factory::class)
+class LearnViewModel @AssistedInject constructor(
+    @Assisted val categoryId: String,
+    val userRepository: RefactoredUserRepository
+) : ViewModel() {
+    @AssistedFactory interface Factory {
+        fun create(categoryId: String): LearnViewModel
+    }
 
     private val _localUser = userRepository.observeLocalUser()
     private val _isLoading = MutableStateFlow(false)
@@ -29,7 +37,7 @@ class LearnViewModel @Inject constructor(val userRepository: RefactoredUserRepos
     val uiState: StateFlow<LearnUiState> = combine(_localUser, _isLoading) { localUser, isLoading ->
         LearnUiState(
             isLoading = isLoading,
-            category = HiraganaCategory.entries.first { it.id == localUser.progress },
+            category = HiraganaCategory.entries.first { it.id == categoryId },
             learningSetsCount = localUser.learningSetsCount
         )
     }.stateIn(

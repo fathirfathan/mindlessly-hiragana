@@ -15,11 +15,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.effatheresoft.mindlesslyhiragana.Constants.DEFAULT_LEARNING_SETS_COUNT
 import com.effatheresoft.mindlesslyhiragana.R
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.HIMIKASE
+import com.effatheresoft.mindlesslyhiragana.ui.component.DefaultScaffold
 import com.effatheresoft.mindlesslyhiragana.ui.component.DefaultTopAppBar
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 
@@ -29,15 +29,15 @@ fun LearnScreen(
     onNavigationIconClick: () -> Unit,
     onLearnButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: LearnViewModel = hiltViewModel()
+    viewModel: LearnViewModel
 ) {
-    Scaffold(
-        topBar = { DefaultTopAppBar(
+    DefaultScaffold(
+        topAppBar = { DefaultTopAppBar(
             title = R.string.learn,
             onNavigationIconClick = onNavigationIconClick
         ) },
-        modifier = modifier.fillMaxSize(),
-    ) { paddingValues ->
+        modifier = modifier
+    ) {
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
         LearnScreenContent(
@@ -45,7 +45,6 @@ fun LearnScreen(
             learningSetsCount = uiState.learningSetsCount,
             onLearningSetsCountChange = { viewModel.updateLearningSetsCount(it) },
             onLearnButtonClick = onLearnButtonClick,
-            modifier = Modifier.padding(paddingValues)
         )
     }
 }

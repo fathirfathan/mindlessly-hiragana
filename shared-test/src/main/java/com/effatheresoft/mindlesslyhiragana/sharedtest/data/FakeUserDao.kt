@@ -23,9 +23,17 @@ class FakeUserDao: UserDao {
         return clonedMap
     }
 
-    override suspend fun upsertUser(user: UserRoomEntity) {}
+    override suspend fun upsertUser(user: UserRoomEntity) {
+        val updatedMap = deepCloneUserMap(userEntities.value)
+        updatedMap[user.id] = user
+        userEntities.value = updatedMap
+    }
 
-    override suspend fun updateLocalUserProgress(progress: String) {}
+    override suspend fun updateLocalUserProgress(progress: String) {
+        val updatedMap = deepCloneUserMap(userEntities.value)
+        updatedMap["localUser"] = updatedMap["localUser"]!!.copy(progress = progress)
+        userEntities.value = updatedMap
+    }
 
     override suspend fun updateLocalUserLearningSetsCount(count: Int) {
         val updatedMap = deepCloneUserMap(userEntities.value)
@@ -33,7 +41,11 @@ class FakeUserDao: UserDao {
         userEntities.value = updatedMap
     }
 
-    override suspend fun updateLocalUserIsTestUnlocked(isUnlocked: Boolean) {}
+    override suspend fun updateLocalUserIsTestUnlocked(isUnlocked: Boolean) {
+        val updatedMap = deepCloneUserMap(userEntities.value)
+        updatedMap["localUser"] = updatedMap["localUser"]!!.copy(isTestUnlocked = isUnlocked)
+        userEntities.value = updatedMap
+    }
 
     override fun observeLocalUser(): Flow<UserRoomEntity> = userEntities.map { it.getValue("localUser") }
 

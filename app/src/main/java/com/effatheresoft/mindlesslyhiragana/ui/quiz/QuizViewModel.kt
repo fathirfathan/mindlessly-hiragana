@@ -4,8 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana
 import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredQuizRepository
-import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
+import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredUserRepository
 import com.effatheresoft.mindlesslyhiragana.ui.result.isCorrect
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -14,7 +17,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 data class QuizUiState(
     val isLoading: Boolean = false,
@@ -23,14 +25,23 @@ data class QuizUiState(
     val isCompleted: Boolean = false
 )
 
-@HiltViewModel
-class QuizViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = QuizViewModel.Factory::class)
+class QuizViewModel @AssistedInject constructor(
+    @Assisted val categoryId: String,
     val quizRepository: RefactoredQuizRepository,
-    val userRepository: UserRepository
+    val userRepository: RefactoredUserRepository
 ): ViewModel() {
+    @AssistedFactory interface Factory {
+        fun create(categoryId: String): QuizViewModel
+    }
+
+    init {
+        viewModelScope.launch {
+            quizRepository.generateQuizzes(categoryId)
+        }
+    }
 
     private val _isLoading = MutableStateFlow(false)
-    private val _categoryId = MutableStateFlow("")
     private val _quizzes = quizRepository.observeQuizzes()
     private val _currentQuizIndex = MutableStateFlow(0)
     private val _isCompleted = MutableStateFlow(false)
@@ -57,7 +68,7 @@ class QuizViewModel @Inject constructor(
         if (selectedAnswer.isCorrect) {
             if (_currentQuizIndex.value == _quizzes.first().size - 1) {
                 val localUser = userRepository.observeLocalUser().first()
-                if (localUser.progress == _categoryId.value) {
+                if (localUser.progress == categoryId) {
                     val isAllCorrect = _quizzes.first().firstOrNull { !it.isCorrect }.let { it == null }
                     if (isAllCorrect) userRepository.updateLocalUserIsTestUnlocked(true)
                 }
@@ -66,10 +77,5 @@ class QuizViewModel @Inject constructor(
                 _currentQuizIndex.value += 1
             }
         }
-    }
-
-    fun generateQuizzes(categoryId: String) = viewModelScope.launch {
-        _categoryId.value = categoryId
-        quizRepository.generateQuizzes(categoryId)
     }
 }
