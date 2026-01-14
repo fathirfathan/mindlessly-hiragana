@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.effatheresoft.mindlesslyhiragana.R
+import com.effatheresoft.mindlesslyhiragana.ui.component.DefaultScaffold
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 
 data class HomeCategory(
@@ -41,7 +42,7 @@ fun HomeScreen(
         drawerState = drawerState,
         onResetButtonClick = viewModel::onDrawerResetButtonClick
     ) {
-        HomeScaffold(
+        DefaultScaffold(
             topAppBar = {
                 HomeTopAppBar(
                     title = R.string.mindlessly_hiragana,
@@ -122,7 +123,7 @@ fun HomeScreenPreviewBase(state: String) {
             ),
             onResetButtonClick = {}
         ) {
-            HomeScaffold(
+            DefaultScaffold(
                 topAppBar = {
                     HomeTopAppBar(
                         title = R.string.mindlessly_hiragana,

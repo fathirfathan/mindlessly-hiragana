@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.effatheresoft.mindlesslyhiragana.Constants.DEFAULT_LEARNING_SETS_COUNT
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
-import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
+import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredUserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -21,7 +21,7 @@ data class LearnUiState(
 )
 
 @HiltViewModel
-class LearnViewModel @Inject constructor(val userRepository: UserRepository) : ViewModel() {
+class LearnViewModel @Inject constructor(val userRepository: RefactoredUserRepository) : ViewModel() {
 
     private val _localUser = userRepository.observeLocalUser()
     private val _isLoading = MutableStateFlow(false)

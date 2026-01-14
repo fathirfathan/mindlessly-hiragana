@@ -4,7 +4,6 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
@@ -19,8 +18,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -62,23 +59,6 @@ fun HomeDrawer(
         modifier = modifier
     ) {
         content()
-    }
-}
-
-@Composable
-fun HomeScaffold(
-    modifier: Modifier = Modifier,
-    topAppBar: @Composable () -> Unit,
-    content: @Composable () -> Unit
-) {
-    Scaffold(
-        topBar = { topAppBar() },
-        modifier = modifier.fillMaxSize(),
-    ) { paddingValues ->
-
-        Surface(modifier = Modifier.padding(paddingValues)) {
-            content()
-        }
     }
 }
 
