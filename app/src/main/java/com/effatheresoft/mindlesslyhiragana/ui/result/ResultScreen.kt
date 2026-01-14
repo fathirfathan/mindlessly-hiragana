@@ -25,10 +25,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.effatheresoft.mindlesslyhiragana.R
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.HI
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.MI
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.KA
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.MI
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.SE
 import com.effatheresoft.mindlesslyhiragana.ui.quiz.Quiz
+import com.effatheresoft.mindlesslyhiragana.ui.test.DefaultScaffold
+import com.effatheresoft.mindlesslyhiragana.ui.test.DefaultTopAppBar
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,23 +42,13 @@ fun ResultScreen(
     modifier: Modifier = Modifier,
     viewModel: ResultViewModel = hiltViewModel()
 ) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.result)) },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateUp) {
-                        Icon(
-                            painter = painterResource(R.drawable.arrow_back_24px),
-                            contentDescription = stringResource(R.string.navigate_back)
-                        )
-                    }
-                }
-            )
-        },
-        modifier = modifier.fillMaxSize(),
-    ) { paddingValues ->
-
+    DefaultScaffold(
+        topAppBar = { DefaultTopAppBar(
+            title = R.string.result,
+            onNavigationIconClick = onNavigateUp
+        ) },
+        modifier = modifier
+    ) {
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
         ResultContent(
@@ -65,8 +57,7 @@ fun ResultScreen(
             individualIncorrectCounts = uiState.individualIncorrectCounts,
             onTryAgainButtonClick = onTryAgain,
             onTestAllLearnedButtonClick = onTestAllLearned,
-            isTestAllLearnedButtonEnabled = uiState.isTestUnlocked,
-            modifier = Modifier.padding(paddingValues)
+            isTestAllLearnedButtonEnabled = uiState.isTestUnlocked
         )
     }
 }
@@ -91,14 +82,16 @@ fun ResultContent(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.fillMaxSize().padding(16.dp)
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp)
     ) {
         Spacer(Modifier.height(16.dp))
         Text("Correct: $correctCounts")
         Text("Incorrect: $incorrectCounts")
         Spacer(Modifier.height(16.dp))
 
-        Text("Incorrect Counts")
+        Text(stringResource(R.string.incorrect_counts))
         for ((hiragana, count) in individualIncorrectCounts) {
             Text("${hiragana.kana}: $count")
         }

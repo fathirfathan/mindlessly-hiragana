@@ -3,6 +3,7 @@ package com.effatheresoft.mindlesslyhiragana.quiz
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasProgressBarRangeInfo
 import androidx.compose.ui.test.hasText
@@ -72,6 +73,34 @@ class QuizScreenRoboTest {
         setContentAndNavigateToQuiz("ひみかせ", 1)
         composeTestRule.onNodeWithText("HI").performClick()
         composeTestRule.onNodeWithText("み").assertIsDisplayed()
+    }
+
+    @Test
+    fun `user select all correct answer scenario`() = runTest {
+        // given user progress is `himikase`
+        // and selected category is `ひみかせ`
+        // and learning sets count is 2
+        // and shown quizzes are `ひみかせ` category in order twice
+        // when user select all correct answer buttons
+        // then user navigates to result screen
+        setContentAndNavigateToQuiz("ひみかせ", 2)
+        repeat(2) {
+            listOf("HI", "MI", "KA", "SE").forEach {
+                composeTestRule.onNodeWithText(it).performClick()
+            }
+        }
+
+        composeTestRule.onNodeWithText(activity.getString(R.string.result)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(activity.getString(R.string.correct_n, 8)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(activity.getString(R.string.incorrect_n, 0)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(activity.getString(R.string.incorrect_counts)).assertIsDisplayed()
+        composeTestRule.onNodeWithText("ひ: 0").assertIsDisplayed()
+        composeTestRule.onNodeWithText("み: 0").assertIsDisplayed()
+        composeTestRule.onNodeWithText("か: 0").assertIsDisplayed()
+        composeTestRule.onNodeWithText("せ: 0").assertIsDisplayed()
+        composeTestRule.onNodeWithText(activity.getString(R.string.try_again)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(activity.getString(R.string.test_all_learned)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(activity.getString(R.string.test_all_learned)).assertIsEnabled()
     }
 
     fun setContentAndNavigateToQuiz(category: String, learningSetsCount: Int) {
