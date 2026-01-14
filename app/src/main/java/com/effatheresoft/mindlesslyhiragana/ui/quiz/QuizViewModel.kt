@@ -3,7 +3,7 @@ package com.effatheresoft.mindlesslyhiragana.ui.quiz
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana
-import com.effatheresoft.mindlesslyhiragana.data.repository.QuizRepository
+import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredQuizRepository
 import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
 import com.effatheresoft.mindlesslyhiragana.ui.result.isCorrect
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,7 +25,7 @@ data class QuizUiState(
 
 @HiltViewModel
 class QuizViewModel @Inject constructor(
-    val quizRepository: QuizRepository,
+    val quizRepository: RefactoredQuizRepository,
     val userRepository: UserRepository
 ): ViewModel() {
 

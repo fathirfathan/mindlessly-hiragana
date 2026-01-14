@@ -10,6 +10,8 @@ import com.effatheresoft.mindlesslyhiragana.data.local.UserDao
 import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
 import com.effatheresoft.mindlesslyhiragana.data.repository.DefaultQuizRepository
 import com.effatheresoft.mindlesslyhiragana.data.repository.QuizRepository
+import com.effatheresoft.mindlesslyhiragana.data.repository.QuizVolatileDataSource
+import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredQuizRepository
 import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredUserRepository
 import dagger.Binds
 import dagger.Module
@@ -39,6 +41,21 @@ object RepositoryProviderModule {
     @Provides
     fun provideRefactoredUserRepository(userDao: UserDao) =
         RefactoredUserRepository(userDao)
+
+    @Singleton
+    @Provides
+    fun provideRefactoredQuizRepository(
+        userLocalDataSource: UserDao,
+        quizVolatileDataSource: QuizVolatileDataSource
+    ) = RefactoredQuizRepository(userLocalDataSource, quizVolatileDataSource)
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+object VolatileDataSourceModule {
+    @Singleton
+    @Provides
+    fun provideQuizVolatileDataSource() = QuizVolatileDataSource()
 }
 
 @Module
