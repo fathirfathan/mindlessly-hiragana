@@ -67,7 +67,7 @@ fun TestScreenContent(
             .padding(16.dp)
             .padding(bottom = 16.dp)
     ) {
-        Text(text = stringResource(R.string.questions, categoryList.size))
+        Text(text = stringResource(R.string.test_categories_n, categoryList.size))
         Text(text = stringResource(R.string.including))
         categoryList.forEach { category ->
             Text(text = category)

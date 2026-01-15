@@ -1,9 +1,14 @@
 package com.effatheresoft.mindlesslyhiragana.home
 
+import androidx.compose.ui.test.assertAll
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotDisplayed
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onParent
@@ -14,6 +19,7 @@ import com.effatheresoft.mindlesslyhiragana.HiltTestActivity
 import com.effatheresoft.mindlesslyhiragana.R
 import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredUserRepository
 import com.effatheresoft.mindlesslyhiragana.navigation.DefaultNavGraph
+import com.effatheresoft.mindlesslyhiragana.sharedtest.util.isButton
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -106,14 +112,41 @@ class HomeScreenRoboTest {
     @Test
     fun `user click test category scenario`() = runTest {
         // given user progress is `himikase`
+        // and user isTestUnlocked is false
         // when user click Test All Learned category
         // then user navigates to test screen
         setContent()
-
         composeTestRule.onNodeWithText(activity.getString(R.string.test_all_learned)).performClick()
+
+        with(composeTestRule.onAllNodesWithText(activity.getString(R.string.test_all_learned))) {
+            assertCountEquals(2)
+            assertAll(hasText(activity.getString(R.string.test_all_learned)))
+        }
+        composeTestRule.onNodeWithText(activity.getString(R.string.test_categories_n, 1)).assertIsDisplayed()
         composeTestRule.onNodeWithText(activity.getString(R.string.including)).assertIsDisplayed()
         composeTestRule.onNodeWithText("ひみかせ").assertIsDisplayed()
         composeTestRule.onNodeWithText("ふをや").assertIsNotDisplayed()
+        composeTestRule.onNodeWithText(activity.getString(R.string.challenge_all_correct_on_learn)).assertIsDisplayed()
+        with(composeTestRule.onNode(isButton() and hasText(activity.getString(R.string.test_all_learned)))) {
+            assertIsDisplayed()
+            assertIsNotEnabled()
+        }
+    }
+
+    @Test
+    fun `user click test category and test is unlocked scenario`() = runTest {
+        // given user progress is `himikase`
+        // and user isTestUnlocked is true
+        // when user click Test All Learned category
+        // then user sees `Test All Learned` button enabled
+        userRepository.updateLocalUserIsTestUnlocked(true)
+        setContent()
+        composeTestRule.onNodeWithText(activity.getString(R.string.test_all_learned)).performClick()
+
+        with(composeTestRule.onNode(isButton() and hasText(activity.getString(R.string.test_all_learned)))) {
+            assertIsDisplayed()
+            assertIsEnabled()
+        }
     }
 
     @Test
