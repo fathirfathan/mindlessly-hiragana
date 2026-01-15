@@ -53,8 +53,13 @@ fun QuizScreen(
     ) {
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
         val currentQuiz = uiState.currentQuiz
-        LaunchedEffect(uiState.isCompleted) {
-            if (uiState.isCompleted) onCompleted()
+
+        LaunchedEffect(Unit) {
+            viewModel.uiEvent.collect {
+                when (it) {
+                    QuizUiEvent.NavigateToResult -> onCompleted()
+                }
+            }
         }
 
         currentQuiz?.let {

@@ -10,7 +10,9 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -21,9 +23,12 @@ import kotlinx.coroutines.launch
 data class QuizUiState(
     val isLoading: Boolean = false,
     val currentQuiz: Quiz? = null,
-    val remainingQuestionsCount: Int = -1,
-    val isCompleted: Boolean = false
+    val remainingQuestionsCount: Int = -1
 )
+
+sealed class QuizUiEvent{
+    object NavigateToResult: QuizUiEvent()
+}
 
 @HiltViewModel(assistedFactory = QuizViewModel.Factory::class)
 class QuizViewModel @AssistedInject constructor(
@@ -44,21 +49,22 @@ class QuizViewModel @AssistedInject constructor(
     private val _isLoading = MutableStateFlow(false)
     private val _quizzes = quizRepository.observeQuizzes()
     private val _currentQuizIndex = MutableStateFlow(0)
-    private val _isCompleted = MutableStateFlow(false)
 
     val uiState: StateFlow<QuizUiState> =
-        combine(_isLoading, _quizzes, _currentQuizIndex, _isCompleted) { isLoading, quizzes, currentQuizIndex, isCompleted ->
+        combine(_isLoading, _quizzes, _currentQuizIndex) { isLoading, quizzes, currentQuizIndex ->
             QuizUiState(
                 isLoading = isLoading,
                 currentQuiz = quizzes.getOrNull(currentQuizIndex),
-                remainingQuestionsCount = quizzes.size - currentQuizIndex - 1,
-                isCompleted = isCompleted
+                remainingQuestionsCount = quizzes.size - currentQuizIndex - 1
             )
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000L),
             initialValue = QuizUiState(isLoading = true)
         )
+
+    private val _uiEvent = MutableSharedFlow<QuizUiEvent>()
+    val uiEvent: SharedFlow<QuizUiEvent> = _uiEvent
 
     fun selectCurrentQuizAnswer(answer: Hiragana) = viewModelScope.launch {
         quizRepository.selectQuizAnswer(_currentQuizIndex.value, answer)
@@ -72,7 +78,7 @@ class QuizViewModel @AssistedInject constructor(
                     val isAllCorrect = _quizzes.first().firstOrNull { !it.isCorrect }.let { it == null }
                     if (isAllCorrect) userRepository.updateLocalUserIsTestUnlocked(true)
                 }
-                _isCompleted.value = true
+                _uiEvent.emit(QuizUiEvent.NavigateToResult)
             } else {
                 _currentQuizIndex.value += 1
             }
