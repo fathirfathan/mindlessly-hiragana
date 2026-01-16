@@ -32,6 +32,7 @@ data class TestQuizUiState(
     val loading: Boolean = false,
     val currentQuestion: Hiragana? = null,
     val remainingQuestionsCount: Int = -1,
+    val selectedAnswers: Set<Hiragana> = emptySet()
 )
 
 sealed class TestQuizUiEvent() {
@@ -48,16 +49,18 @@ class TestQuizViewModel @Inject constructor(
     private val quizQuestions get() = _quizQuestions.value
     private val _currentQuestionIndex = MutableStateFlow(0)
     private val currentQuestionIndex get() = _currentQuestionIndex.value
+    private val _selectedAnswers = MutableStateFlow(emptySet<Hiragana>())
 
     init {
         viewModelScope.launch { quizRepository.generateQuizQuestions() }
     }
 
-    val uiState = combine(_loading, _quizQuestions, _currentQuestionIndex) { loading, questionStates, currentQuestionIndex ->
+    val uiState = combine(_loading, _quizQuestions, _currentQuestionIndex, _selectedAnswers) { loading, questionStates, currentQuestionIndex, selectedAnswers ->
         TestQuizUiState(
             loading = loading,
             currentQuestion = questionStates.getOrNull(currentQuestionIndex)?.question,
-            remainingQuestionsCount = questionStates.size - currentQuestionIndex - 1
+            remainingQuestionsCount = questionStates.size - currentQuestionIndex - 1,
+            selectedAnswers = selectedAnswers
         )
     }.stateIn(
         scope = viewModelScope,
@@ -72,8 +75,13 @@ class TestQuizViewModel @Inject constructor(
 
     fun selectAnswer(hiragana: Hiragana) = viewModelScope.launch {
         quizRepository.selectAnswer(currentQuestionIndex, hiragana)
+        _selectedAnswers.value += hiragana
 
-        if (currentQuestion.isAnswered) { _currentQuestionIndex.value += 1 }
+        if (currentQuestion.isAnswered) {
+            _currentQuestionIndex.value += 1
+            _selectedAnswers.value = emptySet()
+        }
+
         if (quizQuestions.isAllQuestionsAnswered) {
             if (quizQuestions.isAllQuestionsCorrect) {
                 userRepository.continueLocalUserProgress()

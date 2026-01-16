@@ -16,8 +16,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -59,7 +57,7 @@ fun TestQuizScreen(
             TestQuizContent(
                 question = question,
                 remainingQuestionsCount = uiState.remainingQuestionsCount,
-                resetAnswersEffectKey = uiState.remainingQuestionsCount,
+                selectedAnswers = uiState.selectedAnswers,
                 onAnswerSelected = viewModel::selectAnswer
             )
         }
@@ -70,7 +68,7 @@ fun TestQuizScreen(
 fun TestQuizContent(
     question: Hiragana,
     remainingQuestionsCount: Int,
-    resetAnswersEffectKey: Any,
+    selectedAnswers: Set<Hiragana>,
     onAnswerSelected: (Hiragana) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -87,7 +85,7 @@ fun TestQuizContent(
         Spacer(modifier = Modifier.padding(4.dp))
         HiraganaKeyboard(
             onButtonClick = onAnswerSelected,
-            enableButtonsEffectKey = resetAnswersEffectKey,
+            selectedAnswers = selectedAnswers,
             modifier = modifier.height(240.dp)
         )
     }
@@ -96,7 +94,7 @@ fun TestQuizContent(
 @Composable
 fun HiraganaKeyboard(
     onButtonClick: (Hiragana) -> Unit,
-    enableButtonsEffectKey: Any,
+    selectedAnswers: Set<Hiragana>,
     modifier: Modifier = Modifier
 ) {
     val listState = rememberLazyGridState()
@@ -115,7 +113,7 @@ fun HiraganaKeyboard(
                     item(it) {
                         HiraganaKeyboardButton(
                             hiragana = it,
-                            enableButtonEffectKey = enableButtonsEffectKey,
+                            isEnabled = !selectedAnswers.contains(it),
                             onButtonClick = { onButtonClick(it) }
                         )
                     }
@@ -125,7 +123,7 @@ fun HiraganaKeyboard(
                     item(it) {
                         HiraganaKeyboardButton(
                             hiragana = it,
-                            enableButtonEffectKey = enableButtonsEffectKey,
+                            isEnabled = !selectedAnswers.contains(it),
                             onButtonClick = { onButtonClick(it) }
                         )
                     }
@@ -135,7 +133,7 @@ fun HiraganaKeyboard(
                     item(it) {
                         HiraganaKeyboardButton(
                             hiragana = it,
-                            enableButtonEffectKey = enableButtonsEffectKey,
+                            isEnabled = !selectedAnswers.contains(it),
                             onButtonClick = { onButtonClick(it) }
                         )
                     }
@@ -144,7 +142,7 @@ fun HiraganaKeyboard(
                 else -> item(it) {
                     HiraganaKeyboardButton(
                         hiragana = it,
-                        enableButtonEffectKey = enableButtonsEffectKey,
+                        isEnabled = !selectedAnswers.contains(it),
                         onButtonClick = { onButtonClick(it) }
                     )
                 }
@@ -156,19 +154,12 @@ fun HiraganaKeyboard(
 @Composable
 fun HiraganaKeyboardButton(
     hiragana: Hiragana,
-    enableButtonEffectKey: Any,
+    isEnabled: Boolean,
     onButtonClick: () -> Unit
 ) {
-    val isEnabled = remember { mutableStateOf(true) }
-
-    LaunchedEffect(enableButtonEffectKey) { isEnabled.value = true }
-
     Button(
-        onClick = {
-            isEnabled.value = false
-            onButtonClick()
-        },
-        enabled = isEnabled.value,
+        onClick = onButtonClick,
+        enabled = isEnabled,
         modifier = Modifier.width(76.dp)
     ) {
         Text(hiragana.name)
@@ -190,7 +181,7 @@ fun TestQuizScreenPreview() {
             TestQuizContent(
                 question = Hiragana.HI,
                 remainingQuestionsCount = 3,
-                resetAnswersEffectKey = 0,
+                selectedAnswers = emptySet(),
                 onAnswerSelected = {}
             )
         }
