@@ -16,7 +16,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.effatheresoft.mindlesslyhiragana.R
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana
-import com.effatheresoft.mindlesslyhiragana.navigation.NavigationViewModel
 import com.effatheresoft.mindlesslyhiragana.ui.test.DefaultScaffold
 import com.effatheresoft.mindlesslyhiragana.ui.test.DefaultTopAppBar
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
@@ -24,14 +23,12 @@ import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 @Composable
 fun TestResultScreen(
     viewModel: TestResultViewModel,
-    navigationViewModel: NavigationViewModel,
     onNavigateUp: () -> Unit,
     onTryAgain: () -> Unit,
     onContinueLearning: (newProgress: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val navigationUiState by navigationViewModel.uiState.collectAsStateWithLifecycle()
 
     DefaultScaffold(
         topAppBar = {
@@ -43,9 +40,9 @@ fun TestResultScreen(
         modifier = modifier
     ) {
         TestResultContent(
-            correctCount = navigationUiState.correctCount,
-            incorrectCount = navigationUiState.incorrectCount,
-            incorrectHiraganaList = navigationUiState.incorrectHiraganaList,
+            correctCount = uiState.correctCount,
+            incorrectCount = uiState.incorrectCount,
+            incorrectHiraganaList = uiState.incorrectHiraganaList,
             isContinueLearningButtonEnabled = uiState.canContinueLearning,
             onTryAgainButtonClick = onTryAgain,
             onContinueLearningButtonClick = { onContinueLearning(uiState.progress) }

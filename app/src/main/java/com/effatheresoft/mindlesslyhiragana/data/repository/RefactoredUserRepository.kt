@@ -2,6 +2,7 @@ package com.effatheresoft.mindlesslyhiragana.data.repository
 
 import com.effatheresoft.mindlesslyhiragana.data.local.UserDao
 import com.effatheresoft.mindlesslyhiragana.data.local.toUser
+import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.AO
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.FUWOYA
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.HIMIKASE
@@ -17,6 +18,7 @@ import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.WANERE
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.YOHAMAHO
 import com.effatheresoft.mindlesslyhiragana.data.model.User
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -28,12 +30,21 @@ class RefactoredUserRepository @Inject constructor(
     suspend fun updateLocalUserProgress(progress: String) =
         localDataSource.updateLocalUserProgress(progress.toRoomEntityProgress())
 
+    suspend fun continueLocalUserProgress() {
+        val currentProgress = localDataSource.observeLocalUser().first().progress
+        val nextHiraganaCategoryIndex = HiraganaCategory.entries.indexOfFirst { it.id == currentProgress } + 1
+        val nextProgress = HiraganaCategory.entries[nextHiraganaCategoryIndex].id
+        updateLocalUserProgress(nextProgress)
+    }
+
     suspend fun updateLocalUserLearningSetsCount(count: Int) =
         localDataSource.updateLocalUserLearningSetsCount(count)
 
     suspend fun updateLocalUserIsTestUnlocked(isUnlocked: Boolean) {
         localDataSource.updateLocalUserIsTestUnlocked(isUnlocked)
     }
+
+    suspend fun lockTestAllLearned() = updateLocalUserIsTestUnlocked(false)
 
     private fun String.toRoomEntityProgress(): String {
         return when(this) {

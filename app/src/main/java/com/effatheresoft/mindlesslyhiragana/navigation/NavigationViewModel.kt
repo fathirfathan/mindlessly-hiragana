@@ -3,7 +3,7 @@ package com.effatheresoft.mindlesslyhiragana.navigation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana
-import com.effatheresoft.mindlesslyhiragana.ui.testquiz.QuestionState
+import com.effatheresoft.mindlesslyhiragana.ui.testquiz.QuizQuestion
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +21,7 @@ data class NavigationUiState(
 
 @HiltViewModel
 class NavigationViewModel @Inject constructor(): ViewModel() {
-    private val _questionStates = MutableStateFlow<List<QuestionState>>(emptyList())
+    private val _questionStates = MutableStateFlow<List<QuizQuestion>>(emptyList())
     private val _loading = MutableStateFlow(false)
 
     private val _correctCount = _questionStates.map { questionStates ->
@@ -46,8 +46,4 @@ class NavigationViewModel @Inject constructor(): ViewModel() {
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = NavigationUiState(loading = true)
     )
-
-    fun setQuestionStates(questionStates: List<QuestionState>) {
-        _questionStates.value = questionStates
-    }
 }

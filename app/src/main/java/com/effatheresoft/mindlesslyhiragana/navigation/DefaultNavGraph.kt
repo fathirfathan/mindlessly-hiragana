@@ -49,7 +49,7 @@ fun DefaultNavGraph(
     navController: NavHostController = rememberNavController(),
     startDestination: Route = Route.Home
 ) {
-    val navigationViewModel: NavigationViewModel = hiltViewModel()
+//    val navigationViewModel: NavigationViewModel = hiltViewModel()
 
     NavHost(
         navController = navController,
@@ -129,8 +129,7 @@ fun DefaultNavGraph(
             TestQuizScreen(
                 viewModel = hiltViewModel(),
                 onNavigateUp = navController::navigateUp,
-                onAllQuestionsAnswered = { questionStates ->
-                    navigationViewModel.setQuestionStates(questionStates)
+                onAllQuestionsAnswered = {
                     navController.navigate(Route.TestResult) {
                         popUpTo(Route.Test) { inclusive = true }
                     }
@@ -141,7 +140,6 @@ fun DefaultNavGraph(
         composable<Route.TestResult> {
             TestResultScreen(
                 viewModel = hiltViewModel(),
-                navigationViewModel = hiltViewModel(),
                 onNavigateUp = navController::navigateUp,
                 onTryAgain = {
                     navController.navigate(Route.Test) {

@@ -33,7 +33,7 @@ import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 fun TestQuizScreen(
     viewModel: TestQuizViewModel,
     onNavigateUp: () -> Unit,
-    onAllQuestionsAnswered: (List<QuestionState>) -> Unit,
+    onAllQuestionsAnswered: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -47,14 +47,20 @@ fun TestQuizScreen(
         },
         modifier = modifier
     ) {
+        LaunchedEffect(Unit) {
+            viewModel.uiEvent.collect { event ->
+                when (event) {
+                    TestQuizUiEvent.NavigateToTestResults -> onAllQuestionsAnswered()
+                }
+            }
+        }
+
         uiState.currentQuestion?.let { question ->
             TestQuizContent(
                 question = question,
                 remainingQuestionsCount = uiState.remainingQuestionsCount,
                 resetAnswersEffectKey = uiState.remainingQuestionsCount,
-                onAnswerSelected = { answer ->
-                    viewModel.selectAnswer(answer, onAllQuestionsAnswered)
-                }
+                onAnswerSelected = viewModel::selectAnswer
             )
         }
     }

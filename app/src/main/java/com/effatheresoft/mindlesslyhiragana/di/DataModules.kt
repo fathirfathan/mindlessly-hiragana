@@ -5,14 +5,14 @@ import androidx.room.Room
 import com.effatheresoft.mindlesslyhiragana.Constants.DEFAULT_DATABASE_NAME
 import com.effatheresoft.mindlesslyhiragana.Constants.PREPOPULATED_DATABASE_FILEPATH
 import com.effatheresoft.mindlesslyhiragana.data.local.DefaultDatabase
-import com.effatheresoft.mindlesslyhiragana.data.repository.DefaultUserRepository
 import com.effatheresoft.mindlesslyhiragana.data.local.UserDao
-import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
 import com.effatheresoft.mindlesslyhiragana.data.repository.DefaultQuizRepository
+import com.effatheresoft.mindlesslyhiragana.data.repository.DefaultUserRepository
 import com.effatheresoft.mindlesslyhiragana.data.repository.QuizRepository
 import com.effatheresoft.mindlesslyhiragana.data.repository.QuizVolatileDataSource
 import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredQuizRepository
 import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredUserRepository
+import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -45,9 +45,9 @@ object RepositoryProviderModule {
     @Singleton
     @Provides
     fun provideRefactoredQuizRepository(
-        userLocalDataSource: UserDao,
+        userRepository: RefactoredUserRepository,
         quizVolatileDataSource: QuizVolatileDataSource
-    ) = RefactoredQuizRepository(userLocalDataSource, quizVolatileDataSource)
+    ) = RefactoredQuizRepository(userRepository, quizVolatileDataSource)
 }
 
 @Module

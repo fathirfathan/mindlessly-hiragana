@@ -3,22 +3,30 @@ package com.effatheresoft.mindlesslyhiragana.ui.testquiz
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana
-import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
+import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredQuizRepository
 import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredUserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-data class QuestionState(
+data class QuizQuestion(
     val question: Hiragana,
     val answerAttempts: List<Hiragana> = emptyList()
-)
+) {
+    val isCorrect: Boolean get() = answerAttempts.size == 1 && answerAttempts.first() == question
+    val isAnswered: Boolean get() = answerAttempts.lastOrNull()?.let { it == question } ?: false
+}
+val List<QuizQuestion>.correctCounts: Int get() = count { it.isCorrect }
+val List<QuizQuestion>.incorrectCounts: Int get() = count { !it.isCorrect }
+val List<QuizQuestion>.incorrectQuestions: List<QuizQuestion> get() = filter { !it.isCorrect }
+val List<QuizQuestion>.isAllQuestionsAnswered: Boolean get() = lastOrNull()?.isAnswered ?: false
+val List<QuizQuestion>.isAllQuestionsCorrect: Boolean get() = all { it.isCorrect }
 
 data class TestQuizUiState(
     val loading: Boolean = false,
@@ -26,23 +34,26 @@ data class TestQuizUiState(
     val remainingQuestionsCount: Int = -1,
 )
 
+sealed class TestQuizUiEvent() {
+    object NavigateToTestResults: TestQuizUiEvent()
+}
+
 @HiltViewModel
-class TestQuizViewModel @Inject constructor(val userRepository: RefactoredUserRepository): ViewModel() {
-    private val _userProgress = userRepository.observeLocalUser().map { it.progress }
+class TestQuizViewModel @Inject constructor(
+    val userRepository: RefactoredUserRepository,
+    val quizRepository: RefactoredQuizRepository
+): ViewModel() {
     private val _loading = MutableStateFlow(false)
-    private val _questionStates = MutableStateFlow<List<QuestionState>>(emptyList())
+    private val _quizQuestions = quizRepository.observeQuizQuestions()
+    private val quizQuestions get() = _quizQuestions.value
     private val _currentQuestionIndex = MutableStateFlow(0)
+    private val currentQuestionIndex get() = _currentQuestionIndex.value
 
     init {
-        viewModelScope.launch {
-            _userProgress.collect { progress ->
-                val questions = HiraganaCategory.progressToCategoryList(progress).flatMap { it.hiraganaList }
-                _questionStates.value = questions.map { question -> QuestionState(question = question) }
-            }
-        }
+        viewModelScope.launch { quizRepository.generateQuizQuestions() }
     }
 
-    val uiState = combine(_loading, _questionStates, _currentQuestionIndex) { loading, questionStates, currentQuestionIndex ->
+    val uiState = combine(_loading, _quizQuestions, _currentQuestionIndex) { loading, questionStates, currentQuestionIndex ->
         TestQuizUiState(
             loading = loading,
             currentQuestion = questionStates.getOrNull(currentQuestionIndex)?.question,
@@ -54,31 +65,21 @@ class TestQuizViewModel @Inject constructor(val userRepository: RefactoredUserRe
         initialValue = TestQuizUiState(loading = true)
     )
 
-    fun selectAnswer(hiragana: Hiragana, onAllQuestionsAnswered: (List<QuestionState>) -> Unit) = viewModelScope.launch {
-        val currentQuestionState = _questionStates.value[_currentQuestionIndex.value]
-        val isCurrentQuestionCorrect = hiragana == currentQuestionState.question
-        val updatedQuestionState = currentQuestionState.copy(answerAttempts = currentQuestionState.answerAttempts + hiragana)
-        _questionStates.value = _questionStates.value.toMutableList().apply {
-            set(_currentQuestionIndex.value, updatedQuestionState)
-        }
+    private val _uiEvent = MutableSharedFlow<TestQuizUiEvent>()
+    val uiEvent: SharedFlow<TestQuizUiEvent> = _uiEvent
 
-        if (isCurrentQuestionCorrect) {
-            _currentQuestionIndex.value += 1
-        }
+    private val currentQuestion get() = quizQuestions[currentQuestionIndex]
 
-        if (_currentQuestionIndex.value == _questionStates.value.size) {
-            val isAllAnswersCorrect = _questionStates.value.run {
-                count { it.answerAttempts.size == 1 } == size
+    fun selectAnswer(hiragana: Hiragana) = viewModelScope.launch {
+        quizRepository.selectAnswer(currentQuestionIndex, hiragana)
+
+        if (currentQuestion.isAnswered) { _currentQuestionIndex.value += 1 }
+        if (quizQuestions.isAllQuestionsAnswered) {
+            if (quizQuestions.isAllQuestionsCorrect) {
+                userRepository.continueLocalUserProgress()
+                userRepository.lockTestAllLearned()
             }
-
-            val questionStatesBeforeProgressUpdate = _questionStates.value
-            if (isAllAnswersCorrect) {
-                val nextHiraganaCategoryIndex = HiraganaCategory.entries.indexOfFirst { it.id == _userProgress.first() } + 1
-                userRepository.updateLocalUserProgress(HiraganaCategory.entries[nextHiraganaCategoryIndex].id)
-                userRepository.updateLocalUserIsTestUnlocked(false)
-            }
-
-            onAllQuestionsAnswered(questionStatesBeforeProgressUpdate)
+            _uiEvent.emit(TestQuizUiEvent.NavigateToTestResults)
         }
     }
 }
