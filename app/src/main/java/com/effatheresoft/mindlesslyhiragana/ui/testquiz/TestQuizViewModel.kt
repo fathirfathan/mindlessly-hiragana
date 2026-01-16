@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
-import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
+import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredUserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -27,7 +27,7 @@ data class TestQuizUiState(
 )
 
 @HiltViewModel
-class TestQuizViewModel @Inject constructor(val userRepository: UserRepository): ViewModel() {
+class TestQuizViewModel @Inject constructor(val userRepository: RefactoredUserRepository): ViewModel() {
     private val _userProgress = userRepository.observeLocalUser().map { it.progress }
     private val _loading = MutableStateFlow(false)
     private val _questionStates = MutableStateFlow<List<QuestionState>>(emptyList())

@@ -2,7 +2,7 @@ package com.effatheresoft.mindlesslyhiragana.ui.testresult
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
+import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredUserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -19,7 +19,7 @@ data class TestResultUiState(
 
 @HiltViewModel
 class TestResultViewModel @Inject constructor(
-    userRepository: UserRepository
+    userRepository: RefactoredUserRepository
 ): ViewModel() {
     private val _loading = MutableStateFlow(false)
     private val _observedLocalUser = userRepository.observeLocalUser()

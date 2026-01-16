@@ -34,13 +34,13 @@ sealed interface Route {
     data class Result(val categoryId: String): Route
 
     @Serializable
-    data class Test(val categoryId: String): Route
+    object Test: Route
 
     @Serializable
-    data class TestQuiz(val categoryId: String): Route
+    object TestQuiz: Route
 
     @Serializable
-    data class TestResult(val categoryId: String): Route
+    object TestResult: Route
 }
 
 @Composable
@@ -60,7 +60,7 @@ fun DefaultNavGraph(
             HomeScreen(
                 onNavigateToLearnOrTest = { categoryId ->
                     when (categoryId) {
-                        "Test All Learned" -> navController.navigate(Route.Test(categoryId))
+                        "Test All Learned" -> navController.navigate(Route.Test)
                         else -> navController.navigate(Route.Learn(categoryId))
                     }
                 },
@@ -105,57 +105,54 @@ fun DefaultNavGraph(
                     }
                 },
                 onTestAllLearned = {
-                    navController.navigate(Route.Test(resultRoute.categoryId)) {
+                    navController.navigate(Route.Test) {
                         popUpTo(Route.Home)
                     }
                 }
             )
         }
 
-        composable<Route.Test> { navBackStackEntry ->
-            val testRoute: Route.Test = navBackStackEntry.toRoute()
+        composable<Route.Test> {
             TestScreen(
+                viewModel = hiltViewModel(),
                 onNavigationIconClick = { navController.navigateUp() },
-                onChallengeLearn = {
-                    navController.navigate(Route.Learn(testRoute.categoryId))  {
-                        popUpTo(Route.Test(testRoute.categoryId)) { inclusive = true }
+                onChallengeLearn = { categoryId ->
+                    navController.navigate(Route.Learn(categoryId))  {
+                        popUpTo(Route.Test) { inclusive = true }
                     }
                 },
-                onTestAllLearned = {
-                    navController.navigate(Route.TestQuiz(testRoute.categoryId))
-                }
+                onTestAllLearned = { navController.navigate(Route.TestQuiz) }
             )
         }
 
-        composable<Route.TestQuiz> { navBackStackEntry ->
-            val testQuizRoute: Route.TestQuiz = navBackStackEntry.toRoute()
+        composable<Route.TestQuiz> {
             TestQuizScreen(
+                viewModel = hiltViewModel(),
                 onNavigateUp = navController::navigateUp,
                 onAllQuestionsAnswered = { questionStates ->
                     navigationViewModel.setQuestionStates(questionStates)
-                    navController.navigate(Route.TestResult(testQuizRoute.categoryId)) {
-                        popUpTo(Route.Test(testQuizRoute.categoryId)) { inclusive = true }
+                    navController.navigate(Route.TestResult) {
+                        popUpTo(Route.Test) { inclusive = true }
                     }
                 }
             )
         }
 
-        composable<Route.TestResult> { navBackStackEntry ->
-            val categoryId = (navBackStackEntry.toRoute() as Route.TestResult).categoryId
-
+        composable<Route.TestResult> {
             TestResultScreen(
+                viewModel = hiltViewModel(),
+                navigationViewModel = hiltViewModel(),
                 onNavigateUp = navController::navigateUp,
                 onTryAgain = {
-                    navController.navigate(Route.Test(categoryId)) {
-                        popUpTo(Route.TestResult(categoryId)) { inclusive = true }
+                    navController.navigate(Route.Test) {
+                        popUpTo(Route.TestResult) { inclusive = true }
                     }
                 },
                 onContinueLearning = { newProgress ->
                     navController.navigate(Route.Learn(newProgress)) {
-                        popUpTo(Route.TestResult(categoryId)) { inclusive = true }
+                        popUpTo(Route.TestResult) { inclusive = true }
                     }
-                },
-                navigationViewModel = navigationViewModel
+                }
             )
         }
     }

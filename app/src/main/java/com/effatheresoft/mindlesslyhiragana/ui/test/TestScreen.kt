@@ -21,16 +21,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.effatheresoft.mindlesslyhiragana.R
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 
 @Composable
 fun TestScreen(
-    viewModel: TestViewModel = hiltViewModel(),
+    viewModel: TestViewModel,
     onNavigationIconClick: () -> Unit,
-    onChallengeLearn: () -> Unit,
+    onChallengeLearn: (categoryId: String) -> Unit,
     onTestAllLearned: () -> Unit
 ) {
     DefaultScaffold(
@@ -46,7 +45,7 @@ fun TestScreen(
         TestScreenContent(
             categoryList = uiState.categoryList.map { it.kanaWithNakaguro },
             isTestButtonEnabled = uiState.isTestUnlocked,
-            onChallengeButtonClick = onChallengeLearn,
+            onChallengeButtonClick = { onChallengeLearn(uiState.categoryList.first().id) },
             onTestAllLearnedButtonClick = onTestAllLearned
         )
     }
