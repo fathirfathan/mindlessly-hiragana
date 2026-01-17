@@ -31,23 +31,3 @@ object VolatileDataSourceTestModule {
     @Provides
     fun provideFakeQuizVolatileDataSource(): QuizVolatileDataSource = FakeQuizVolatileDataSource()
 }
-
-//@Module
-//@TestInstallIn(
-//    components = [SingletonComponent::class],
-//    replaces = [RepositoryModule::class]
-//)
-//object RepositoryTestModule {
-//
-//    @Singleton
-//    @Provides
-//    fun provideUserRepository(): UserRepository {
-//        return FakeUserRepository()
-//    }
-//
-//    @Singleton
-//    @Provides
-//    fun provideQuizRepository(): QuizRepository {
-//        return FakeQuizRepository()
-//    }
-//}

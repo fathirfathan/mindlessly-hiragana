@@ -49,7 +49,6 @@ fun DefaultNavGraph(
     navController: NavHostController = rememberNavController(),
     startDestination: Route = Route.Home
 ) {
-//    val navigationViewModel: NavigationViewModel = hiltViewModel()
 
     NavHost(
         navController = navController,
