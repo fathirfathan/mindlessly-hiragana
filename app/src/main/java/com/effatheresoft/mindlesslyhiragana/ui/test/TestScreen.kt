@@ -45,7 +45,7 @@ fun TestScreen(
         TestScreenContent(
             categoryList = uiState.categoryList.map { it.kanaWithNakaguro },
             isTestButtonEnabled = uiState.isTestUnlocked,
-            onChallengeButtonClick = { onChallengeLearn(uiState.categoryList.first().id) },
+            onChallengeButtonClick = { onChallengeLearn(uiState.categoryList.last().id) },
             onTestAllLearnedButtonClick = onTestAllLearned
         )
     }

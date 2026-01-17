@@ -42,16 +42,17 @@ class TestScreenRoboTest {
     }
 
     @Test
-    fun `user click challenge learn button scenario`() {
-        // given user progress is `himikase`
+    fun `user click challenge learn button scenario`() = runTest {
+        // given user progress is `fuwoya`
         // and learning sets count is 5
         // when user clicks `Challenge All Correct On Learn` button
         // then user navigates to learn screen
-        // and user sees `ひみかせ`
+        // and user sees `ふをや`
         // and user sees `5` for learning sets
+        userRepository.updateLocalUserProgress("fuwoya")
         setContentAndNavigateToTestScreen()
         composeTestRule.onNodeWithText(activity.getString(R.string.challenge_all_correct_on_learn)).performClick()
-        composeTestRule.onNodeWithText("ひみかせ").assertIsDisplayed()
+        composeTestRule.onNodeWithText("ふをや").assertIsDisplayed()
         composeTestRule.onNodeWithText(activity.getString(R.string.learning_sets_n_sets, 5)).assertIsDisplayed()
     }
 
