@@ -2,10 +2,12 @@ package com.effatheresoft.mindlesslyhiragana.di
 
 import android.content.Context
 import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.effatheresoft.mindlesslyhiragana.Constants.DEFAULT_DATABASE_NAME
-import com.effatheresoft.mindlesslyhiragana.Constants.PREPOPULATED_DATABASE_FILEPATH
 import com.effatheresoft.mindlesslyhiragana.data.local.DefaultDatabase
 import com.effatheresoft.mindlesslyhiragana.data.local.UserDao
+import com.effatheresoft.mindlesslyhiragana.data.local.UserRoomEntity
 import com.effatheresoft.mindlesslyhiragana.data.repository.DefaultQuizRepository
 import com.effatheresoft.mindlesslyhiragana.data.repository.DefaultUserRepository
 import com.effatheresoft.mindlesslyhiragana.data.repository.QuizRepository
@@ -19,6 +21,10 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import javax.inject.Provider
 import javax.inject.Singleton
 
 @Module
@@ -64,14 +70,36 @@ object DatabaseModule {
 
     @Singleton
     @Provides
-    fun provideDefaultDatabase(@ApplicationContext context: Context): DefaultDatabase {
+    fun provideDefaultDatabase(
+        @ApplicationContext context: Context,
+        userDaoProvider: Provider<UserDao>
+    ): DefaultDatabase {
         return Room.databaseBuilder(
             context.applicationContext,
             DefaultDatabase::class.java,
             DEFAULT_DATABASE_NAME
         )
-            .createFromAsset(PREPOPULATED_DATABASE_FILEPATH)
+            .addCallback(object : RoomDatabase.Callback() {
+                override fun onCreate(db: SupportSQLiteDatabase) {
+                    super.onCreate(db)
+
+                    CoroutineScope(Dispatchers.IO).launch {
+                        prePopulateDatabase(userDaoProvider.get())
+                    }
+                }
+            })
             .build()
+    }
+
+    private suspend fun prePopulateDatabase(userDao: UserDao) {
+        userDao.upsertUser(
+            UserRoomEntity(
+                id = "localUser",
+                progress = "1",
+                learningSetsCount = 5,
+                isTestUnlocked = false
+            )
+        )
     }
 
     @Provides
