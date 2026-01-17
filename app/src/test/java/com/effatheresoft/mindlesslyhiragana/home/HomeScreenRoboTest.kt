@@ -14,6 +14,8 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onParent
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.swipeLeft
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.effatheresoft.mindlesslyhiragana.HiltTestActivity
 import com.effatheresoft.mindlesslyhiragana.R
@@ -161,6 +163,41 @@ class HomeScreenRoboTest {
         composeTestRule.onNodeWithText(activity.getString(R.string.reset_progress)).assertIsDisplayed()
         composeTestRule.onNodeWithText(activity.getString(R.string.reset_progress)).performClick()
         composeTestRule.onNodeWithText(activity.getString(R.string.reset)).assertIsDisplayed()
+    }
+
+    @Test
+    fun `user reset progress scenario`() = runTest {
+        // given user progress is `fuwoya`
+        // when user click top app bar navigation icon
+        // and user click reset progress button
+        // and user click reset button
+        // then user sees `ふをや` category locked
+        userRepository.updateLocalUserProgress("fuwoya")
+        setContent()
+        composeTestRule.onNodeWithContentDescription(activity.getString(R.string.x_category_unlocked, "ふをや")).assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription(activity.getString(R.string.open_menu)).performClick()
+        composeTestRule.onNodeWithText(activity.getString(R.string.reset_progress)).performClick()
+        composeTestRule.onNode(isButton() and hasText(activity.getString(R.string.reset))).performClick()
+
+        composeTestRule.onNodeWithContentDescription(activity.getString(R.string.x_category_locked, "ふをや")).assertIsDisplayed()
+    }
+
+    @Test
+    fun `user cancel reset progress dialog scenario`() = runTest {
+        // given user progress is `fuwoya`
+        // when user click top app bar navigation icon
+        // and user click reset progress button
+        // and user click cancel button
+        // then user sees `ふをや` category still unlocked
+        userRepository.updateLocalUserProgress("fuwoya")
+        setContent()
+        composeTestRule.onNodeWithContentDescription(activity.getString(R.string.x_category_unlocked, "ふをや")).assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription(activity.getString(R.string.open_menu)).performClick()
+        composeTestRule.onNodeWithText(activity.getString(R.string.reset_progress)).performClick()
+        composeTestRule.onNode(isButton() and hasText(activity.getString(R.string.cancel))).performClick()
+
+        composeTestRule.onNodeWithText(activity.getString(R.string.reset_progress)).performTouchInput { swipeLeft() }
+        composeTestRule.onNodeWithContentDescription(activity.getString(R.string.x_category_unlocked, "ふをや")).assertIsDisplayed()
     }
 
     fun setContent() {

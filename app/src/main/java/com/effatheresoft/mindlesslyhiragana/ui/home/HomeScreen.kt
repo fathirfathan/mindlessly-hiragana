@@ -19,6 +19,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.effatheresoft.mindlesslyhiragana.R
 import com.effatheresoft.mindlesslyhiragana.ui.component.DefaultScaffold
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
+import kotlinx.coroutines.launch
 
 data class HomeCategory(
     val id: String,
@@ -59,7 +60,10 @@ fun HomeScreen(
 
             when {
                 uiState.isResetDialogOpen -> HomeDialog(
-                    onConfirm = viewModel::onResetDialogConfirm,
+                    onConfirm = {
+                        viewModel.onResetDialogConfirm()
+                        scope.launch { drawerState.close() }
+                    },
                     onConfirmLabel = R.string.reset,
                     onDismiss = viewModel::onResetDialogDismiss,
                     title = R.string.reset_progress,

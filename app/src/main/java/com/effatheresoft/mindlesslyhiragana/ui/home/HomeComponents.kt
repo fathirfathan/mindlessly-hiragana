@@ -125,7 +125,7 @@ fun HomeDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         confirmButton = { Button(onConfirm) { Text(stringResource(onConfirmLabel)) } },
-        dismissButton = { Button(onConfirm) { Text(stringResource(R.string.cancel)) } },
+        dismissButton = { Button(onDismiss) { Text(stringResource(R.string.cancel)) } },
         title = { Text(stringResource(title)) },
         text = { Text(stringResource(text)) },
         icon = { Icon(painterResource(icon), null) },
