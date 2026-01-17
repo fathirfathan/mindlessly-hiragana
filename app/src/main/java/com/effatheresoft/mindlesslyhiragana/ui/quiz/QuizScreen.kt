@@ -73,17 +73,6 @@ fun QuizScreen(
     }
 }
 
-data class Quiz(
-    val question: Hiragana,
-    val possibleAnswers: List<PossibleAnswer>
-)
-
-data class PossibleAnswer(
-    val answer: Hiragana,
-    val isCorrect: Boolean,
-    val isSelected: Boolean
-)
-
 @Composable
 fun QuizContent(
     question: Hiragana,

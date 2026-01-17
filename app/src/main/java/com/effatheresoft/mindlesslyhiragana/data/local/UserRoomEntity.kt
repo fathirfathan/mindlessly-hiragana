@@ -4,8 +4,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.effatheresoft.mindlesslyhiragana.Constants.DEFAULT_DATABASE_USER_TABLE_NAME
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.AO
-import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.HIMIKASE
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.FUWOYA
+import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.HIMIKASE
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.KONITANA
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.KUHERIKE
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.NOYUMENU
@@ -112,5 +112,24 @@ fun UserRoomEntity.toUser(): User {
             learningSetsCount = learningSetsCount,
             isTestUnlocked = isTestUnlocked
         )
+    }
+}
+
+fun String.toRoomEntityProgress(): String {
+    return when(this) {
+        HIMIKASE.id  -> "1"
+        FUWOYA.id    -> "2"
+        AO.id        -> "3"
+        TSUUNE.id    -> "4"
+        KUHERIKE.id  -> "5"
+        KONITANA.id  -> "6"
+        SUMURORU.id  -> "7"
+        SHIIMO.id    -> "8"
+        TOTESO.id    -> "9"
+        WANERE.id    -> "10"
+        NOYUMENU.id  -> "11"
+        YOHAMAHO.id  -> "12"
+        SAKICHIRA.id -> "13"
+        else -> "-1"
     }
 }

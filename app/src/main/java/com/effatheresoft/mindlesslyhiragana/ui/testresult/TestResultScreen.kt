@@ -16,8 +16,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.effatheresoft.mindlesslyhiragana.R
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana
-import com.effatheresoft.mindlesslyhiragana.ui.test.DefaultScaffold
-import com.effatheresoft.mindlesslyhiragana.ui.test.DefaultTopAppBar
+import com.effatheresoft.mindlesslyhiragana.ui.component.DefaultScaffold
+import com.effatheresoft.mindlesslyhiragana.ui.component.DefaultTopAppBar
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 
 @Composable

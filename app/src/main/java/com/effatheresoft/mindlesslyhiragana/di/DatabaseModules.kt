@@ -8,9 +8,6 @@ import com.effatheresoft.mindlesslyhiragana.Constants.DEFAULT_DATABASE_NAME
 import com.effatheresoft.mindlesslyhiragana.data.local.DefaultDatabase
 import com.effatheresoft.mindlesslyhiragana.data.local.UserDao
 import com.effatheresoft.mindlesslyhiragana.data.local.UserRoomEntity
-import com.effatheresoft.mindlesslyhiragana.data.repository.QuizVolatileDataSource
-import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredQuizRepository
-import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredUserRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,30 +18,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Provider
 import javax.inject.Singleton
-
-@Module
-@InstallIn(SingletonComponent::class)
-object RepositoryProviderModule {
-    @Singleton
-    @Provides
-    fun provideRefactoredUserRepository(userDao: UserDao) =
-        RefactoredUserRepository(userDao)
-
-    @Singleton
-    @Provides
-    fun provideRefactoredQuizRepository(
-        userRepository: RefactoredUserRepository,
-        quizVolatileDataSource: QuizVolatileDataSource
-    ) = RefactoredQuizRepository(userRepository, quizVolatileDataSource)
-}
-
-@Module
-@InstallIn(SingletonComponent::class)
-object VolatileDataSourceModule {
-    @Singleton
-    @Provides
-    fun provideQuizVolatileDataSource() = QuizVolatileDataSource()
-}
 
 @Module
 @InstallIn(SingletonComponent::class)

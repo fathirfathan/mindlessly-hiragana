@@ -28,9 +28,8 @@ import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.HI
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.KA
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.MI
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.SE
-import com.effatheresoft.mindlesslyhiragana.ui.quiz.Quiz
-import com.effatheresoft.mindlesslyhiragana.ui.test.DefaultScaffold
-import com.effatheresoft.mindlesslyhiragana.ui.test.DefaultTopAppBar
+import com.effatheresoft.mindlesslyhiragana.ui.component.DefaultScaffold
+import com.effatheresoft.mindlesslyhiragana.ui.component.DefaultTopAppBar
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,14 +60,6 @@ fun ResultScreen(
         )
     }
 }
-
-val Quiz.isCorrect
-    get() = this.possibleAnswers.count { it.isSelected } == 1
-val List<Quiz>.correctCounts
-    get() = count { quiz -> quiz.isCorrect }
-val List<Quiz>.incorrectCounts
-    get() = count { quiz -> !quiz.isCorrect }
-
 
 @Composable
 fun ResultContent(

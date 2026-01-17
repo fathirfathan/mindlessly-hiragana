@@ -5,6 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana
 import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredQuizRepository
 import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredUserRepository
+import com.effatheresoft.mindlesslyhiragana.ui.quiz.correctCounts
+import com.effatheresoft.mindlesslyhiragana.ui.quiz.incorrectCounts
+import com.effatheresoft.mindlesslyhiragana.ui.quiz.isCorrect
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow

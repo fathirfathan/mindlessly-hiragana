@@ -17,31 +17,6 @@ import com.effatheresoft.mindlesslyhiragana.ui.result.ResultScreen
 import com.effatheresoft.mindlesslyhiragana.ui.test.TestScreen
 import com.effatheresoft.mindlesslyhiragana.ui.testquiz.TestQuizScreen
 import com.effatheresoft.mindlesslyhiragana.ui.testresult.TestResultScreen
-import kotlinx.serialization.Serializable
-
-sealed interface Route {
-
-    @Serializable
-    object Home: Route
-
-    @Serializable
-    data class Learn(val categoryId: String): Route
-
-    @Serializable
-    data class Quiz(val categoryId: String): Route
-
-    @Serializable
-    data class Result(val categoryId: String): Route
-
-    @Serializable
-    object Test: Route
-
-    @Serializable
-    object TestQuiz: Route
-
-    @Serializable
-    object TestResult: Route
-}
 
 @Composable
 fun DefaultNavGraph(
