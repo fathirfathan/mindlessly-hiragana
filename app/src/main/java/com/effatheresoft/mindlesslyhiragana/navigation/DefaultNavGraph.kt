@@ -121,7 +121,7 @@ fun DefaultNavGraph(
                     }
                 },
                 onContinueLearning = { newProgress ->
-                    navController.navigate(Route.Learn(newProgress)) {
+                    navController.navigate(Route.Learn(newProgress.id)) {
                         popUpTo(Route.TestResult) { inclusive = true }
                     }
                 }

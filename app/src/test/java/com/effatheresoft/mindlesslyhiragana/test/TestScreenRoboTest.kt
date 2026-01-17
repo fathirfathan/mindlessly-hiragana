@@ -8,6 +8,7 @@ import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.effatheresoft.mindlesslyhiragana.HiltTestActivity
 import com.effatheresoft.mindlesslyhiragana.R
+import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredUserRepository
 import com.effatheresoft.mindlesslyhiragana.navigation.DefaultNavGraph
 import com.effatheresoft.mindlesslyhiragana.sharedtest.util.isButton
@@ -49,7 +50,7 @@ class TestScreenRoboTest {
         // then user navigates to learn screen
         // and user sees `ふをや`
         // and user sees `5` for learning sets
-        userRepository.updateLocalUserProgress("fuwoya")
+        userRepository.updateLocalUserProgress(HiraganaCategory.FUWOYA)
         setContentAndNavigateToTestScreen()
         composeTestRule.onNodeWithText(activity.getString(R.string.challenge_all_correct_on_learn)).performClick()
         composeTestRule.onNodeWithText("ふをや").assertIsDisplayed()

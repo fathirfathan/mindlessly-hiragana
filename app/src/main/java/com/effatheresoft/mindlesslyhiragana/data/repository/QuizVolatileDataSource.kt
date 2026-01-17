@@ -72,8 +72,8 @@ open class QuizVolatileDataSource @Inject constructor() {
         _quizzes.value = generatedQuizzes
     }
 
-    open fun generateQuizQuestions(categoryId: String) {
-        val hiraganaQuestions = HiraganaCategory.progressToCategoryList(categoryId).flatMap { it.hiraganaList }
+    open fun generateQuizQuestions(category: HiraganaCategory) {
+        val hiraganaQuestions = category.complementedHiraganaList
         val quizQuestions = hiraganaQuestions.map { question -> QuizQuestion(question = question) }
         setQuizQuestions(quizQuestions.shuffled())
     }

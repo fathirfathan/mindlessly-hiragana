@@ -18,17 +18,10 @@ fun UserRoomEntity.toUserOrNull(): User? = progress.toIntOrNull()?.let {
     return if (it in 1..HiraganaCategory.entries.size)
         User(
             id = id,
-            progress = HiraganaCategory.entries[it - 1].id,
+            progress = HiraganaCategory.entries[it - 1],
             learningSetsCount = learningSetsCount,
             isTestUnlocked = isTestUnlocked
         )
     else null
 }
 
-fun String.toRoomEntityProgressOrNull(): String? {
-    return when(this) {
-        in HiraganaCategory.entries.map { it.id } ->
-            HiraganaCategory.entries.indexOfFirst { it.id == this }.plus(1).toString()
-        else -> null
-    }
-}

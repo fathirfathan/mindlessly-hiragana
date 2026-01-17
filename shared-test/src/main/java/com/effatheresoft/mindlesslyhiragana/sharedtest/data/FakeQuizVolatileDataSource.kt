@@ -36,8 +36,8 @@ class FakeQuizVolatileDataSource: QuizVolatileDataSource() {
         setQuizzes(generatedQuizzes)
     }
 
-    override fun generateQuizQuestions(categoryId: String) {
-        val hiraganaQuestions = HiraganaCategory.progressToCategoryList(categoryId).flatMap { it.hiraganaList }
+    override fun generateQuizQuestions(category: HiraganaCategory) {
+        val hiraganaQuestions = category.complementedHiraganaList
         val quizQuestions = hiraganaQuestions.map { question -> QuizQuestion(question = question) }
         setQuizQuestions(quizQuestions)
     }

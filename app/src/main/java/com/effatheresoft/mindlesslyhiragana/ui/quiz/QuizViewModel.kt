@@ -3,6 +3,7 @@ package com.effatheresoft.mindlesslyhiragana.ui.quiz
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana
+import com.effatheresoft.mindlesslyhiragana.data.model.toHiraganaCategoryOrNull
 import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredQuizRepository
 import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredUserRepository
 import dagger.assisted.Assisted
@@ -22,7 +23,7 @@ import kotlinx.coroutines.launch
 data class QuizUiState(
     val isLoading: Boolean = false,
     val currentQuiz: Quiz? = null,
-    val remainingQuestionsCount: Int = -1
+    val remainingQuestionsCount: Int? = null
 )
 
 sealed class QuizUiEvent{
@@ -73,7 +74,7 @@ class QuizViewModel @AssistedInject constructor(
         if (selectedAnswer.isCorrect) {
             if (_currentQuizIndex.value == _quizzes.first().size - 1) {
                 val localUser = userRepository.observeLocalUser().first()
-                if (localUser.progress == categoryId) {
+                if (localUser.progress == categoryId.toHiraganaCategoryOrNull()) {
                     val isAllCorrect = _quizzes.first().firstOrNull { !it.isCorrect }.let { it == null }
                     if (isAllCorrect) userRepository.updateLocalUserIsTestUnlocked(true)
                 }

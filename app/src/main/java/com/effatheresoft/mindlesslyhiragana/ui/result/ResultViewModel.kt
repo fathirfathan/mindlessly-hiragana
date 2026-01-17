@@ -18,8 +18,8 @@ import kotlinx.coroutines.flow.stateIn
 
 data class ResultUiState(
     val isLoading: Boolean = false,
-    val correctCounts: Int = -1,
-    val incorrectCounts: Int = -1,
+    val correctCounts: Int? = null,
+    val incorrectCounts: Int? = null,
     val individualIncorrectCounts: List<Pair<Hiragana, Int>> = emptyList(),
     val isTestUnlocked: Boolean = false
 )

@@ -3,6 +3,7 @@ package com.effatheresoft.mindlesslyhiragana.ui.testresult
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana
+import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredQuizRepository
 import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredUserRepository
 import com.effatheresoft.mindlesslyhiragana.ui.testquiz.correctCounts
@@ -18,7 +19,7 @@ import javax.inject.Inject
 data class TestResultUiState(
     val loading: Boolean = false,
     val canContinueLearning: Boolean = false,
-    val progress: String = "",
+    val progress: HiraganaCategory? = null,
     val correctCount: Int = -1,
     val incorrectCount: Int = -1,
     val incorrectHiraganaList: List<Hiragana> = emptyList()

@@ -19,6 +19,7 @@ import androidx.compose.ui.test.swipeLeft
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.effatheresoft.mindlesslyhiragana.HiltTestActivity
 import com.effatheresoft.mindlesslyhiragana.R
+import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredUserRepository
 import com.effatheresoft.mindlesslyhiragana.navigation.DefaultNavGraph
 import com.effatheresoft.mindlesslyhiragana.sharedtest.util.isButton
@@ -90,7 +91,7 @@ class HomeScreenRoboTest {
         // given user progress is `ao`
         // when user click unlocked category `fuwoya`
         // then user navigates to learn screen
-        userRepository.updateLocalUserProgress("ao")
+        userRepository.updateLocalUserProgress(HiraganaCategory.AO)
         setContent()
 
         composeTestRule.onNodeWithText("ふをや").performClick()
@@ -172,7 +173,7 @@ class HomeScreenRoboTest {
         // and user click reset progress button
         // and user click reset button
         // then user sees `ふをや` category locked
-        userRepository.updateLocalUserProgress("fuwoya")
+        userRepository.updateLocalUserProgress(HiraganaCategory.FUWOYA)
         setContent()
         composeTestRule.onNodeWithContentDescription(activity.getString(R.string.x_category_unlocked, "ふをや")).assertIsDisplayed()
         composeTestRule.onNodeWithContentDescription(activity.getString(R.string.open_menu)).performClick()
@@ -189,7 +190,7 @@ class HomeScreenRoboTest {
         // and user click reset progress button
         // and user click cancel button
         // then user sees `ふをや` category still unlocked
-        userRepository.updateLocalUserProgress("fuwoya")
+        userRepository.updateLocalUserProgress(HiraganaCategory.FUWOYA)
         setContent()
         composeTestRule.onNodeWithContentDescription(activity.getString(R.string.x_category_unlocked, "ふをや")).assertIsDisplayed()
         composeTestRule.onNodeWithContentDescription(activity.getString(R.string.open_menu)).performClick()

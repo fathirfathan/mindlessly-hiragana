@@ -18,7 +18,6 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class HomeUiState(
-    val progress: String = HIMIKASE.id,
     val isLoading: Boolean = false,
     val categories: List<HomeCategory> = emptyList(),
     val isResetDialogOpen: Boolean = false
@@ -33,7 +32,6 @@ class HomeViewModel @Inject constructor(val userRepository: RefactoredUserReposi
 
     val uiState: StateFlow<HomeUiState> = combine(_localUser, _isLoading, _isResetDialogOpen) { localUser, isLoading, isResetDialogOpen ->
         HomeUiState(
-            progress = localUser.progress,
             isLoading = isLoading,
             categories = getCategories(localUser.progress),
             isResetDialogOpen = isResetDialogOpen
@@ -44,11 +42,11 @@ class HomeViewModel @Inject constructor(val userRepository: RefactoredUserReposi
         initialValue = HomeUiState(isLoading = true)
     )
 
-    fun getCategories(userProgress: String): List<HomeCategory> {
+    fun getCategories(userProgress: HiraganaCategory): List<HomeCategory> {
         val hiraganaCategories = HiraganaCategory.entries
         val categories = mutableListOf<HomeCategory>()
 
-        val categoryOnProgressIndex = hiraganaCategories.indexOfFirst { category -> category.id == userProgress }
+        val categoryOnProgressIndex = userProgress.ordinal
         val unlockedCategories = hiraganaCategories.take(categoryOnProgressIndex + 1)
             .map {
                 HomeCategory(
@@ -96,7 +94,7 @@ class HomeViewModel @Inject constructor(val userRepository: RefactoredUserReposi
     }
 
     fun onResetDialogConfirm() = viewModelScope.launch {
-        userRepository.updateLocalUserProgress(HIMIKASE.id)
+        userRepository.updateLocalUserProgress(HIMIKASE)
         userRepository.updateLocalUserLearningSetsCount(5)
         userRepository.updateLocalUserIsTestUnlocked(false)
         _isResetDialogOpen.value = false

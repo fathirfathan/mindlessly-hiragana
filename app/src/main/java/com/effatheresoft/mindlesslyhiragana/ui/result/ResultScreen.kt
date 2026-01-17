@@ -50,14 +50,18 @@ fun ResultScreen(
     ) {
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-        ResultContent(
-            correctCounts = uiState.correctCounts,
-            incorrectCounts = uiState.incorrectCounts,
-            individualIncorrectCounts = uiState.individualIncorrectCounts,
-            onTryAgainButtonClick = onTryAgain,
-            onTestAllLearnedButtonClick = onTestAllLearned,
-            isTestAllLearnedButtonEnabled = uiState.isTestUnlocked
-        )
+        uiState.correctCounts?.let { correctCounts ->
+            uiState.incorrectCounts?.let { incorrectCounts ->
+                ResultContent(
+                    correctCounts = correctCounts,
+                    incorrectCounts = incorrectCounts,
+                    individualIncorrectCounts = uiState.individualIncorrectCounts,
+                    onTryAgainButtonClick = onTryAgain,
+                    onTestAllLearnedButtonClick = onTestAllLearned,
+                    isTestAllLearnedButtonEnabled = uiState.isTestUnlocked
+                )
+            }
+        }
     }
 }
 

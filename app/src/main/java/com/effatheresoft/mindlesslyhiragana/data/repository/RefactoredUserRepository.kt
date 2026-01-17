@@ -1,7 +1,6 @@
 package com.effatheresoft.mindlesslyhiragana.data.repository
 
 import com.effatheresoft.mindlesslyhiragana.data.local.UserDao
-import com.effatheresoft.mindlesslyhiragana.data.local.toRoomEntityProgressOrNull
 import com.effatheresoft.mindlesslyhiragana.data.local.toUserOrNull
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.data.model.User
@@ -15,17 +14,11 @@ class RefactoredUserRepository @Inject constructor(
 ) {
     fun observeLocalUser(): Flow<User> = localDataSource.observeLocalUser().mapNotNull { it.toUserOrNull() }
 
-    suspend fun updateLocalUserProgress(progress: String) =
-        progress.toRoomEntityProgressOrNull()?.let { roomEntityProgress ->
-            localDataSource.updateLocalUserProgress(roomEntityProgress)
-        }
-
+    suspend fun updateLocalUserProgress(progress: HiraganaCategory) =
+        localDataSource.updateLocalUserProgress(progress.toRoomEntityProgress())
     suspend fun continueLocalUserProgress() {
-        getLocalUserOrNull()?.let { localUser ->
-            val currentProgress = localUser.progress
-            val nextHiraganaCategoryIndex = HiraganaCategory.entries.indexOfFirst { it.id == currentProgress } + 1
-            val nextProgress = HiraganaCategory.entries.getOrNull(nextHiraganaCategoryIndex)?.id
-            nextProgress?.let { updateLocalUserProgress(it) }
+        getLocalUserProgressOrNull()?.let { progress ->
+            updateLocalUserProgress(progress.getNextCategoryOrNull() ?: progress)
         }
     }
 
@@ -36,13 +29,13 @@ class RefactoredUserRepository @Inject constructor(
         localDataSource.updateLocalUserIsTestUnlocked(isUnlocked)
     }
 
-    private suspend fun getLocalUserOrNull() = localDataSource.observeLocalUser().first().toUserOrNull()
+    private suspend fun getLocalUserProgressOrNull() = localDataSource.observeLocalUser().first().toUserOrNull()?.progress
 
     suspend fun lockTestAllLearned() {
-        getLocalUserOrNull()?.let { localUser ->
-            if (localUser.progress == HiraganaCategory.entries.last().id) return
+        getLocalUserProgressOrNull()?.let { progress ->
+            if (progress.isLastCategory) return
+
             updateLocalUserIsTestUnlocked(false)
         }
     }
-
 }

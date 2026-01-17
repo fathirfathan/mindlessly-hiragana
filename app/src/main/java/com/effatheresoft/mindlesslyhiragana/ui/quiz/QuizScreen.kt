@@ -52,7 +52,6 @@ fun QuizScreen(
         modifier = modifier
     ) {
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-        val currentQuiz = uiState.currentQuiz
 
         LaunchedEffect(Unit) {
             viewModel.uiEvent.collect {
@@ -62,13 +61,15 @@ fun QuizScreen(
             }
         }
 
-        currentQuiz?.let {
-            QuizContent(
-                question = currentQuiz.question,
-                remainingQuestionsCount = uiState.remainingQuestionsCount,
-                possibleAnswers = currentQuiz.possibleAnswers,
-                onAnswerSelected = viewModel::selectCurrentQuizAnswer
-            )
+        uiState.currentQuiz?.let { currentQuiz ->
+            uiState.remainingQuestionsCount?.let { remainingQuestionsCount ->
+                QuizContent(
+                    question = currentQuiz.question,
+                    remainingQuestionsCount = remainingQuestionsCount,
+                    possibleAnswers = currentQuiz.possibleAnswers,
+                    onAnswerSelected = viewModel::selectCurrentQuizAnswer
+                )
+            }
         }
     }
 }

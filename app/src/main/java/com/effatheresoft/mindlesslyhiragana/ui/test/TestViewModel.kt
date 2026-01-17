@@ -27,7 +27,7 @@ class TestViewModel @Inject constructor(
     val uiState = combine(_loading, _observedUser) { loading, user ->
         TestUiState(
             loading = loading,
-            categoryList = HiraganaCategory.progressToCategoryList(user.progress),
+            categoryList = user.progress.complementedHiraganaCategory,
             isTestUnlocked = user.isTestUnlocked
         )
     }.stateIn(

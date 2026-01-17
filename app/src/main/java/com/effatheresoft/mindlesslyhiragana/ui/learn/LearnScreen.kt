@@ -40,12 +40,16 @@ fun LearnScreen(
     ) {
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-        LearnScreenContent(
-            category = uiState.category?.toHiraganaStringWithNakaguro() ?: "",
-            learningSetsCount = uiState.learningSetsCount,
-            onLearningSetsCountChange = { viewModel.updateLearningSetsCount(it) },
-            onLearnButtonClick = onLearnButtonClick,
-        )
+        uiState.category?.let { category ->
+            uiState.learningSetsCount?.let { learningSetsCount ->
+                LearnScreenContent(
+                    category = category.toHiraganaStringWithNakaguro(),
+                    learningSetsCount = learningSetsCount,
+                    onLearningSetsCountChange = { viewModel.updateLearningSetsCount(it) },
+                    onLearnButtonClick = onLearnButtonClick,
+                )
+            }
+        }
     }
 }
 

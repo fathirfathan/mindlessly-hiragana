@@ -1,5 +1,7 @@
 package com.effatheresoft.mindlesslyhiragana.data.model
 
+import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.entries
+
 enum class HiraganaCategory(
     val id: String,
     val hiraganaList: List<Hiragana>
@@ -23,21 +25,22 @@ enum class HiraganaCategory(
         return hiraganaList.joinToString("") { if (it in hiraganaBeforeNakaguroSet) "${it.kana}・" else it.kana }
     }
 
+    fun toRoomEntityProgress(): String = ordinal.plus(1).toString()
+
+    fun getNextCategoryOrNull() = entries.getOrNull(ordinal + 1)
+
+    val isLastCategory: Boolean get() = this == entries.last()
+    val complementedHiraganaList: List<Hiragana> get() =
+        entries.filter { it.ordinal <= this.ordinal }.flatMap { it.hiraganaList }
+    val complementedHiraganaCategory: List<HiraganaCategory> get() = entries.filter { it.ordinal <= this.ordinal }
+
     val kanaWithNakaguro: String
         get() {
             val hiraganaBeforeNakaguroSet = setOf(Hiragana.U, Hiragana.HE, Hiragana.NI, Hiragana.MU)
             return hiraganaList.joinToString("") { if (it in hiraganaBeforeNakaguroSet) "${it.kana}・" else it.kana }
         }
+}
 
-    companion object {
-        fun progressToCategoryList(progress: String): List<HiraganaCategory> {
-            if (progress.isEmpty()) return emptyList()
-            val progressCategory = entries.first { it.id == progress }
-            return entries.filter { it.ordinal <= progressCategory.ordinal }
-        }
-
-        fun getAllHiraganaUntilCategory(category: HiraganaCategory): List<Hiragana> {
-            return entries.filter { it.ordinal <= category.ordinal }.flatMap { it.hiraganaList }
-        }
-    }
+fun String.toHiraganaCategoryOrNull(): HiraganaCategory? {
+    return entries.firstOrNull { category -> category.id == this }
 }

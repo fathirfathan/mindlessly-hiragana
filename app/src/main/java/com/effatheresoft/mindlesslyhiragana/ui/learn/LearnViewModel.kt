@@ -2,7 +2,6 @@ package com.effatheresoft.mindlesslyhiragana.ui.learn
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.effatheresoft.mindlesslyhiragana.Constants.DEFAULT_LEARNING_SETS_COUNT
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredUserRepository
 import dagger.assisted.Assisted
@@ -19,7 +18,7 @@ import kotlinx.coroutines.launch
 data class LearnUiState(
     val isLoading: Boolean = false,
     val category: HiraganaCategory? = null,
-    val learningSetsCount: Int = DEFAULT_LEARNING_SETS_COUNT
+    val learningSetsCount: Int? = null
 )
 
 @HiltViewModel(assistedFactory = LearnViewModel.Factory::class)

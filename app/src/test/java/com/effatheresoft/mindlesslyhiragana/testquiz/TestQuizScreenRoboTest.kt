@@ -152,9 +152,9 @@ class TestQuizScreenRoboTest {
         // and user don't see any incorrect hiragana
         // and user sees `Try Again` button enabled
         // and user sees `Continue Learning` button disabled
-        userRepository.updateLocalUserProgress("sakichira")
+        userRepository.updateLocalUserProgress(HiraganaCategory.SAKICHIRA)
         setContentAndNavigateToTestQuizScreen()
-        HiraganaCategory.getAllHiraganaUntilCategory(HiraganaCategory.SAKICHIRA).forEach {
+        HiraganaCategory.SAKICHIRA.complementedHiraganaList.forEach {
             hiraganaKeyboard_clickAnswer(it)
         }
 
@@ -165,10 +165,9 @@ class TestQuizScreenRoboTest {
         composeTestRule.onNodeWithText(activity.getString(R.string.continue_learning)).assertIsDisplayed()
         composeTestRule.onNodeWithText(activity.getString(R.string.continue_learning)).assertIsNotEnabled()
 
-        HiraganaCategory.getAllHiraganaUntilCategory(HiraganaCategory.SAKICHIRA)
-            .forEach {
-                composeTestRule.onNodeWithText(it.kana, substring = true).assertIsNotDisplayed()
-            }
+        HiraganaCategory.SAKICHIRA.complementedHiraganaList.forEach {
+            composeTestRule.onNodeWithText(it.kana, substring = true).assertIsNotDisplayed()
+        }
     }
 
     fun hiraganaKeyboard_clickAnswer(answer: Hiragana) {
