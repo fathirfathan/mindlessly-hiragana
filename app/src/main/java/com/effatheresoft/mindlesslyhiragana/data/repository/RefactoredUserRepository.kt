@@ -33,8 +33,8 @@ class RefactoredUserRepository @Inject constructor(
     suspend fun continueLocalUserProgress() {
         val currentProgress = localDataSource.observeLocalUser().first().toUser().progress
         val nextHiraganaCategoryIndex = HiraganaCategory.entries.indexOfFirst { it.id == currentProgress } + 1
-        val nextProgress = HiraganaCategory.entries[nextHiraganaCategoryIndex].id
-        updateLocalUserProgress(nextProgress)
+        val nextProgress = HiraganaCategory.entries.getOrNull(nextHiraganaCategoryIndex)?.id
+        nextProgress?.let { updateLocalUserProgress(it) }
     }
 
     suspend fun updateLocalUserLearningSetsCount(count: Int) =
@@ -44,7 +44,13 @@ class RefactoredUserRepository @Inject constructor(
         localDataSource.updateLocalUserIsTestUnlocked(isUnlocked)
     }
 
-    suspend fun lockTestAllLearned() = updateLocalUserIsTestUnlocked(false)
+    private suspend fun getLocalUser() = localDataSource.observeLocalUser().first().toUser()
+
+    suspend fun lockTestAllLearned() {
+        if (getLocalUser().progress == HiraganaCategory.entries.last().id) return
+
+        updateLocalUserIsTestUnlocked(false)
+    }
 
     private fun String.toRoomEntityProgress(): String {
         return when(this) {

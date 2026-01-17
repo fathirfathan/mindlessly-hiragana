@@ -1,51 +1,51 @@
 package com.effatheresoft.mindlesslyhiragana.data.model
 
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.HI
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.KA
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.MI
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.SE
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.FU
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.WO
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.YA
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.A
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.O
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.TSU
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.U
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.N
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.CHI
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.E
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.KU
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.FU
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.HA
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.HE
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.RI
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.HI
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.HO
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.I
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.KA
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.KE
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.KI
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.KO
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.NI
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.TA
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.NA
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.SU
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.KU
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.MA
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.ME
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.MI
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.MO
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.MU
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.N
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.NA
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.NE
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.NI
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.NO
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.NU
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.O
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.RA
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.RE
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.RI
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.RO
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.RU
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.SHI
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.I
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.MO
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.TO
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.TE
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.SO
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.WA
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.NE
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.RE
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.NO
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.YU
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.ME
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.NU
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.YO
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.HA
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.MA
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.HO
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.SA
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.KI
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.CHI
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.RA
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.SE
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.SHI
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.SO
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.SU
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.TA
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.TE
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.TO
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.TSU
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.U
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.WA
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.WO
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.YA
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.YO
+import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.YU
 
 
 enum class HiraganaCategory(
@@ -82,6 +82,10 @@ enum class HiraganaCategory(
             if (progress.isEmpty()) return emptyList()
             val progressCategory = HiraganaCategory.entries.first { it.id == progress }
             return HiraganaCategory.entries.filter { it.ordinal <= progressCategory.ordinal }
+        }
+
+        fun getAllHiraganaUntilCategory(category: HiraganaCategory): List<Hiragana> {
+            return HiraganaCategory.entries.filter { it.ordinal <= category.ordinal }.flatMap { it.hiraganaList }
         }
     }
 }

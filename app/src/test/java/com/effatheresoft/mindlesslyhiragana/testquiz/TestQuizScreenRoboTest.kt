@@ -4,16 +4,19 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.hasScrollToKeyAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToKey
+import androidx.compose.ui.test.performScrollToNode
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.effatheresoft.mindlesslyhiragana.HiltTestActivity
 import com.effatheresoft.mindlesslyhiragana.R
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana
+import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredUserRepository
 import com.effatheresoft.mindlesslyhiragana.navigation.DefaultNavGraph
 import com.effatheresoft.mindlesslyhiragana.sharedtest.util.isButton
@@ -139,6 +142,35 @@ class TestQuizScreenRoboTest {
         }
     }
 
+    @Test
+    fun `user correctly answers last category scenario`() = runTest {
+        // given user progress is `sakichira`
+        // when user click all correct buttons
+        // then user navigates to test result screen
+        // and user sees correct answers count is `46`
+        // and user sees incorrect answers count is `0`
+        // and user don't see any incorrect hiragana
+        // and user sees `Try Again` button enabled
+        // and user sees `Continue Learning` button disabled
+        userRepository.updateLocalUserProgress("sakichira")
+        setContentAndNavigateToTestQuizScreen()
+        HiraganaCategory.getAllHiraganaUntilCategory(HiraganaCategory.SAKICHIRA).forEach {
+            hiraganaKeyboard_clickAnswer(it)
+        }
+
+        composeTestRule.onNodeWithText(activity.getString(R.string.correct_n, 46)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(activity.getString(R.string.incorrect_n, 0)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(activity.getString(R.string.try_again)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(activity.getString(R.string.try_again)).assertIsEnabled()
+        composeTestRule.onNodeWithText(activity.getString(R.string.continue_learning)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(activity.getString(R.string.continue_learning)).assertIsNotEnabled()
+
+        HiraganaCategory.getAllHiraganaUntilCategory(HiraganaCategory.SAKICHIRA)
+            .forEach {
+                composeTestRule.onNodeWithText(it.kana, substring = true).assertIsNotDisplayed()
+            }
+    }
+
     fun hiraganaKeyboard_clickAnswer(answer: Hiragana) {
         composeTestRule.onNode(hasScrollToKeyAction()).performScrollToKey(answer)
         composeTestRule.onNodeWithText(answer.name).performClick()
@@ -152,6 +184,7 @@ class TestQuizScreenRoboTest {
                 DefaultNavGraph()
             }
         }
+        composeTestRule.onNode(hasScrollAction()).performScrollToNode(hasText(activity.getString(R.string.test_all_learned)))
         composeTestRule.onNodeWithText(activity.getString(R.string.test_all_learned)).performClick()
         composeTestRule.onNode(isButton() and hasText(activity.getString(R.string.test_all_learned))).performClick()
     }
