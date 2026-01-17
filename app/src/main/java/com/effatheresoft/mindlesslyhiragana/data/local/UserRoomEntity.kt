@@ -3,19 +3,7 @@ package com.effatheresoft.mindlesslyhiragana.data.local
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.effatheresoft.mindlesslyhiragana.Constants.DEFAULT_DATABASE_USER_TABLE_NAME
-import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.AO
-import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.FUWOYA
-import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.HIMIKASE
-import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.KONITANA
-import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.KUHERIKE
-import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.NOYUMENU
-import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.SAKICHIRA
-import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.SHIIMO
-import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.SUMURORU
-import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.TOTESO
-import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.TSUUNE
-import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.WANERE
-import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.YOHAMAHO
+import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.data.model.User
 
 @Entity(tableName = DEFAULT_DATABASE_USER_TABLE_NAME)
@@ -26,110 +14,21 @@ data class UserRoomEntity(
     val isTestUnlocked: Boolean
 )
 
-fun UserRoomEntity.toUser(): User {
-    return when (progress) {
-        "1" -> User(
+fun UserRoomEntity.toUserOrNull(): User? = progress.toIntOrNull()?.let {
+    return if (it in 1..HiraganaCategory.entries.size)
+        User(
             id = id,
-            progress = HIMIKASE.id,
+            progress = HiraganaCategory.entries[it - 1].id,
             learningSetsCount = learningSetsCount,
             isTestUnlocked = isTestUnlocked
         )
-        "2" -> User(
-            id = id,
-            progress = FUWOYA.id,
-            learningSetsCount = learningSetsCount,
-            isTestUnlocked = isTestUnlocked
-        )
-        "3" -> User(
-            id = id,
-            progress = AO.id,
-            learningSetsCount = learningSetsCount,
-            isTestUnlocked = isTestUnlocked
-        )
-        "4" -> User(
-            id = id,
-            progress = TSUUNE.id,
-            learningSetsCount = learningSetsCount,
-            isTestUnlocked = isTestUnlocked
-        )
-        "5" -> User(
-            id = id,
-            progress = KUHERIKE.id,
-            learningSetsCount = learningSetsCount,
-            isTestUnlocked = isTestUnlocked
-        )
-        "6" -> User(
-            id = id,
-            progress = KONITANA.id,
-            learningSetsCount = learningSetsCount,
-            isTestUnlocked = isTestUnlocked
-        )
-        "7" -> User(
-            id = id,
-            progress = SUMURORU.id,
-            learningSetsCount = learningSetsCount,
-            isTestUnlocked = isTestUnlocked
-        )
-        "8" -> User(
-            id = id,
-            progress = SHIIMO.id,
-            learningSetsCount = learningSetsCount,
-            isTestUnlocked = isTestUnlocked
-        )
-        "9" -> User(
-            id = id,
-            progress = TOTESO.id,
-            learningSetsCount = learningSetsCount,
-            isTestUnlocked = isTestUnlocked
-        )
-        "10" -> User(
-            id = id,
-            progress = WANERE.id,
-            learningSetsCount = learningSetsCount,
-            isTestUnlocked = isTestUnlocked
-        )
-        "11" -> User(
-            id = id,
-            progress = NOYUMENU.id,
-            learningSetsCount = learningSetsCount,
-            isTestUnlocked = isTestUnlocked
-        )
-        "12" -> User(
-            id = id,
-            progress = YOHAMAHO.id,
-            learningSetsCount = learningSetsCount,
-            isTestUnlocked = isTestUnlocked
-        )
-        "13" -> User(
-            id = id,
-            progress = SAKICHIRA.id,
-            learningSetsCount = learningSetsCount,
-            isTestUnlocked = isTestUnlocked
-        )
-        else -> User(
-            id = id,
-            progress = "-1",
-            learningSetsCount = learningSetsCount,
-            isTestUnlocked = isTestUnlocked
-        )
-    }
+    else null
 }
 
-fun String.toRoomEntityProgress(): String {
+fun String.toRoomEntityProgressOrNull(): String? {
     return when(this) {
-        HIMIKASE.id  -> "1"
-        FUWOYA.id    -> "2"
-        AO.id        -> "3"
-        TSUUNE.id    -> "4"
-        KUHERIKE.id  -> "5"
-        KONITANA.id  -> "6"
-        SUMURORU.id  -> "7"
-        SHIIMO.id    -> "8"
-        TOTESO.id    -> "9"
-        WANERE.id    -> "10"
-        NOYUMENU.id  -> "11"
-        YOHAMAHO.id  -> "12"
-        SAKICHIRA.id -> "13"
-        else -> "-1"
+        in HiraganaCategory.entries.map { it.id } ->
+            HiraganaCategory.entries.indexOfFirst { it.id == this }.plus(1).toString()
+        else -> null
     }
 }
