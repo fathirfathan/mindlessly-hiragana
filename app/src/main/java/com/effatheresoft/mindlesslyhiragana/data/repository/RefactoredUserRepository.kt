@@ -31,7 +31,7 @@ class RefactoredUserRepository @Inject constructor(
         localDataSource.updateLocalUserProgress(progress.toRoomEntityProgress())
 
     suspend fun continueLocalUserProgress() {
-        val currentProgress = localDataSource.observeLocalUser().first().progress
+        val currentProgress = localDataSource.observeLocalUser().first().toUser().progress
         val nextHiraganaCategoryIndex = HiraganaCategory.entries.indexOfFirst { it.id == currentProgress } + 1
         val nextProgress = HiraganaCategory.entries[nextHiraganaCategoryIndex].id
         updateLocalUserProgress(nextProgress)
