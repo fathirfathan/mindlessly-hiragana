@@ -99,6 +99,8 @@ class TestQuizScreenRoboTest {
 
         composeTestRule.onNodeWithText(activity.getString(R.string.correct_n, 4)).assertIsDisplayed()
         composeTestRule.onNodeWithText(activity.getString(R.string.incorrect_n, 0)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(activity.getString(R.string.try_again)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(activity.getString(R.string.try_again)).assertIsNotEnabled()
         composeTestRule.onNodeWithText(activity.getString(R.string.continue_learning)).assertIsDisplayed()
         composeTestRule.onNodeWithText(activity.getString(R.string.continue_learning)).assertIsEnabled()
 
@@ -126,6 +128,8 @@ class TestQuizScreenRoboTest {
 
         composeTestRule.onNodeWithText(activity.getString(R.string.correct_n, 3)).assertIsDisplayed()
         composeTestRule.onNodeWithText(activity.getString(R.string.incorrect_n, 1)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(activity.getString(R.string.try_again)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(activity.getString(R.string.try_again)).assertIsEnabled()
         composeTestRule.onNodeWithText(activity.getString(R.string.continue_learning)).assertIsDisplayed()
         composeTestRule.onNodeWithText(activity.getString(R.string.continue_learning)).assertIsNotEnabled()
 
