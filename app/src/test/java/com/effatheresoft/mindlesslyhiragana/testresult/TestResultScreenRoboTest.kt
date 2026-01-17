@@ -1,14 +1,13 @@
 package com.effatheresoft.mindlesslyhiragana.testresult
 
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
-import androidx.compose.ui.test.assertAll
-import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.hasProgressBarRangeInfo
 import androidx.compose.ui.test.hasScrollToKeyAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToKey
@@ -58,14 +57,9 @@ class TestResultScreenRoboTest {
         // then user navigates to learn screen
         // and user sees `ふをや` category
         // and learning sets count is `1`
-        // and `learn button` is displayed
-        setContentAndNavigateToTestResultScreen()
+        setContentAndNavigateToTestResultScreen(isAllCorrect = true)
         composeTestRule.onNodeWithText(activity.getString(R.string.continue_learning)).performClick()
 
-        with(composeTestRule.onAllNodesWithText(activity.getString(R.string.learn))) {
-            assertCountEquals(2)
-            assertAll(hasText(activity.getString(R.string.learn)))
-        }
         composeTestRule.onNodeWithText("ふをや").assertIsDisplayed()
         composeTestRule.onNodeWithText(activity.getString(R.string.learning_sets_n_sets, 1)).assertIsDisplayed()
         composeTestRule.onNode(
@@ -77,7 +71,25 @@ class TestResultScreenRoboTest {
                 )
             )
         ).assertIsDisplayed()
-        composeTestRule.onNode(isButton() and hasText(activity.getString(R.string.learn))).assertIsDisplayed()
+    }
+
+    @Test
+    fun `user click try again scenario`() = runTest {
+        // given user progress is `himikase`
+        // and user learning sets count is `1`
+        // and user select all correct answers except one
+        // when user click `Try Again` button
+        // then user navigates to test screen
+        // and user sees only `ひみかせ` category
+        // and `Test All Learned` button is enabled
+        setContentAndNavigateToTestResultScreen(isAllCorrect = false)
+        composeTestRule.onNodeWithText(activity.getString(R.string.try_again)).performClick()
+
+        composeTestRule.onNodeWithText(activity.getString(R.string.test_categories_n, 1))
+        composeTestRule.onNodeWithText("ひみかせ").assertIsDisplayed()
+        composeTestRule.onNodeWithText("ふをや").assertIsNotDisplayed()
+        composeTestRule.onNode(isButton() and hasText(activity.getString(R.string.test_all_learned))).assertIsDisplayed()
+        composeTestRule.onNode(isButton() and hasText(activity.getString(R.string.test_all_learned))).assertIsEnabled()
     }
 
     fun hiraganaKeyboard_clickAnswer(answer: Hiragana) {
@@ -85,7 +97,7 @@ class TestResultScreenRoboTest {
         composeTestRule.onNodeWithText(answer.name).performClick()
     }
 
-    suspend fun setContentAndNavigateToTestResultScreen() {
+    suspend fun setContentAndNavigateToTestResultScreen(isAllCorrect: Boolean) {
         userRepository.updateLocalUserIsTestUnlocked(true)
         userRepository.updateLocalUserLearningSetsCount(1)
         composeTestRule.setContent {
@@ -95,7 +107,10 @@ class TestResultScreenRoboTest {
         }
         composeTestRule.onNodeWithText(activity.getString(R.string.test_all_learned)).performClick()
         composeTestRule.onNode(isButton() and hasText(activity.getString(R.string.test_all_learned))).performClick()
-        listOf(Hiragana.HI, Hiragana.MI, Hiragana.KA, Hiragana.SE).forEach {
+        when(isAllCorrect) {
+            true -> listOf(Hiragana.HI)
+            false -> listOf(Hiragana.HI, Hiragana.HI)
+        }.plus(listOf(Hiragana.MI, Hiragana.KA, Hiragana.SE)).forEach {
             hiraganaKeyboard_clickAnswer(it)
         }
     }
