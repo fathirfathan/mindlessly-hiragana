@@ -53,13 +53,8 @@ fun HomeScreen(
         ) {
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-            HomeContent(
-                categories = uiState.categories,
-                onNavigateToLearnOrTest = onNavigateToLearnOrTest
-            )
-
-            when {
-                uiState.isResetDialogOpen -> HomeDialog(
+            if (uiState.isResetDialogOpen) {
+                HomeDialog(
                     onConfirm = {
                         viewModel.onResetDialogConfirm()
                         scope.launch { drawerState.close() }
@@ -71,6 +66,11 @@ fun HomeScreen(
                     icon = R.drawable.delete_24px
                 )
             }
+
+            HomeContent(
+                categories = uiState.categories,
+                onNavigateToLearnOrTest = onNavigateToLearnOrTest
+            )
         }
     }
 }
