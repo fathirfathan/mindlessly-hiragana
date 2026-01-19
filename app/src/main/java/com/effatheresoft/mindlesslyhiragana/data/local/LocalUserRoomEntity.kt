@@ -3,6 +3,8 @@ package com.effatheresoft.mindlesslyhiragana.data.local
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.effatheresoft.mindlesslyhiragana.Constants.DEFAULT_DATABASE_USER_TABLE_NAME
+import com.effatheresoft.mindlesslyhiragana.Constants.DEFAULT_HIGHEST_CATEGORY
+import com.effatheresoft.mindlesslyhiragana.Constants.DEFAULT_REPEAT_CATEGORY_COUNT
 import com.effatheresoft.mindlesslyhiragana.Constants.LOCAL_USER_ID
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.data.model.User
@@ -17,8 +19,8 @@ data class LocalUserRoomEntity(
     companion object {
         val default get() = LocalUserRoomEntity(
             id = LOCAL_USER_ID,
-            highestCategory = "1",
-            repeatCategoryCount = 5,
+            highestCategory = DEFAULT_HIGHEST_CATEGORY,
+            repeatCategoryCount = DEFAULT_REPEAT_CATEGORY_COUNT,
             isTestUnlocked = false
         )
     }

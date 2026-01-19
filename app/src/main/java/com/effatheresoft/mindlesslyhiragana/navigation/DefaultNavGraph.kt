@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.effatheresoft.mindlesslyhiragana.Constants.TEST_ALL_LEARNED_CATEGORY_ID
 import com.effatheresoft.mindlesslyhiragana.ui.home.HomeScreen
 import com.effatheresoft.mindlesslyhiragana.ui.learn.LearnScreen
 import com.effatheresoft.mindlesslyhiragana.ui.learn.LearnViewModel
@@ -34,7 +35,7 @@ fun DefaultNavGraph(
                 viewModel = hiltViewModel(),
                 onNavigateToLearnOrTest = { categoryId ->
                     when (categoryId) {
-                        "Test All Learned" -> navController.navigate(Route.Test)
+                        TEST_ALL_LEARNED_CATEGORY_ID -> navController.navigate(Route.Test)
                         else -> navController.navigate(Route.Learn(categoryId))
                     }
                 }

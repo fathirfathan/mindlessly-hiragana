@@ -4,6 +4,8 @@ import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.effatheresoft.mindlesslyhiragana.Constants.TEST_ALL_LEARNED_CATEGORY_ID
+import com.effatheresoft.mindlesslyhiragana.Constants.TEST_ALL_LEARNED_CATEGORY_TITLE
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.HIMIKASE
 import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
@@ -59,8 +61,8 @@ class HomeViewModel @Inject constructor(val userRepository: UserRepository) : Vi
                 )
             }
         val testAllLearnedCategory = HomeCategory(
-            id = "Test All Learned",
-            title = "Test All Learned",
+            id = TEST_ALL_LEARNED_CATEGORY_ID,
+            title = TEST_ALL_LEARNED_CATEGORY_TITLE,
             isLocked = false
         )
         val lockedCategories = hiraganaCategories.drop(testAllLearnedCategoryIndex)

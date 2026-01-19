@@ -16,7 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.effatheresoft.mindlesslyhiragana.Constants.TEST_ALL_LEARNED_CATEGORY_ID
+import com.effatheresoft.mindlesslyhiragana.Constants.TEST_ALL_LEARNED_CATEGORY_TITLE
 import com.effatheresoft.mindlesslyhiragana.R
+import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.ui.component.DefaultScaffold
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 import kotlinx.coroutines.launch
@@ -135,20 +138,17 @@ fun HomeScreenPreviewBase(state: String) {
                     )
                 }
             ) {
-                val ids = listOf(
-                    "himikase", "Test All Learned", "fuwoya", "ao", "tsuune", "kuherike", "konitana",
-                    "sumuroru", "shiimo", "toteso", "wanere", "noyumenu", "yohamaho", "sakichira"
-                )
-                val titles = listOf(
-                    "ひみかせ", "Test All Learned", "ふをや", "あお", "つう・んえ", "くへ・りけ",
-                    "こに・たな", "すむ・ろる", "しいも", "とてそ", "わねれ", "のゆめぬ", "よはまほ",
-                    "さきちら"
-                )
-                val isLockedStates = listOf(
-                    false, false, true, true, true,
-                    true, true, true, true, true,
-                    true, true, true, true
-                )
+                val ids = HiraganaCategory.entries.map { it.id }.toMutableList().apply {
+                    add(1,TEST_ALL_LEARNED_CATEGORY_ID )
+                }.toList()
+                val titles = HiraganaCategory.entries.last().complementedHiraganaCategory
+                    .map { it.kanaWithNakaguro }.toMutableList().apply {
+                        add(1, TEST_ALL_LEARNED_CATEGORY_TITLE)
+                    }.toList()
+                val isLockedStates = HiraganaCategory.entries.map { true }.toMutableList().apply {
+                    add(0, false)
+                    add(1, false)
+                }
                 val categories = ids.zip(titles).zip(isLockedStates) {
                     (id, title), isLocked ->
                     HomeCategory(id = id, title = title, isLocked = isLocked)
