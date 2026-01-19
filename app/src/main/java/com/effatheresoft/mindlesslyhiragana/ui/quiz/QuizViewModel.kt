@@ -48,7 +48,9 @@ class QuizViewModel @AssistedInject constructor(
 
     init {
         viewModelScope.launch {
-            quizRepository.generateLearnQuizQuestions()
+            categoryId.toHiraganaCategoryOrNull()?.let {
+                quizRepository.generateLearnQuizQuestions(it)
+            }
         }
     }
 
@@ -76,7 +78,7 @@ class QuizViewModel @AssistedInject constructor(
             QuizUiState(
                 isLoading = isLoading,
                 currentQuiz = quizQuestions.getOrNull(currentQuizIndex)?.question,
-                category = categoryId.toHiraganaCategoryOrNull(),
+                category = category,
                 remainingQuestionsCount = quizQuestions.size - currentQuizIndex - 1,
                 selectedAnswers = selectedAnswers
             )

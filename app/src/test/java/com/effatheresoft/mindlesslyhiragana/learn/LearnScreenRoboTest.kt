@@ -12,6 +12,7 @@ import androidx.compose.ui.test.performSemanticsAction
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.effatheresoft.mindlesslyhiragana.HiltTestActivity
 import com.effatheresoft.mindlesslyhiragana.R
+import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
 import com.effatheresoft.mindlesslyhiragana.navigation.DefaultNavGraph
 import com.effatheresoft.mindlesslyhiragana.sharedtest.util.isButton
@@ -66,14 +67,15 @@ class LearnScreenRoboTest {
 
     @Test
     fun `user click learn button scenario`() = runTest {
-        // given user progress is `himikase`
+        // given user progress is `fuwoya`
         // and selected category is `ひみかせ`
-        // and learning sets count is 6
-        // and shown quizzes are `ひみかせ` category in order
+        // and learning sets count is 1
         // when user click learn button
         // then user navigates to quiz screen
+        // and shown quizzes are `ひみかせ` category in order
+        userRepository.updateHighestCategory(HiraganaCategory.FUWOYA)
         setContentAndNavigateToLearn("ひみかせ")
-        val learningSetsCount = 6
+        val learningSetsCount = 1
         composeTestRule.onNode(
             hasProgressBarRangeInfo(
                 ProgressBarRangeInfo(

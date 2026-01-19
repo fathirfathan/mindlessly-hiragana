@@ -1,6 +1,7 @@
 package com.effatheresoft.mindlesslyhiragana.data.repository
 
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana
+import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
@@ -10,10 +11,9 @@ class QuizRepository @Inject constructor(
 ) {
     fun observeQuizQuestions() = quizVolatileDataSource.observeQuizQuestions()
 
-    suspend fun generateLearnQuizQuestions() {
-        val highestCategory = userRepository.observeUser().first().highestCategory
+    suspend fun generateLearnQuizQuestions(currentCategory: HiraganaCategory) {
         val repeatCategoryCount = userRepository.observeUser().first().repeatCategoryCount
-        quizVolatileDataSource.generateLearnQuizQuestions(highestCategory, repeatCategoryCount)
+        quizVolatileDataSource.generateLearnQuizQuestions(currentCategory, repeatCategoryCount)
     }
 
     suspend fun generateTestQuizQuestions() {
