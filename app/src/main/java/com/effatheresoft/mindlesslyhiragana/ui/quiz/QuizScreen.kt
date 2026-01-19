@@ -28,11 +28,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.effatheresoft.mindlesslyhiragana.Constants.DEFAULT_LEARNING_SETS_COUNT
 import com.effatheresoft.mindlesslyhiragana.R
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.HI
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.KA
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.MI
-import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana.SE
-import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.HIMIKASE
+import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.ui.component.DefaultScaffold
 import com.effatheresoft.mindlesslyhiragana.ui.component.DefaultTopAppBar
 
@@ -63,12 +59,15 @@ fun QuizScreen(
 
         uiState.currentQuiz?.let { currentQuiz ->
             uiState.remainingQuestionsCount?.let { remainingQuestionsCount ->
-                QuizContent(
-                    question = currentQuiz.question,
-                    remainingQuestionsCount = remainingQuestionsCount,
-                    possibleAnswers = currentQuiz.possibleAnswers,
-                    onAnswerSelected = viewModel::selectCurrentQuizAnswer
-                )
+                uiState.category?.let { category ->
+                    QuizContent(
+                        question = currentQuiz,
+                        category = category,
+                        remainingQuestionsCount = remainingQuestionsCount,
+                        selectedAnswers = uiState.selectedAnswers,
+                        onAnswerSelected = viewModel::selectAnswer
+                    )
+                }
             }
         }
     }
@@ -77,8 +76,9 @@ fun QuizScreen(
 @Composable
 fun QuizContent(
     question: Hiragana,
+    category: HiraganaCategory,
     remainingQuestionsCount: Int,
-    possibleAnswers: List<PossibleAnswer>,
+    selectedAnswers: Set<Hiragana>,
     onAnswerSelected: (Hiragana) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -96,12 +96,12 @@ fun QuizContent(
             horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
             modifier = Modifier.fillMaxWidth()
         ) {
-            for (answer in possibleAnswers) {
+            for (answer in category.hiraganaList) {
                 Button(
-                    onClick = { onAnswerSelected(answer.answer) },
-                    enabled = !answer.isSelected
+                    onClick = { onAnswerSelected(answer) },
+                    enabled = answer !in selectedAnswers
                 ) {
-                    Text(answer.answer.name)
+                    Text(answer.name)
                 }
             }
         }
@@ -129,14 +129,10 @@ fun QuizScreenPreview() {
         modifier = Modifier.fillMaxSize(),
     ) { paddingValues ->
         QuizContent(
-            question = HI,
-            remainingQuestionsCount = HIMIKASE.hiraganaList.size * DEFAULT_LEARNING_SETS_COUNT - 1,
-            possibleAnswers = listOf(
-                PossibleAnswer(answer = HI, isCorrect = true, isSelected = false),
-                PossibleAnswer(answer = MI, isCorrect = false, isSelected = false),
-                PossibleAnswer(answer = KA, isCorrect = false, isSelected = false),
-                PossibleAnswer(answer = SE, isCorrect = false, isSelected = false)
-            ),
+            question = Hiragana.HI,
+            category = HiraganaCategory.HIMIKASE,
+            remainingQuestionsCount = HiraganaCategory.HIMIKASE.hiraganaList.size * DEFAULT_LEARNING_SETS_COUNT - 1,
+            selectedAnswers = emptySet(),
             onAnswerSelected = {},
             modifier = Modifier.padding(paddingValues)
         )

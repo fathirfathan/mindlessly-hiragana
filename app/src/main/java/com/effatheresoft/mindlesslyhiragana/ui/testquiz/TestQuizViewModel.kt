@@ -39,7 +39,7 @@ class TestQuizViewModel @Inject constructor(
     private val _selectedAnswers = MutableStateFlow(emptySet<Hiragana>())
 
     init {
-        viewModelScope.launch { quizRepository.generateQuizQuestions() }
+        viewModelScope.launch { quizRepository.generateTestQuizQuestions() }
     }
 
     val uiState = combine(_loading, _quizQuestions, _currentQuestionIndex, _selectedAnswers) { loading, questionStates, currentQuestionIndex, selectedAnswers ->

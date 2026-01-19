@@ -5,9 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana
 import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredQuizRepository
 import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredUserRepository
-import com.effatheresoft.mindlesslyhiragana.ui.quiz.correctCounts
-import com.effatheresoft.mindlesslyhiragana.ui.quiz.incorrectCounts
-import com.effatheresoft.mindlesslyhiragana.ui.quiz.isCorrect
+import com.effatheresoft.mindlesslyhiragana.ui.testquiz.correctCounts
+import com.effatheresoft.mindlesslyhiragana.ui.testquiz.incorrectCounts
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,18 +30,18 @@ class ResultViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _isLoading = MutableStateFlow(false)
-    private val _quizzes = quizRepository.observeQuizzes()
+    private val _quizQuestions = quizRepository.observeQuizQuestions()
     private val _observedIsTestUnlocked = userRepository.observeLocalUser().map { it.isTestUnlocked }
 
-    val uiState = combine(_isLoading, _quizzes, _observedIsTestUnlocked) { isLoading, quizzes, isTestUnlocked ->
-        val individualIncorrectCounts = quizzes.groupBy { quiz -> quiz.question }.map { (hiragana, groupedQuizzes) ->
+    val uiState = combine(_isLoading, _quizQuestions, _observedIsTestUnlocked) { isLoading, quizQuestions, isTestUnlocked ->
+        val individualIncorrectCounts = quizQuestions.groupBy { quiz -> quiz.question }.map { (hiragana, groupedQuizzes) ->
             hiragana to groupedQuizzes.count { quiz -> !quiz.isCorrect }
         }
 
         ResultUiState(
             isLoading = isLoading,
-            correctCounts = quizzes.correctCounts,
-            incorrectCounts = quizzes.incorrectCounts,
+            correctCounts = quizQuestions.correctCounts,
+            incorrectCounts = quizQuestions.incorrectCounts,
             individualIncorrectCounts = individualIncorrectCounts,
             isTestUnlocked = isTestUnlocked
         )

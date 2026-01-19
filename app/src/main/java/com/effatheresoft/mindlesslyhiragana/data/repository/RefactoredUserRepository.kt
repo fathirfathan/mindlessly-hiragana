@@ -38,4 +38,7 @@ class RefactoredUserRepository @Inject constructor(
             updateLocalUserIsTestUnlocked(false)
         }
     }
+    suspend fun unlockTestAllLearned() {
+        updateLocalUserIsTestUnlocked(true)
+    }
 }
