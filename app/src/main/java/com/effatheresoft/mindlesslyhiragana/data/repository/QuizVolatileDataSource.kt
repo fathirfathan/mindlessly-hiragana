@@ -10,6 +10,7 @@ import javax.inject.Inject
 
 open class QuizVolatileDataSource @Inject constructor() {
     private val _quizQuestions = MutableStateFlow(emptyList<QuizQuestion>())
+    private val quizQuestions get() = _quizQuestions.value
 
     fun observeQuizQuestions(): StateFlow<List<QuizQuestion>> = _quizQuestions
 
@@ -18,7 +19,7 @@ open class QuizVolatileDataSource @Inject constructor() {
     }
 
     fun selectAnswer(index: Int, answer: Hiragana) {
-        val updatedQuestions = _quizQuestions.value.toMutableList().apply {
+        val updatedQuestions = quizQuestions.toMutableList().apply {
             val targetQuestion = get(index)
             val updatedQuestion = targetQuestion.copy(answerAttempts = targetQuestion.answerAttempts + answer)
             set(index, updatedQuestion)
@@ -26,9 +27,9 @@ open class QuizVolatileDataSource @Inject constructor() {
         _quizQuestions.value = updatedQuestions
     }
 
-    open fun generateLearnQuizQuestions(category: HiraganaCategory, learningSetsCount: Int) {
+    open fun generateLearnQuizQuestions(category: HiraganaCategory, repeatCategoryCount: Int) {
         val generatedQuestions = mutableListOf<QuizQuestion>()
-        repeat(learningSetsCount) {
+        repeat(repeatCategoryCount) {
             val randomizedGeneratedQuestionsSet = category.hiraganaList.shuffled().toMutableList()
                 .map { hiragana -> QuizQuestion(question = hiragana) }
             generatedQuestions.lastOrNull()?.let { lastGeneratedQuestion ->

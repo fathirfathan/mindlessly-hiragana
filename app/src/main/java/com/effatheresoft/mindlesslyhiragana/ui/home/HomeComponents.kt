@@ -41,18 +41,20 @@ fun HomeDrawer(
             ModalDrawerSheet {
                 Text(
                     text = stringResource(title),
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier.padding(16.dp),
+                    style = MaterialTheme.typography.titleLarge
                 )
                 HorizontalDivider()
                 NavigationDrawerItem(
                     label = { Text(stringResource(R.string.reset_progress)) },
                     selected = false,
                     onClick = onResetButtonClick,
-                    icon = { Icon(
-                        painter = painterResource(R.drawable.delete_24px),
-                        contentDescription = null
-                    ) }
+                    icon = {
+                        Icon(
+                            painter = painterResource(R.drawable.delete_24px),
+                            contentDescription = null
+                        )
+                    }
                 )
             }
         },
@@ -71,6 +73,7 @@ fun HomeTopAppBar(
 ) {
     CenterAlignedTopAppBar(
         title = { Text(stringResource(title)) },
+        modifier = modifier,
         navigationIcon = {
             IconButton(onClick = onMenuIconClick) {
                 Icon(
@@ -78,8 +81,7 @@ fun HomeTopAppBar(
                     contentDescription = stringResource(R.string.open_menu)
                 )
             }
-        },
-        modifier = modifier
+        }
     )
 }
 
@@ -106,7 +108,6 @@ fun HomeCategoryItem(
                     painter = painterResource(R.drawable.arrow_right_24px),
                     contentDescription = stringResource(R.string.x_category_unlocked, title)
                 )
-
             }
         }
     }
@@ -114,21 +115,23 @@ fun HomeCategoryItem(
 
 @Composable
 fun HomeDialog(
-    onConfirm: () -> Unit,
-    @StringRes onConfirmLabel: Int,
-    onDismiss: () -> Unit,
+    @DrawableRes icon: Int,
     @StringRes title: Int,
     @StringRes text: Int,
-    @DrawableRes icon: Int,
+    @StringRes onConfirmLabel: Int,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        confirmButton = { Button(onConfirm) { Text(stringResource(onConfirmLabel)) } },
+        confirmButton = {
+            Button(onConfirm) { Text(stringResource(onConfirmLabel)) }
+        },
+        modifier = modifier,
         dismissButton = { Button(onDismiss) { Text(stringResource(R.string.cancel)) } },
-        title = { Text(stringResource(title)) },
-        text = { Text(stringResource(text)) },
         icon = { Icon(painterResource(icon), null) },
-        modifier = modifier
+        title = { Text(stringResource(title)) },
+        text = { Text(stringResource(text)) }
     )
 }

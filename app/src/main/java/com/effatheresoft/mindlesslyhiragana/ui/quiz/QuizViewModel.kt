@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.data.model.toHiraganaCategoryOrNull
-import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredQuizRepository
-import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredUserRepository
+import com.effatheresoft.mindlesslyhiragana.data.repository.QuizRepository
+import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
 import com.effatheresoft.mindlesslyhiragana.ui.testquiz.isAllQuestionsAnswered
 import com.effatheresoft.mindlesslyhiragana.ui.testquiz.isAllQuestionsCorrect
 import dagger.assisted.Assisted
@@ -39,27 +39,40 @@ sealed class QuizUiEvent{
 @HiltViewModel(assistedFactory = QuizViewModel.Factory::class)
 class QuizViewModel @AssistedInject constructor(
     @Assisted val categoryId: String,
-    val quizRepository: RefactoredQuizRepository,
-    val userRepository: RefactoredUserRepository
+    val quizRepository: QuizRepository,
+    val userRepository: UserRepository
 ): ViewModel() {
     @AssistedFactory interface Factory {
         fun create(categoryId: String): QuizViewModel
     }
 
+    init {
+        viewModelScope.launch {
+            quizRepository.generateLearnQuizQuestions()
+        }
+    }
+
     private val _isLoading = MutableStateFlow(false)
     private val category = categoryId.toHiraganaCategoryOrNull()
-    private suspend fun getUserProgress() = userRepository.observeLocalUser().map { it.progress }.first()
-    private val _quizQuestions = quizRepository.observeQuizQuestions()
-    private val quizQuestions get() = _quizQuestions.value
-    private val _currentQuestionIndex = MutableStateFlow(0)
-    private val currentQuestionIndex get() = _currentQuestionIndex.value
-    private val _selectedAnswers = MutableStateFlow(emptySet<Hiragana>())
+    private suspend fun getHighestCategory() = userRepository.observeUser().map { it.highestCategory }.first()
+    private val quizQuestionsState = quizRepository.observeQuizQuestions()
+    private val quizQuestions get() = quizQuestionsState.value
+    private val currentQuestionIndexState = MutableStateFlow(0)
+    private val currentQuestionIndex get() = currentQuestionIndexState.value
     private val currentQuestion get() = quizQuestions[currentQuestionIndex]
 
-    private val _uiEvent = MutableSharedFlow<QuizUiEvent>()
-    val uiEvent: SharedFlow<QuizUiEvent> = _uiEvent
+    private val selectedAnswersState = MutableStateFlow(emptySet<Hiragana>())
+    private val mutableUiEvent = MutableSharedFlow<QuizUiEvent>()
+    val observableUiEvent: SharedFlow<QuizUiEvent> = mutableUiEvent
+
     val uiState: StateFlow<QuizUiState> =
-        combine(_isLoading, _quizQuestions, _currentQuestionIndex, _selectedAnswers) { isLoading, quizQuestions, currentQuizIndex, selectedAnswers ->
+        combine(
+            _isLoading,
+            quizQuestionsState,
+            currentQuestionIndexState,
+            selectedAnswersState
+        ) { isLoading, quizQuestions, currentQuizIndex, selectedAnswers ->
+
             QuizUiState(
                 isLoading = isLoading,
                 currentQuiz = quizQuestions.getOrNull(currentQuizIndex)?.question,
@@ -73,26 +86,21 @@ class QuizViewModel @AssistedInject constructor(
             initialValue = QuizUiState(isLoading = true)
         )
 
-    init {
-        viewModelScope.launch {
-            quizRepository.generateLearnQuizQuestions()
-        }
-    }
-
-    fun selectAnswer(hiragana: Hiragana) = viewModelScope.launch {
-        quizRepository.selectAnswer(currentQuestionIndex, hiragana)
-        _selectedAnswers.value += hiragana
+    fun selectAnswer(answer: Hiragana) = viewModelScope.launch {
+        quizRepository.selectAnswer(currentQuestionIndex, answer)
+        selectedAnswersState.value += answer
 
         if (currentQuestion.isAnswered) {
-            _currentQuestionIndex.value += 1
-            _selectedAnswers.value = emptySet()
+            currentQuestionIndexState.value += 1
+            selectedAnswersState.value = emptySet()
         }
 
         if (quizQuestions.isAllQuestionsAnswered) {
-            if (quizQuestions.isAllQuestionsCorrect && category == getUserProgress()) {
+            if (quizQuestions.isAllQuestionsCorrect && category == getHighestCategory()) {
                 userRepository.unlockTestAllLearned()
             }
-            _uiEvent.emit(QuizUiEvent.NavigateToResult)
+
+            mutableUiEvent.emit(QuizUiEvent.NavigateToResult)
         }
     }
 }

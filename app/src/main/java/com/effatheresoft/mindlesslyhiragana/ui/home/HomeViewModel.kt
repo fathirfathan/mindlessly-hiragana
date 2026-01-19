@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory.HIMIKASE
-import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredUserRepository
+import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,30 +24,33 @@ data class HomeUiState(
 )
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(val userRepository: RefactoredUserRepository) : ViewModel() {
+class HomeViewModel @Inject constructor(val userRepository: UserRepository) : ViewModel() {
 
-    private val _localUser = userRepository.observeLocalUser()
-    private val _isLoading = MutableStateFlow(false)
-    private val _isResetDialogOpen = MutableStateFlow(false)
+    private val isLoadingState = MutableStateFlow(false)
+    private val observableUser = userRepository.observeUser()
+    private val isResetDialogOpenState = MutableStateFlow(false)
 
-    val uiState: StateFlow<HomeUiState> = combine(_localUser, _isLoading, _isResetDialogOpen) { localUser, isLoading, isResetDialogOpen ->
-        HomeUiState(
-            isLoading = isLoading,
-            categories = getCategories(localUser.progress),
-            isResetDialogOpen = isResetDialogOpen
+    val uiState: StateFlow<HomeUiState> =
+        combine(observableUser, isLoadingState, isResetDialogOpenState) {
+            user, isLoading, isResetDialogOpen ->
+
+            HomeUiState(
+                isLoading = isLoading,
+                categories = getHomeCategories(user.highestCategory),
+                isResetDialogOpen = isResetDialogOpen
+            )
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = HomeUiState(isLoading = true)
         )
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000L),
-        initialValue = HomeUiState(isLoading = true)
-    )
 
-    fun getCategories(userProgress: HiraganaCategory): List<HomeCategory> {
+    private fun getHomeCategories(highestCategory: HiraganaCategory): List<HomeCategory> {
+        val homeCategories = mutableListOf<HomeCategory>()
         val hiraganaCategories = HiraganaCategory.entries
-        val categories = mutableListOf<HomeCategory>()
+        val testAllLearnedCategoryIndex = highestCategory.ordinal + 1
 
-        val categoryOnProgressIndex = userProgress.ordinal
-        val unlockedCategories = hiraganaCategories.take(categoryOnProgressIndex + 1)
+        val unlockedCategories = hiraganaCategories.take(testAllLearnedCategoryIndex)
             .map {
                 HomeCategory(
                     id = it.id,
@@ -60,7 +63,7 @@ class HomeViewModel @Inject constructor(val userRepository: RefactoredUserReposi
             title = "Test All Learned",
             isLocked = false
         )
-        val lockedCategories = hiraganaCategories.drop(categoryOnProgressIndex + 1)
+        val lockedCategories = hiraganaCategories.drop(testAllLearnedCategoryIndex)
             .map {
                 HomeCategory(
                     id = it.id,
@@ -69,18 +72,14 @@ class HomeViewModel @Inject constructor(val userRepository: RefactoredUserReposi
                 )
             }
 
-        categories.addAll(unlockedCategories)
-        categories.add(testAllLearnedCategory)
-        categories.addAll(lockedCategories)
+        homeCategories.addAll(unlockedCategories)
+        homeCategories.add(testAllLearnedCategory)
+        homeCategories.addAll(lockedCategories)
 
-        return categories
+        return homeCategories
     }
 
-    fun onDrawerResetButtonClick() {
-        _isResetDialogOpen.value = true
-    }
-
-    fun onMenuItemClick(drawerState: DrawerState, drawerScope: CoroutineScope) {
+    fun onDrawerToggled(drawerState: DrawerState, drawerScope: CoroutineScope) {
         drawerScope.launch {
             when (drawerState.currentValue) {
                 DrawerValue.Closed -> drawerState.open()
@@ -89,14 +88,19 @@ class HomeViewModel @Inject constructor(val userRepository: RefactoredUserReposi
         }
     }
 
+    fun onResetDialogOpen() {
+        isResetDialogOpenState.value = true
+    }
+
     fun onResetDialogDismiss() {
-        _isResetDialogOpen.value = false
+        isResetDialogOpenState.value = false
     }
 
     fun onResetDialogConfirm() = viewModelScope.launch {
-        userRepository.updateLocalUserProgress(HIMIKASE)
-        userRepository.updateLocalUserLearningSetsCount(5)
-        userRepository.updateLocalUserIsTestUnlocked(false)
-        _isResetDialogOpen.value = false
+        userRepository.updateHighestCategory(HIMIKASE)
+        userRepository.updateRepeatCategoryCount(5)
+        userRepository.updateIsTestUnlocked(false)
+
+        onResetDialogDismiss()
     }
 }

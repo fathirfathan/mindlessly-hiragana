@@ -6,8 +6,8 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.effatheresoft.mindlesslyhiragana.Constants.DEFAULT_DATABASE_NAME
 import com.effatheresoft.mindlesslyhiragana.data.local.DefaultDatabase
-import com.effatheresoft.mindlesslyhiragana.data.local.UserDao
-import com.effatheresoft.mindlesslyhiragana.data.local.UserRoomEntity
+import com.effatheresoft.mindlesslyhiragana.data.local.LocalUserDao
+import com.effatheresoft.mindlesslyhiragana.data.local.LocalUserRoomEntity
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,7 +27,7 @@ object DatabaseModule {
     @Provides
     fun provideDefaultDatabase(
         @ApplicationContext context: Context,
-        userDaoProvider: Provider<UserDao>
+        localUserDaoProvider: Provider<LocalUserDao>
     ): DefaultDatabase {
         return Room.databaseBuilder(
             context.applicationContext,
@@ -39,24 +39,17 @@ object DatabaseModule {
                     super.onCreate(db)
 
                     CoroutineScope(Dispatchers.IO).launch {
-                        prePopulateDatabase(userDaoProvider.get())
+                        prePopulateDatabase(localUserDaoProvider.get())
                     }
                 }
             })
             .build()
     }
 
-    private suspend fun prePopulateDatabase(userDao: UserDao) {
-        userDao.upsertUser(
-            UserRoomEntity(
-                id = "localUser",
-                progress = "1",
-                learningSetsCount = 5,
-                isTestUnlocked = false
-            )
-        )
+    private suspend fun prePopulateDatabase(localUserDao: LocalUserDao) {
+        localUserDao.upsertLocalUser(LocalUserRoomEntity.default)
     }
 
     @Provides
-    fun provideUserDao(database: DefaultDatabase): UserDao = database.userDao()
+    fun provideLocalUserDao(database: DefaultDatabase): LocalUserDao = database.localUserDao()
 }

@@ -11,9 +11,9 @@ class FakeQuizVolatileDataSource: QuizVolatileDataSource() {
         setQuizQuestions(quizQuestions)
     }
 
-    override fun generateLearnQuizQuestions(category: HiraganaCategory, learningSetsCount: Int) {
+    override fun generateLearnQuizQuestions(category: HiraganaCategory, repeatCategoryCount: Int) {
         val generatedQuestions = mutableListOf<QuizQuestion>()
-        repeat(learningSetsCount) {
+        repeat(repeatCategoryCount) {
             val unrandomizedGeneratedQuestionsSet = category.hiraganaList.toMutableList()
                 .map { hiragana -> QuizQuestion(question = hiragana) }
 

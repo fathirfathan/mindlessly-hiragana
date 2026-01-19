@@ -3,7 +3,7 @@ package com.effatheresoft.mindlesslyhiragana.ui.learn
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
-import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredUserRepository
+import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -18,26 +18,28 @@ import kotlinx.coroutines.launch
 data class LearnUiState(
     val isLoading: Boolean = false,
     val category: HiraganaCategory? = null,
-    val learningSetsCount: Int? = null
+    val repeatCategoryCount: Int? = null
 )
 
 @HiltViewModel(assistedFactory = LearnViewModel.Factory::class)
 class LearnViewModel @AssistedInject constructor(
     @Assisted val categoryId: String,
-    val userRepository: RefactoredUserRepository
+    val userRepository: UserRepository
 ) : ViewModel() {
     @AssistedFactory interface Factory {
         fun create(categoryId: String): LearnViewModel
     }
 
-    private val _localUser = userRepository.observeLocalUser()
+    private val observableUser = userRepository.observeUser()
     private val _isLoading = MutableStateFlow(false)
 
-    val uiState: StateFlow<LearnUiState> = combine(_localUser, _isLoading) { localUser, isLoading ->
+    val uiState: StateFlow<LearnUiState> = combine(observableUser, _isLoading) {
+        user, isLoading ->
+
         LearnUiState(
             isLoading = isLoading,
             category = HiraganaCategory.entries.first { it.id == categoryId },
-            learningSetsCount = localUser.learningSetsCount
+            repeatCategoryCount = user.repeatCategoryCount
         )
     }.stateIn(
         scope = viewModelScope,
@@ -45,11 +47,7 @@ class LearnViewModel @AssistedInject constructor(
         initialValue = LearnUiState(isLoading = true)
     )
 
-    fun updateLearningSetsCount(count: Int) {
-        viewModelScope.launch {
-            _isLoading.value = true
-            userRepository.updateLocalUserLearningSetsCount(count)
-            _isLoading.value = false
-        }
+    fun updateRepeatCategoryCount(count: Int) = viewModelScope.launch {
+        userRepository.updateRepeatCategoryCount(count)
     }
 }

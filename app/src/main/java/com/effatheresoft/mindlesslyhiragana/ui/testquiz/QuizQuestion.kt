@@ -6,8 +6,8 @@ data class QuizQuestion(
     val question: Hiragana,
     val answerAttempts: List<Hiragana> = emptyList()
 ) {
-    val isCorrect: Boolean get() = answerAttempts.size == 1 && answerAttempts.first() == question
     val isAnswered: Boolean get() = answerAttempts.lastOrNull()?.let { it == question } ?: false
+    val isCorrect: Boolean get() = answerAttempts.size == 1 && answerAttempts.first() == question
 }
 
 val List<QuizQuestion>.correctCounts: Int get() = count { it.isCorrect }

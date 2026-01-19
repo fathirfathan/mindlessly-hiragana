@@ -3,7 +3,7 @@ package com.effatheresoft.mindlesslyhiragana.data.local
 import androidx.room.Database
 import androidx.room.RoomDatabase
 
-@Database(entities = [UserRoomEntity::class], version = 1)
+@Database(entities = [LocalUserRoomEntity::class], version = 1)
 abstract class DefaultDatabase: RoomDatabase() {
-    abstract fun userDao(): UserDao
+    abstract fun localUserDao(): LocalUserDao
 }

@@ -3,8 +3,8 @@ package com.effatheresoft.mindlesslyhiragana.ui.result
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana
-import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredQuizRepository
-import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredUserRepository
+import com.effatheresoft.mindlesslyhiragana.data.repository.QuizRepository
+import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
 import com.effatheresoft.mindlesslyhiragana.ui.testquiz.correctCounts
 import com.effatheresoft.mindlesslyhiragana.ui.testquiz.incorrectCounts
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,19 +25,25 @@ data class ResultUiState(
 
 @HiltViewModel
 class ResultViewModel @Inject constructor(
-    quizRepository: RefactoredQuizRepository,
-    userRepository: RefactoredUserRepository
+    quizRepository: QuizRepository,
+    userRepository: UserRepository
 ) : ViewModel() {
 
     private val _isLoading = MutableStateFlow(false)
-    private val _quizQuestions = quizRepository.observeQuizQuestions()
-    private val _observedIsTestUnlocked = userRepository.observeLocalUser().map { it.isTestUnlocked }
+    private val observableQuizQuestions = quizRepository.observeQuizQuestions()
+    private val observableIsTestUnlocked = userRepository.observeUser().map { it.isTestUnlocked }
 
-    val uiState = combine(_isLoading, _quizQuestions, _observedIsTestUnlocked) { isLoading, quizQuestions, isTestUnlocked ->
-        val individualIncorrectCounts = quizQuestions.groupBy { quiz -> quiz.question }.map { (hiragana, groupedQuizzes) ->
-            hiragana to groupedQuizzes.count { quiz -> !quiz.isCorrect }
+    val uiState = combine(
+        _isLoading,
+        observableQuizQuestions,
+        observableIsTestUnlocked
+    ) { isLoading, quizQuestions, isTestUnlocked ->
+
+        val individualIncorrectCounts = quizQuestions.groupBy { it.question }.map {
+            (hiragana, groupedQuizQuestions) ->
+
+            hiragana to groupedQuizQuestions.count { question -> !question.isCorrect }
         }
-
         ResultUiState(
             isLoading = isLoading,
             correctCounts = quizQuestions.correctCounts,

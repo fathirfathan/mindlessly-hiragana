@@ -20,12 +20,7 @@ enum class HiraganaCategory(
     YOHAMAHO ("yohamaho",  listOf(Hiragana.YO, Hiragana.HA, Hiragana.MA, Hiragana.HO)),
     SAKICHIRA("sakichira", listOf(Hiragana.SA, Hiragana.KI, Hiragana.CHI, Hiragana.RA));
 
-    fun toHiraganaStringWithNakaguro(): String {
-        val hiraganaBeforeNakaguroSet = setOf(Hiragana.U, Hiragana.HE, Hiragana.NI, Hiragana.MU)
-        return hiraganaList.joinToString("") { if (it in hiraganaBeforeNakaguroSet) "${it.kana}・" else it.kana }
-    }
-
-    fun toRoomEntityProgress(): String = ordinal.plus(1).toString()
+    fun toRoomEntityCategory(): String = ordinal.plus(1).toString()
 
     fun getNextCategoryOrNull() = entries.getOrNull(ordinal + 1)
 

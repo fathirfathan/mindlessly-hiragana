@@ -1,53 +1,28 @@
 package com.effatheresoft.mindlesslyhiragana.sharedtest.data
 
-import com.effatheresoft.mindlesslyhiragana.data.local.UserDao
-import com.effatheresoft.mindlesslyhiragana.data.local.UserRoomEntity
+import com.effatheresoft.mindlesslyhiragana.data.local.LocalUserDao
+import com.effatheresoft.mindlesslyhiragana.data.local.LocalUserRoomEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.map
 
-class FakeUserDao: UserDao {
-    private val localUserEntity = UserRoomEntity(
-        id = "localUser",
-        progress = "1",
-        learningSetsCount = 5,
-        isTestUnlocked = false
-    )
-    private val userEntities = MutableStateFlow(hashMapOf(localUserEntity.id to localUserEntity))
+class FakeUserDao: LocalUserDao {
+    private val localUserRoomEntity = MutableStateFlow(LocalUserRoomEntity.default)
 
-    private fun deepCloneUserMap(map: HashMap<String, UserRoomEntity>): HashMap<String, UserRoomEntity> {
-        val clonedMap = hashMapOf<String, UserRoomEntity>()
-        for ((key, value) in map) {
-            clonedMap[key] = value.copy()
-        }
-        return clonedMap
+    override suspend fun upsertLocalUser(user: LocalUserRoomEntity) {
+        localUserRoomEntity.value = user
     }
 
-    override suspend fun upsertUser(user: UserRoomEntity) {
-        val updatedMap = deepCloneUserMap(userEntities.value)
-        updatedMap[user.id] = user
-        userEntities.value = updatedMap
+    override suspend fun updateHighestCategory(category: String) {
+        localUserRoomEntity.value = localUserRoomEntity.value.copy(highestCategory = category)
     }
 
-    override suspend fun updateLocalUserProgress(progress: String) {
-        val updatedMap = deepCloneUserMap(userEntities.value)
-        updatedMap["localUser"] = updatedMap["localUser"]!!.copy(progress = progress)
-        userEntities.value = updatedMap
+    override suspend fun updateRepeatCategoryCount(count: Int) {
+        localUserRoomEntity.value = localUserRoomEntity.value.copy(repeatCategoryCount = count)
     }
 
-    override suspend fun updateLocalUserLearningSetsCount(count: Int) {
-        val updatedMap = deepCloneUserMap(userEntities.value)
-        updatedMap["localUser"] = updatedMap["localUser"]!!.copy(learningSetsCount = count)
-        userEntities.value = updatedMap
+    override suspend fun updateIsTestUnlocked(isUnlocked: Boolean) {
+        localUserRoomEntity.value = localUserRoomEntity.value.copy(isTestUnlocked = isUnlocked)
     }
 
-    override suspend fun updateLocalUserIsTestUnlocked(isUnlocked: Boolean) {
-        val updatedMap = deepCloneUserMap(userEntities.value)
-        updatedMap["localUser"] = updatedMap["localUser"]!!.copy(isTestUnlocked = isUnlocked)
-        userEntities.value = updatedMap
-    }
-
-    override fun observeLocalUser(): Flow<UserRoomEntity> = userEntities.map { it.getValue("localUser") }
-
-    override suspend fun getUserById(id: String): UserRoomEntity? = userEntities.value[id]
+    override fun observeLocalUser(): Flow<LocalUserRoomEntity> = localUserRoomEntity
 }

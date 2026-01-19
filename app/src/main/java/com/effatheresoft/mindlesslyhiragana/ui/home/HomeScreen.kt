@@ -30,8 +30,8 @@ data class HomeCategory(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    onNavigateToLearnOrTest: (categoryId: String) -> Unit,
     viewModel: HomeViewModel,
+    onNavigateToLearnOrTest: (categoryId: String) -> Unit,
     modifier: Modifier = Modifier,
     drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 ) {
@@ -40,13 +40,13 @@ fun HomeScreen(
     HomeDrawer(
         title = R.string.mindlessly_hiragana,
         drawerState = drawerState,
-        onResetButtonClick = viewModel::onDrawerResetButtonClick
+        onResetButtonClick = viewModel::onResetDialogOpen
     ) {
         DefaultScaffold(
             topAppBar = {
                 HomeTopAppBar(
                     title = R.string.mindlessly_hiragana,
-                    onMenuIconClick = { viewModel.onMenuItemClick(drawerState, scope) }
+                    onMenuIconClick = { viewModel.onDrawerToggled(drawerState, scope) }
                 )
             },
             modifier = modifier
@@ -55,15 +55,15 @@ fun HomeScreen(
 
             if (uiState.isResetDialogOpen) {
                 HomeDialog(
+                    icon = R.drawable.delete_24px,
+                    title = R.string.reset_progress,
+                    text = R.string.reset_dialog_text,
+                    onConfirmLabel = R.string.reset,
                     onConfirm = {
                         viewModel.onResetDialogConfirm()
                         scope.launch { drawerState.close() }
                     },
-                    onConfirmLabel = R.string.reset,
-                    onDismiss = viewModel::onResetDialogDismiss,
-                    title = R.string.reset_progress,
-                    text = R.string.reset_dialog_text,
-                    icon = R.drawable.delete_24px
+                    onDismiss = viewModel::onResetDialogDismiss
                 )
             }
 
@@ -82,11 +82,9 @@ fun HomeContent(
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
+
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp)
-            .verticalScroll(scrollState)
+        modifier = modifier.fillMaxSize().padding(horizontal = 16.dp).verticalScroll(scrollState)
     ) {
         for (category in categories) {
             HomeCategoryItem(
@@ -122,7 +120,10 @@ fun HomeScreenPreviewBase(state: String) {
         HomeDrawer(
             title = R.string.mindlessly_hiragana,
             drawerState = rememberDrawerState(
-                initialValue = if(state == "drawer opened" || state == "dialog opened") DrawerValue.Open else DrawerValue.Closed
+                initialValue = when(state) {
+                    "drawer opened", "dialog opened" -> DrawerValue.Open
+                    else -> DrawerValue.Closed
+                }
             ),
             onResetButtonClick = {}
         ) {
@@ -134,10 +135,22 @@ fun HomeScreenPreviewBase(state: String) {
                     )
                 }
             ) {
-                val ids = listOf("himikase", "Test All Learned", "fuwoya", "ao", "tsuune", "kuherike", "konitana", "sumuroru", "shiimo", "toteso", "wanere", "noyumenu", "yohamaho", "sakichira")
-                val titles = listOf("ひみかせ", "Test All Learned", "ふをや", "あお", "つう・んえ", "くへ・りけ", "こに・たな", "すむ・ろる", "しいも", "とてそ", "わねれ", "のゆめぬ", "よはまほ", "さきちら")
-                val isLockedStates = listOf(false, false, true, true, true, true, true, true, true, true, true, true, true, true)
-                val categories = ids.zip(titles).zip(isLockedStates) { (id, title), isLocked ->
+                val ids = listOf(
+                    "himikase", "Test All Learned", "fuwoya", "ao", "tsuune", "kuherike", "konitana",
+                    "sumuroru", "shiimo", "toteso", "wanere", "noyumenu", "yohamaho", "sakichira"
+                )
+                val titles = listOf(
+                    "ひみかせ", "Test All Learned", "ふをや", "あお", "つう・んえ", "くへ・りけ",
+                    "こに・たな", "すむ・ろる", "しいも", "とてそ", "わねれ", "のゆめぬ", "よはまほ",
+                    "さきちら"
+                )
+                val isLockedStates = listOf(
+                    false, false, true, true, true,
+                    true, true, true, true, true,
+                    true, true, true, true
+                )
+                val categories = ids.zip(titles).zip(isLockedStates) {
+                    (id, title), isLocked ->
                     HomeCategory(id = id, title = title, isLocked = isLocked)
                 }
 
@@ -148,12 +161,12 @@ fun HomeScreenPreviewBase(state: String) {
 
                 if (state == "dialog opened") {
                     HomeDialog(
-                        onConfirm = {},
-                        onConfirmLabel = R.string.reset,
-                        onDismiss = {},
+                        icon = R.drawable.delete_24px,
                         title = R.string.reset,
                         text = R.string.reset_dialog_text,
-                        icon = R.drawable.delete_24px
+                        onConfirmLabel = R.string.reset,
+                        onConfirm = {},
+                        onDismiss = {}
                     )
                 }
             }

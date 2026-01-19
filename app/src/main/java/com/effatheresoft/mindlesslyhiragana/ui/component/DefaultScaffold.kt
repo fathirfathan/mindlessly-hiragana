@@ -9,8 +9,8 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun DefaultScaffold(
-    modifier: Modifier = Modifier,
     topAppBar: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
     Scaffold(

@@ -1,6 +1,6 @@
 package com.effatheresoft.mindlesslyhiragana.di
 
-import com.effatheresoft.mindlesslyhiragana.data.local.UserDao
+import com.effatheresoft.mindlesslyhiragana.data.local.LocalUserDao
 import com.effatheresoft.mindlesslyhiragana.data.repository.QuizVolatileDataSource
 import com.effatheresoft.mindlesslyhiragana.sharedtest.data.FakeQuizVolatileDataSource
 import com.effatheresoft.mindlesslyhiragana.sharedtest.data.FakeUserDao
@@ -18,7 +18,7 @@ import javax.inject.Singleton
 object DatabaseTestModule {
     @Singleton
     @Provides
-    fun provideFakeUserDao(): UserDao = FakeUserDao()
+    fun provideFakeUserDao(): LocalUserDao = FakeUserDao()
 }
 
 @Module

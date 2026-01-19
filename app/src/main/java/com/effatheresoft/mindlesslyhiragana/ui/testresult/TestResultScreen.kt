@@ -30,6 +30,9 @@ fun TestResultScreen(
     modifier: Modifier = Modifier,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val progress = uiState.progress
+    val correctCount = uiState.correctCount
+    val incorrectCount = uiState.incorrectCount
 
     DefaultScaffold(
         topAppBar = {
@@ -40,15 +43,16 @@ fun TestResultScreen(
         },
         modifier = modifier
     ) {
-        uiState.progress?.let { progress ->
+        if (progress != null && correctCount != null && incorrectCount != null) {
             TestResultContent(
-                correctCount = uiState.correctCount,
-                incorrectCount = uiState.incorrectCount,
+                correctCount = correctCount,
+                incorrectCount = incorrectCount,
                 incorrectHiraganaList = uiState.incorrectHiraganaList,
                 isContinueLearningButtonEnabled = uiState.canContinueLearning,
                 onTryAgainButtonClick = onTryAgain,
                 onContinueLearningButtonClick = { onContinueLearning(progress) }
             )
+
         }
     }
 }
@@ -64,11 +68,8 @@ fun TestResultContent(
     modifier: Modifier = Modifier
 ) {
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp)
-            .padding(bottom = 16.dp)
+        modifier = modifier.fillMaxSize().padding(16.dp).padding(bottom = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(stringResource(R.string.correct_n, correctCount))
         Text(stringResource(R.string.incorrect_n, incorrectCount))
@@ -84,11 +85,15 @@ fun TestResultContent(
         Button(
             onClick = onTryAgainButtonClick,
             enabled = !isContinueLearningButtonEnabled
-        ) { Text(stringResource(R.string.try_again)) }
+        ) {
+            Text(stringResource(R.string.try_again))
+        }
         Button(
             onClick = onContinueLearningButtonClick,
             enabled = isContinueLearningButtonEnabled
-        ) { Text(stringResource(R.string.continue_learning)) }
+        ) {
+            Text(stringResource(R.string.continue_learning))
+        }
     }
 }
 
@@ -105,8 +110,8 @@ fun TestResultScreenPreview() {
             }
         ) {
             TestResultContent(
-                correctCount = 4,
-                incorrectCount = 0,
+                correctCount = 3,
+                incorrectCount = 1,
                 incorrectHiraganaList = listOf(Hiragana.HI),
                 isContinueLearningButtonEnabled = false,
                 onTryAgainButtonClick = {},

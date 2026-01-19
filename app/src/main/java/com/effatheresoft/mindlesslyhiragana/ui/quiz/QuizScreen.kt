@@ -9,92 +9,80 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.effatheresoft.mindlesslyhiragana.Constants.DEFAULT_LEARNING_SETS_COUNT
 import com.effatheresoft.mindlesslyhiragana.R
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
 import com.effatheresoft.mindlesslyhiragana.ui.component.DefaultScaffold
 import com.effatheresoft.mindlesslyhiragana.ui.component.DefaultTopAppBar
+import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QuizScreen(
-    modifier: Modifier = Modifier,
+    viewModel: QuizViewModel,
     onNavigationIconClick: () -> Unit,
     onCompleted: () -> Unit,
-    viewModel: QuizViewModel
+    modifier: Modifier = Modifier
 ) {
     DefaultScaffold(
-        topAppBar = { DefaultTopAppBar(
-            title = R.string.learn,
-            onNavigationIconClick = onNavigationIconClick
-        ) },
+        topAppBar = {
+            DefaultTopAppBar(
+                title = R.string.learn,
+                onNavigationIconClick = onNavigationIconClick
+            )
+        },
         modifier = modifier
     ) {
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+        val category = uiState.category
+        val currentQuiz = uiState.currentQuiz
+        val remainingQuestionsCount = uiState.remainingQuestionsCount
 
         LaunchedEffect(Unit) {
-            viewModel.uiEvent.collect {
-                when (it) {
-                    QuizUiEvent.NavigateToResult -> onCompleted()
-                }
-            }
+            viewModel.observableUiEvent.collect { when (it) { QuizUiEvent.NavigateToResult -> onCompleted() } }
         }
 
-        uiState.currentQuiz?.let { currentQuiz ->
-            uiState.remainingQuestionsCount?.let { remainingQuestionsCount ->
-                uiState.category?.let { category ->
-                    QuizContent(
-                        question = currentQuiz,
-                        category = category,
-                        remainingQuestionsCount = remainingQuestionsCount,
-                        selectedAnswers = uiState.selectedAnswers,
-                        onAnswerSelected = viewModel::selectAnswer
-                    )
-                }
-            }
+        if ((category != null) && (currentQuiz != null) && (remainingQuestionsCount != null)) {
+            QuizContent(
+                category = category,
+                question = currentQuiz,
+                selectedAnswers = uiState.selectedAnswers,
+                remainingQuestionsCount = remainingQuestionsCount,
+                onAnswerSelected = viewModel::selectAnswer
+            )
         }
     }
 }
 
 @Composable
 fun QuizContent(
-    question: Hiragana,
     category: HiraganaCategory,
-    remainingQuestionsCount: Int,
+    question: Hiragana,
     selectedAnswers: Set<Hiragana>,
+    remainingQuestionsCount: Int,
     onAnswerSelected: (Hiragana) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-            .fillMaxSize()
-            .padding(bottom = 16.dp)
-            .padding(horizontal = 16.dp)
+        modifier = modifier.fillMaxSize().padding(bottom = 16.dp).padding(horizontal = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = question.kana, style = MaterialTheme.typography.displayLarge)
         Spacer(modifier = Modifier.weight(1f))
         Text("Remaining: $remainingQuestionsCount")
         Row(
-            horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally)
         ) {
             for (answer in category.hiraganaList) {
                 Button(
@@ -112,29 +100,22 @@ fun QuizContent(
 @Preview(showBackground = true)
 @Composable
 fun QuizScreenPreview() {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.learn)) },
-                navigationIcon = {
-                    IconButton(onClick = {}) {
-                        Icon(
-                            painter = painterResource(R.drawable.arrow_back_24px),
-                            contentDescription = stringResource(R.string.navigate_back)
-                        )
-                    }
-                }
+    MindlesslyHiraganaTheme {
+        DefaultScaffold(
+            topAppBar = {
+                DefaultTopAppBar(
+                    title = R.string.learn,
+                    onNavigationIconClick = {}
+                )
+            }
+        ) {
+            QuizContent(
+                category = HiraganaCategory.HIMIKASE,
+                question = Hiragana.HI,
+                selectedAnswers = emptySet(),
+                remainingQuestionsCount = 19,
+                onAnswerSelected = {}
             )
-        },
-        modifier = Modifier.fillMaxSize(),
-    ) { paddingValues ->
-        QuizContent(
-            question = Hiragana.HI,
-            category = HiraganaCategory.HIMIKASE,
-            remainingQuestionsCount = HiraganaCategory.HIMIKASE.hiraganaList.size * DEFAULT_LEARNING_SETS_COUNT - 1,
-            selectedAnswers = emptySet(),
-            onAnswerSelected = {},
-            modifier = Modifier.padding(paddingValues)
-        )
+        }
     }
 }

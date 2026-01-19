@@ -12,7 +12,7 @@ import androidx.compose.ui.test.performSemanticsAction
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.effatheresoft.mindlesslyhiragana.HiltTestActivity
 import com.effatheresoft.mindlesslyhiragana.R
-import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredUserRepository
+import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
 import com.effatheresoft.mindlesslyhiragana.navigation.DefaultNavGraph
 import com.effatheresoft.mindlesslyhiragana.sharedtest.util.isButton
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
@@ -38,7 +38,7 @@ class LearnScreenRoboTest {
     val composeTestRule = createAndroidComposeRule<HiltTestActivity>()
     val activity get() = composeTestRule.activity
 
-    @Inject lateinit var userRepository: RefactoredUserRepository
+    @Inject lateinit var userRepository: UserRepository
 
     @Before
     fun init() {

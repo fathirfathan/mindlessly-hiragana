@@ -7,20 +7,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.effatheresoft.mindlesslyhiragana.R
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana
@@ -35,32 +29,34 @@ import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ResultScreen(
+    viewModel: ResultViewModel,
     onNavigateUp: () -> Unit,
     onTryAgain: () -> Unit,
     onTestAllLearned: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: ResultViewModel = hiltViewModel()
 ) {
     DefaultScaffold(
-        topAppBar = { DefaultTopAppBar(
-            title = R.string.result,
-            onNavigationIconClick = onNavigateUp
-        ) },
+        topAppBar = {
+            DefaultTopAppBar(
+                title = R.string.result,
+                onNavigationIconClick = onNavigateUp
+            )
+        },
         modifier = modifier
     ) {
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+        val correctCounts = uiState.correctCounts
+        val incorrectCounts = uiState.incorrectCounts
 
-        uiState.correctCounts?.let { correctCounts ->
-            uiState.incorrectCounts?.let { incorrectCounts ->
-                ResultContent(
-                    correctCounts = correctCounts,
-                    incorrectCounts = incorrectCounts,
-                    individualIncorrectCounts = uiState.individualIncorrectCounts,
-                    onTryAgainButtonClick = onTryAgain,
-                    onTestAllLearnedButtonClick = onTestAllLearned,
-                    isTestAllLearnedButtonEnabled = uiState.isTestUnlocked
-                )
-            }
+        if (correctCounts != null && incorrectCounts != null) {
+            ResultContent(
+                correctCounts = correctCounts,
+                incorrectCounts = incorrectCounts,
+                individualIncorrectCounts = uiState.individualIncorrectCounts,
+                isTestAllLearnedButtonEnabled = uiState.isTestUnlocked,
+                onTryAgainButtonClick = onTryAgain,
+                onTestAllLearnedButtonClick = onTestAllLearned
+            )
         }
     }
 }
@@ -70,20 +66,18 @@ fun ResultContent(
     correctCounts: Int,
     incorrectCounts: Int,
     individualIncorrectCounts: List<Pair<Hiragana, Int>>,
+    isTestAllLearnedButtonEnabled: Boolean,
     onTryAgainButtonClick: () -> Unit,
     onTestAllLearnedButtonClick: () -> Unit,
-    isTestAllLearnedButtonEnabled: Boolean,
     modifier: Modifier = Modifier
 ) {
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp)
+        modifier = modifier.fillMaxSize().padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(Modifier.height(16.dp))
-        Text("Correct: $correctCounts")
-        Text("Incorrect: $incorrectCounts")
+        Text(stringResource(R.string.correct_n, correctCounts))
+        Text(stringResource(R.string.incorrect_n, incorrectCounts))
         Spacer(Modifier.height(16.dp))
 
         Text(stringResource(R.string.incorrect_counts))
@@ -92,12 +86,12 @@ fun ResultContent(
         }
 
         Spacer(Modifier.weight(1f))
-        Button(onClick = onTryAgainButtonClick) { Text("Try Again") }
+        Button(onClick = onTryAgainButtonClick) { Text(stringResource(R.string.try_again)) }
         Button(
             onClick = onTestAllLearnedButtonClick,
             enabled = isTestAllLearnedButtonEnabled
         ) {
-            Text("Test All Learned")
+            Text(stringResource(R.string.test_all_learned))
         }
         Spacer(Modifier.height(16.dp))
     }
@@ -108,35 +102,26 @@ fun ResultContent(
 @Composable
 fun ResultScreenPreview() {
     MindlesslyHiraganaTheme {
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = { Text("Result") },
-                    navigationIcon = {
-                        IconButton(onClick = {}) {
-                            Icon(
-                                painter = painterResource(R.drawable.arrow_back_24px),
-                                contentDescription = stringResource(R.string.navigate_back)
-                            )
-                        }
-                    }
+        DefaultScaffold(
+            topAppBar = {
+                DefaultTopAppBar(
+                    title = R.string.result,
+                    onNavigationIconClick = {}
                 )
-            },
-            modifier = Modifier.fillMaxSize(),
-        ) { paddingValues ->
+            }
+        ) {
             ResultContent(
-                correctCounts = 4,
-                incorrectCounts = 4,
+                correctCounts = 20,
+                incorrectCounts = 0,
                 individualIncorrectCounts = listOf(
                     HI to 0,
-                    MI to 2,
+                    MI to 0,
                     KA to 0,
-                    SE to 2
+                    SE to 0
                 ),
-                onTryAgainButtonClick = {},
-                onTestAllLearnedButtonClick = {},
                 isTestAllLearnedButtonEnabled = false,
-                modifier = Modifier.padding(paddingValues)
+                onTryAgainButtonClick = {},
+                onTestAllLearnedButtonClick = {}
             )
         }
     }

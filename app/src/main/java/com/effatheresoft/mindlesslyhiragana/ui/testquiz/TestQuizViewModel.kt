@@ -3,8 +3,8 @@ package com.effatheresoft.mindlesslyhiragana.ui.testquiz
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana
-import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredQuizRepository
-import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredUserRepository
+import com.effatheresoft.mindlesslyhiragana.data.repository.QuizRepository
+import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +18,7 @@ import javax.inject.Inject
 data class TestQuizUiState(
     val loading: Boolean = false,
     val currentQuestion: Hiragana? = null,
-    val remainingQuestionsCount: Int = -1,
+    val remainingQuestionsCount: Int? = null,
     val selectedAnswers: Set<Hiragana> = emptySet()
 )
 
@@ -28,25 +28,35 @@ sealed class TestQuizUiEvent() {
 
 @HiltViewModel
 class TestQuizViewModel @Inject constructor(
-    val userRepository: RefactoredUserRepository,
-    val quizRepository: RefactoredQuizRepository
+    val userRepository: UserRepository,
+    val quizRepository: QuizRepository
 ): ViewModel() {
-    private val _loading = MutableStateFlow(false)
-    private val _quizQuestions = quizRepository.observeQuizQuestions()
-    private val quizQuestions get() = _quizQuestions.value
-    private val _currentQuestionIndex = MutableStateFlow(0)
-    private val currentQuestionIndex get() = _currentQuestionIndex.value
-    private val _selectedAnswers = MutableStateFlow(emptySet<Hiragana>())
-
     init {
         viewModelScope.launch { quizRepository.generateTestQuizQuestions() }
     }
 
-    val uiState = combine(_loading, _quizQuestions, _currentQuestionIndex, _selectedAnswers) { loading, questionStates, currentQuestionIndex, selectedAnswers ->
+    private val _loading = MutableStateFlow(false)
+    private val observableQuizQuestions = quizRepository.observeQuizQuestions()
+    private val quizQuestions get() = observableQuizQuestions.value
+    private val currentQuestionIndexState = MutableStateFlow(0)
+    private val currentQuestionIndex get() = currentQuestionIndexState.value
+    private val currentQuestion get() = quizQuestions[currentQuestionIndex]
+    private val selectedAnswersState = MutableStateFlow(emptySet<Hiragana>())
+
+    private val mutableUiEvent = MutableSharedFlow<TestQuizUiEvent>()
+    val observableUiEvent: SharedFlow<TestQuizUiEvent> = mutableUiEvent
+
+    val uiState = combine(
+        _loading,
+        observableQuizQuestions,
+        currentQuestionIndexState,
+        selectedAnswersState
+    ) { loading, quizQuestions, currentQuestionIndex, selectedAnswers ->
+
         TestQuizUiState(
             loading = loading,
-            currentQuestion = questionStates.getOrNull(currentQuestionIndex)?.question,
-            remainingQuestionsCount = questionStates.size - currentQuestionIndex - 1,
+            currentQuestion = quizQuestions.getOrNull(currentQuestionIndex)?.question,
+            remainingQuestionsCount = quizQuestions.size - currentQuestionIndex - 1,
             selectedAnswers = selectedAnswers
         )
     }.stateIn(
@@ -55,26 +65,21 @@ class TestQuizViewModel @Inject constructor(
         initialValue = TestQuizUiState(loading = true)
     )
 
-    private val _uiEvent = MutableSharedFlow<TestQuizUiEvent>()
-    val uiEvent: SharedFlow<TestQuizUiEvent> = _uiEvent
-
-    private val currentQuestion get() = quizQuestions[currentQuestionIndex]
-
-    fun selectAnswer(hiragana: Hiragana) = viewModelScope.launch {
-        quizRepository.selectAnswer(currentQuestionIndex, hiragana)
-        _selectedAnswers.value += hiragana
+    fun selectAnswer(answer: Hiragana) = viewModelScope.launch {
+        quizRepository.selectAnswer(currentQuestionIndex, answer)
+        selectedAnswersState.value += answer
 
         if (currentQuestion.isAnswered) {
-            _currentQuestionIndex.value += 1
-            _selectedAnswers.value = emptySet()
+            currentQuestionIndexState.value += 1
+            selectedAnswersState.value = emptySet()
         }
 
         if (quizQuestions.isAllQuestionsAnswered) {
             if (quizQuestions.isAllQuestionsCorrect) {
-                userRepository.continueLocalUserProgress()
+                userRepository.advanceHighestCategory()
                 userRepository.lockTestAllLearned()
             }
-            _uiEvent.emit(TestQuizUiEvent.NavigateToTestResults)
+            mutableUiEvent.emit(TestQuizUiEvent.NavigateToTestResults)
         }
     }
 }

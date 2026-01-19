@@ -9,7 +9,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.effatheresoft.mindlesslyhiragana.HiltTestActivity
 import com.effatheresoft.mindlesslyhiragana.R
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
-import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredUserRepository
+import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
 import com.effatheresoft.mindlesslyhiragana.navigation.DefaultNavGraph
 import com.effatheresoft.mindlesslyhiragana.sharedtest.util.isButton
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
@@ -35,7 +35,7 @@ class TestScreenRoboTest {
     val composeTestRule = createAndroidComposeRule<HiltTestActivity>()
     val activity get() = composeTestRule.activity
 
-    @Inject lateinit var userRepository: RefactoredUserRepository
+    @Inject lateinit var userRepository: UserRepository
 
     @Before
     fun init() {
@@ -50,7 +50,7 @@ class TestScreenRoboTest {
         // then user navigates to learn screen
         // and user sees `ふをや`
         // and user sees `5` for learning sets
-        userRepository.updateLocalUserProgress(HiraganaCategory.FUWOYA)
+        userRepository.updateHighestCategory(HiraganaCategory.FUWOYA)
         setContentAndNavigateToTestScreen()
         composeTestRule.onNodeWithText(activity.getString(R.string.challenge_all_correct_on_learn)).performClick()
         composeTestRule.onNodeWithText("ふをや").assertIsDisplayed()
@@ -65,7 +65,7 @@ class TestScreenRoboTest {
         // then user navigates to test quiz screen
         // and user sees `ひ` as current question
         // and user sees `3` for remaining questions
-        userRepository.updateLocalUserIsTestUnlocked(true)
+        userRepository.updateIsTestUnlocked(true)
         setContentAndNavigateToTestScreen()
         composeTestRule.onNode(isButton() and hasText(activity.getString(R.string.test_all_learned))).performClick()
         composeTestRule.onNodeWithText("ひ").assertIsDisplayed()

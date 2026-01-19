@@ -20,7 +20,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.effatheresoft.mindlesslyhiragana.HiltTestActivity
 import com.effatheresoft.mindlesslyhiragana.R
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
-import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredUserRepository
+import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
 import com.effatheresoft.mindlesslyhiragana.navigation.DefaultNavGraph
 import com.effatheresoft.mindlesslyhiragana.sharedtest.util.isButton
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
@@ -46,7 +46,7 @@ class HomeScreenRoboTest {
     val composeTestRule = createAndroidComposeRule<HiltTestActivity>()
     val activity get() = composeTestRule.activity
 
-    @Inject lateinit var userRepository: RefactoredUserRepository
+    @Inject lateinit var userRepository: UserRepository
 
     @Before
     fun init() {
@@ -91,7 +91,7 @@ class HomeScreenRoboTest {
         // given user progress is `ao`
         // when user click unlocked category `fuwoya`
         // then user navigates to learn screen
-        userRepository.updateLocalUserProgress(HiraganaCategory.AO)
+        userRepository.updateHighestCategory(HiraganaCategory.AO)
         setContent()
 
         composeTestRule.onNodeWithText("ふをや").performClick()
@@ -142,7 +142,7 @@ class HomeScreenRoboTest {
         // and user isTestUnlocked is true
         // when user click Test All Learned category
         // then user sees `Test All Learned` button enabled
-        userRepository.updateLocalUserIsTestUnlocked(true)
+        userRepository.updateIsTestUnlocked(true)
         setContent()
         composeTestRule.onNodeWithText(activity.getString(R.string.test_all_learned)).performClick()
 
@@ -173,7 +173,7 @@ class HomeScreenRoboTest {
         // and user click reset progress button
         // and user click reset button
         // then user sees `ふをや` category locked
-        userRepository.updateLocalUserProgress(HiraganaCategory.FUWOYA)
+        userRepository.updateHighestCategory(HiraganaCategory.FUWOYA)
         setContent()
         composeTestRule.onNodeWithContentDescription(activity.getString(R.string.x_category_unlocked, "ふをや")).assertIsDisplayed()
         composeTestRule.onNodeWithContentDescription(activity.getString(R.string.open_menu)).performClick()
@@ -190,7 +190,7 @@ class HomeScreenRoboTest {
         // and user click reset progress button
         // and user click cancel button
         // then user sees `ふをや` category still unlocked
-        userRepository.updateLocalUserProgress(HiraganaCategory.FUWOYA)
+        userRepository.updateHighestCategory(HiraganaCategory.FUWOYA)
         setContent()
         composeTestRule.onNodeWithContentDescription(activity.getString(R.string.x_category_unlocked, "ふをや")).assertIsDisplayed()
         composeTestRule.onNodeWithContentDescription(activity.getString(R.string.open_menu)).performClick()

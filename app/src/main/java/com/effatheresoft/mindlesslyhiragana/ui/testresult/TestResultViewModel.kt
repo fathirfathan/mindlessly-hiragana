@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
-import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredQuizRepository
-import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredUserRepository
+import com.effatheresoft.mindlesslyhiragana.data.repository.QuizRepository
+import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
 import com.effatheresoft.mindlesslyhiragana.ui.testquiz.correctCounts
 import com.effatheresoft.mindlesslyhiragana.ui.testquiz.incorrectCounts
 import com.effatheresoft.mindlesslyhiragana.ui.testquiz.incorrectQuestions
@@ -20,25 +20,27 @@ data class TestResultUiState(
     val loading: Boolean = false,
     val canContinueLearning: Boolean = false,
     val progress: HiraganaCategory? = null,
-    val correctCount: Int = -1,
-    val incorrectCount: Int = -1,
+    val correctCount: Int? = null,
+    val incorrectCount: Int? = null,
     val incorrectHiraganaList: List<Hiragana> = emptyList()
 )
 
 @HiltViewModel
 class TestResultViewModel @Inject constructor(
-    userRepository: RefactoredUserRepository,
-    quizRepository: RefactoredQuizRepository
+    userRepository: UserRepository,
+    quizRepository: QuizRepository
 ): ViewModel() {
     private val _loading = MutableStateFlow(false)
-    private val _observedLocalUser = userRepository.observeLocalUser()
-    private val _observedQuizQuestions = quizRepository.observeQuizQuestions()
+    private val observableUser = userRepository.observeUser()
+    private val quizQuestionsState = quizRepository.observeQuizQuestions()
 
-    val uiState = combine(_loading, _observedLocalUser, _observedQuizQuestions) { loading, localUser, observedQuizQuestions ->
+    val uiState = combine(_loading, observableUser, quizQuestionsState) {
+        loading, localUser, observedQuizQuestions ->
+
         TestResultUiState(
             loading = loading,
             canContinueLearning = !localUser.isTestUnlocked,
-            progress = localUser.progress,
+            progress = localUser.highestCategory,
             correctCount = observedQuizQuestions.correctCounts,
             incorrectCount = observedQuizQuestions.incorrectCounts,
             incorrectHiraganaList = observedQuizQuestions.incorrectQuestions.map { it.question }

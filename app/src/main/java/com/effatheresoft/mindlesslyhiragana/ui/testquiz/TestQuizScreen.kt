@@ -12,6 +12,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -29,6 +30,8 @@ fun TestQuizScreen(
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val currentQuestion = uiState.currentQuestion
+    val remainingQuestionsCount = uiState.remainingQuestionsCount
 
     DefaultScaffold(
         topAppBar = {
@@ -40,17 +43,17 @@ fun TestQuizScreen(
         modifier = modifier
     ) {
         LaunchedEffect(Unit) {
-            viewModel.uiEvent.collect { event ->
+            viewModel.observableUiEvent.collect { event ->
                 when (event) {
                     TestQuizUiEvent.NavigateToTestResults -> onAllQuestionsAnswered()
                 }
             }
         }
 
-        uiState.currentQuestion?.let { question ->
+        if (currentQuestion != null && remainingQuestionsCount != null) {
             TestQuizContent(
-                question = question,
-                remainingQuestionsCount = uiState.remainingQuestionsCount,
+                question = currentQuestion,
+                remainingQuestionsCount = remainingQuestionsCount,
                 selectedAnswers = uiState.selectedAnswers,
                 onAnswerSelected = viewModel::selectAnswer
             )
@@ -67,19 +70,16 @@ fun TestQuizContent(
     modifier: Modifier = Modifier
 ) {
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp)
-            .padding(bottom = 16.dp)
+        modifier = modifier.fillMaxSize().padding(16.dp).padding(bottom = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = question.kana, style = MaterialTheme.typography.displayLarge)
         Spacer(modifier = Modifier.weight(1f))
-        Text("Remaining: $remainingQuestionsCount")
+        Text(stringResource(R.string.remaining_n, remainingQuestionsCount))
         Spacer(modifier = Modifier.padding(4.dp))
         HiraganaKeyboard(
-            onButtonClick = onAnswerSelected,
             selectedAnswers = selectedAnswers,
+            onButtonClick = onAnswerSelected,
             modifier = modifier.height(240.dp)
         )
     }
@@ -99,7 +99,7 @@ fun TestQuizScreenPreview() {
         ) {
             TestQuizContent(
                 question = Hiragana.HI,
-                remainingQuestionsCount = 3,
+                remainingQuestionsCount = 19,
                 selectedAnswers = emptySet(),
                 onAnswerSelected = {}
             )

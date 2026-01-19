@@ -17,7 +17,7 @@ import com.effatheresoft.mindlesslyhiragana.HiltTestActivity
 import com.effatheresoft.mindlesslyhiragana.R
 import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana
 import com.effatheresoft.mindlesslyhiragana.data.model.HiraganaCategory
-import com.effatheresoft.mindlesslyhiragana.data.repository.RefactoredUserRepository
+import com.effatheresoft.mindlesslyhiragana.data.repository.UserRepository
 import com.effatheresoft.mindlesslyhiragana.navigation.DefaultNavGraph
 import com.effatheresoft.mindlesslyhiragana.sharedtest.util.isButton
 import com.effatheresoft.mindlesslyhiragana.ui.theme.MindlesslyHiraganaTheme
@@ -43,7 +43,7 @@ class TestQuizScreenRoboTest {
     val composeTestRule = createAndroidComposeRule<HiltTestActivity>()
     val activity get() = composeTestRule.activity
 
-    @Inject lateinit var userRepository: RefactoredUserRepository
+    @Inject lateinit var userRepository: UserRepository
 
     @Before
     fun init() {
@@ -152,7 +152,7 @@ class TestQuizScreenRoboTest {
         // and user don't see any incorrect hiragana
         // and user sees `Try Again` button enabled
         // and user sees `Continue Learning` button disabled
-        userRepository.updateLocalUserProgress(HiraganaCategory.SAKICHIRA)
+        userRepository.updateHighestCategory(HiraganaCategory.SAKICHIRA)
         setContentAndNavigateToTestQuizScreen()
         HiraganaCategory.SAKICHIRA.complementedHiraganaList.forEach {
             hiraganaKeyboard_clickAnswer(it)
@@ -176,8 +176,8 @@ class TestQuizScreenRoboTest {
     }
 
     suspend fun setContentAndNavigateToTestQuizScreen() {
-        userRepository.updateLocalUserIsTestUnlocked(true)
-        userRepository.updateLocalUserLearningSetsCount(1)
+        userRepository.updateIsTestUnlocked(true)
+        userRepository.updateRepeatCategoryCount(1)
         composeTestRule.setContent {
             MindlesslyHiraganaTheme {
                 DefaultNavGraph()

@@ -2,7 +2,7 @@ package com.effatheresoft.mindlesslyhiragana.data.model
 
 data class User(
     val id: String,
-    val progress: HiraganaCategory,
-    val learningSetsCount: Int,
+    val highestCategory: HiraganaCategory,
+    val repeatCategoryCount: Int,
     val isTestUnlocked: Boolean
 )

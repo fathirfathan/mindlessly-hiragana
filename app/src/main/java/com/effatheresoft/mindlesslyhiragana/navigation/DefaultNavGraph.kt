@@ -24,45 +24,46 @@ fun DefaultNavGraph(
     navController: NavHostController = rememberNavController(),
     startDestination: Route = Route.Home
 ) {
-
     NavHost(
+        modifier = modifier,
         navController = navController,
-        startDestination = startDestination,
-        modifier = modifier
+        startDestination = startDestination
     ) {
         composable<Route.Home> {
             HomeScreen(
+                viewModel = hiltViewModel(),
                 onNavigateToLearnOrTest = { categoryId ->
                     when (categoryId) {
                         "Test All Learned" -> navController.navigate(Route.Test)
                         else -> navController.navigate(Route.Learn(categoryId))
                     }
-                },
-                viewModel = hiltViewModel()
+                }
             )
         }
 
         composable<Route.Learn> { navBackStackEntry ->
             val learnRoute: Route.Learn = navBackStackEntry.toRoute()
             LearnScreen(
-                onNavigationIconClick = { navController.navigateUp() },
-                onLearnButtonClick = { navController.navigate(Route.Quiz(learnRoute.categoryId)) },
                 viewModel = hiltViewModel<LearnViewModel, LearnViewModel.Factory>(
-                    creationCallback = { factory -> factory.create(learnRoute.categoryId)}
-                )
+                    creationCallback = { factory -> factory.create(learnRoute.categoryId) }
+                ),
+                onNavigationIconClick = navController::navigateUp,
+                onLearnButtonClick = { navController.navigate(Route.Quiz(learnRoute.categoryId)) }
             )
         }
 
         composable<Route.Quiz> { navBackStackEntry ->
             val quizRoute: Route.Quiz = navBackStackEntry.toRoute()
             QuizScreen(
-                onNavigationIconClick = { navController.navigateUp() },
-                onCompleted = { navController.navigate(Route.Result(quizRoute.categoryId)) {
-                    popUpTo(Route.Quiz(quizRoute.categoryId)) { inclusive = true }
-                } },
                 viewModel = hiltViewModel<QuizViewModel, QuizViewModel.Factory>(
-                    creationCallback = { factory -> factory.create(quizRoute.categoryId)}
-                )
+                    creationCallback = { factory -> factory.create(quizRoute.categoryId) }
+                ),
+                onNavigationIconClick = navController::navigateUp,
+                onCompleted = {
+                    navController.navigate(Route.Result(quizRoute.categoryId)) {
+                        popUpTo(Route.Quiz(quizRoute.categoryId)) { inclusive = true }
+                    }
+                }
             )
         }
 
@@ -70,6 +71,7 @@ fun DefaultNavGraph(
             val resultRoute: Route.Result = navBackStackEntry.toRoute()
             val learnRoute = Route.Learn(resultRoute.categoryId)
             ResultScreen(
+                viewModel = hiltViewModel(),
                 onNavigateUp = {
                     navController.popBackStack(route = learnRoute, inclusive = false)
                 },
@@ -78,20 +80,16 @@ fun DefaultNavGraph(
                         popUpTo(Route.Result(resultRoute.categoryId)) { inclusive = true }
                     }
                 },
-                onTestAllLearned = {
-                    navController.navigate(Route.Test) {
-                        popUpTo(Route.Home)
-                    }
-                }
+                onTestAllLearned = { navController.navigate(Route.Test) { popUpTo(Route.Home) } }
             )
         }
 
         composable<Route.Test> {
             TestScreen(
                 viewModel = hiltViewModel(),
-                onNavigationIconClick = { navController.navigateUp() },
+                onNavigationIconClick = navController::navigateUp,
                 onChallengeLearn = { categoryId ->
-                    navController.navigate(Route.Learn(categoryId))  {
+                    navController.navigate(Route.Learn(categoryId)) {
                         popUpTo(Route.Test) { inclusive = true }
                     }
                 },
@@ -120,8 +118,8 @@ fun DefaultNavGraph(
                         popUpTo(Route.TestResult) { inclusive = true }
                     }
                 },
-                onContinueLearning = { newProgress ->
-                    navController.navigate(Route.Learn(newProgress.id)) {
+                onContinueLearning = { nextCategory ->
+                    navController.navigate(Route.Learn(nextCategory.id)) {
                         popUpTo(Route.TestResult) { inclusive = true }
                     }
                 }

@@ -26,7 +26,8 @@ fun TestScreen(
     viewModel: TestViewModel,
     onNavigationIconClick: () -> Unit,
     onChallengeLearn: (categoryId: String) -> Unit,
-    onTestAllLearned: () -> Unit
+    onTestAllLearned: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     DefaultScaffold(
         topAppBar = {
@@ -34,10 +35,11 @@ fun TestScreen(
                 title = R.string.test_all_learned,
                 onNavigationIconClick = onNavigationIconClick
             )
-        }
+        },
+        modifier = modifier
     ) {
-
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
         TestScreenContent(
             categoryList = uiState.categoryList.map { it.kanaWithNakaguro },
             isTestButtonEnabled = uiState.isTestUnlocked,
@@ -56,25 +58,26 @@ fun TestScreenContent(
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
+
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp)
-            .padding(bottom = 16.dp)
+        modifier = modifier.fillMaxSize().padding(16.dp).padding(bottom = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = stringResource(R.string.test_categories_n, categoryList.size))
         Text(text = stringResource(R.string.including))
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.weight(1f).padding(bottom = 8.dp).verticalScroll(scrollState)
+            modifier = Modifier.weight(1f).padding(bottom = 8.dp).verticalScroll(scrollState),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            categoryList.forEach { category ->
-                Text(text = category)
-            }
+            categoryList.forEach { category -> Text(text = category) }
         }
         Button(onChallengeButtonClick) { Text(stringResource(R.string.challenge_all_correct_on_learn)) }
-        Button(onTestAllLearnedButtonClick, enabled = isTestButtonEnabled) { Text(stringResource(R.string.test_all_learned)) }
+        Button(
+            onClick = onTestAllLearnedButtonClick,
+            enabled = isTestButtonEnabled
+        ) {
+            Text(stringResource(R.string.test_all_learned))
+        }
     }
 }
 
@@ -106,8 +109,7 @@ fun TestScreenContentPreviewBase() {
             }
         ) {
             TestScreenContent(
-                categoryList = HiraganaCategory.entries
-                    .filter { it.ordinal <= HiraganaCategory.SAKICHIRA.ordinal }
+                categoryList = HiraganaCategory.SAKICHIRA.complementedHiraganaCategory
                     .map { it.kanaWithNakaguro },
                 isTestButtonEnabled = false,
                 onChallengeButtonClick = {},

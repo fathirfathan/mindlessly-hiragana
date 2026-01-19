@@ -15,19 +15,19 @@ import com.effatheresoft.mindlesslyhiragana.data.model.Hiragana
 
 @Composable
 fun HiraganaKeyboard(
-    onButtonClick: (Hiragana) -> Unit,
     selectedAnswers: Set<Hiragana>,
+    onButtonClick: (Hiragana) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val listState = rememberLazyGridState()
-    LazyHorizontalGrid(
-        state = listState,
-        rows = GridCells.Fixed(5),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-        modifier = modifier
-    ) {
 
+    LazyHorizontalGrid(
+        rows = GridCells.Fixed(5),
+        modifier = modifier,
+        state = listState,
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
         Hiragana.entries.forEach {
             when (it) {
                 Hiragana.YU -> {
@@ -41,7 +41,6 @@ fun HiraganaKeyboard(
                     }
                     item { Spacer(modifier = Modifier.width(72.dp)) }
                 }
-
                 Hiragana.WA -> {
                     item(it) {
                         HiraganaKeyboardButton(
@@ -52,7 +51,6 @@ fun HiraganaKeyboard(
                     }
                     repeat(3) { item { Spacer(modifier = Modifier.width(72.dp)) } }
                 }
-
                 Hiragana.N -> {
                     item(it) {
                         HiraganaKeyboardButton(
@@ -63,7 +61,6 @@ fun HiraganaKeyboard(
                     }
                     repeat(4) { item { Spacer(modifier = Modifier.width(72.dp)) } }
                 }
-
                 else -> item(it) {
                     HiraganaKeyboardButton(
                         hiragana = it,
@@ -84,8 +81,8 @@ fun HiraganaKeyboardButton(
 ) {
     Button(
         onClick = onButtonClick,
-        enabled = isEnabled,
-        modifier = Modifier.width(76.dp)
+        modifier = Modifier.width(76.dp),
+        enabled = isEnabled
     ) {
         Text(hiragana.name)
     }
