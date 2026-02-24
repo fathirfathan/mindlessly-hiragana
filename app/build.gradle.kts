@@ -13,17 +13,17 @@ room {
 }
 
 android {
-    namespace = "com.effatheresoft.mindlesslyhiragana"
+    namespace = "com.kaishijak.mindlesslyhiragana"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.effatheresoft.mindlesslyhiragana"
+        applicationId = "com.kaishijak.mindlesslyhiragana"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "com.effatheresoft.mindlesslyhiragana.CustomTestRunner"
+        testInstrumentationRunner = "com.kaishijak.mindlesslyhiragana.CustomTestRunner"
     }
 
     buildTypes {

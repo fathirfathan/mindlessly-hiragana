@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.effatheresoft.mindlesslyhiragana.sharedtest"
+    namespace = "com.kaishijak.mindlesslyhiragana.sharedtest"
     compileSdk {
         version = release(36)
     }

@@ -1,0 +1,137 @@
+package com.kaishijak.mindlesslyhiragana.ui.home
+
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import com.kaishijak.mindlesslyhiragana.R
+
+@Composable
+fun HomeDrawer(
+    @StringRes title: Int,
+    drawerState: DrawerState,
+    onResetButtonClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            ModalDrawerSheet {
+                Text(
+                    text = stringResource(title),
+                    modifier = Modifier.padding(16.dp),
+                    style = MaterialTheme.typography.titleLarge
+                )
+                HorizontalDivider()
+                NavigationDrawerItem(
+                    label = { Text(stringResource(R.string.reset_progress)) },
+                    selected = false,
+                    onClick = onResetButtonClick,
+                    icon = {
+                        Icon(
+                            painter = painterResource(R.drawable.delete_24px),
+                            contentDescription = null
+                        )
+                    }
+                )
+            }
+        },
+        modifier = modifier
+    ) {
+        content()
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HomeTopAppBar(
+    @StringRes title: Int,
+    onMenuIconClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    CenterAlignedTopAppBar(
+        title = { Text(stringResource(title)) },
+        modifier = modifier,
+        navigationIcon = {
+            IconButton(onClick = onMenuIconClick) {
+                Icon(
+                    painter = painterResource(R.drawable.menu_24px),
+                    contentDescription = stringResource(R.string.open_menu)
+                )
+            }
+        }
+    )
+}
+
+@Composable
+fun HomeCategoryItem(
+    title: String,
+    isLocked: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    TextButton(
+        onClick = onClick,
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Row {
+            Text(title)
+            Spacer(modifier = Modifier.weight(1f))
+            when(isLocked) {
+                true -> Icon(
+                    painter = painterResource(R.drawable.lock_24px),
+                    contentDescription = stringResource(R.string.x_category_locked, title)
+                )
+                false -> Icon(
+                    painter = painterResource(R.drawable.arrow_right_24px),
+                    contentDescription = stringResource(R.string.x_category_unlocked, title)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun HomeDialog(
+    @DrawableRes icon: Int,
+    @StringRes title: Int,
+    @StringRes text: Int,
+    @StringRes onConfirmLabel: Int,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            Button(onConfirm) { Text(stringResource(onConfirmLabel)) }
+        },
+        modifier = modifier,
+        dismissButton = { Button(onDismiss) { Text(stringResource(R.string.cancel)) } },
+        icon = { Icon(painterResource(icon), null) },
+        title = { Text(stringResource(title)) },
+        text = { Text(stringResource(text)) }
+    )
+}
