@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.google.services)
 }
 
 room {
@@ -66,6 +67,10 @@ android {
 dependencies {
     testImplementation(project(":shared-test"))
     androidTestImplementation(project(":shared-test"))
+
+    // firebase analytics
+    implementation(platform(libs.google.firebase.bom))
+    implementation(libs.google.firebase.analytics)
 
     // robolectric
     testImplementation(libs.robolectric)

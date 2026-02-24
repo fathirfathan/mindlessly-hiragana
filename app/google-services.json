@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "545508344386",
+    "project_id": "mindless-hiragana",
+    "storage_bucket": "mindless-hiragana.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:545508344386:android:36d163063dc819b704e3db",
+        "android_client_info": {
+          "package_name": "com.kaishijak.mindlesslyhiragana"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDwzym3AGca3xj7otYCds5K3grDeKkKJ1o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
