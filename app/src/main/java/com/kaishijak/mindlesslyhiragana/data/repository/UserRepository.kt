@@ -1,5 +1,6 @@
 package com.kaishijak.mindlesslyhiragana.data.repository
 
+import com.kaishijak.mindlesslyhiragana.analytics.Analytics
 import com.kaishijak.mindlesslyhiragana.data.local.LocalUserDao
 import com.kaishijak.mindlesslyhiragana.data.local.toUserOrNull
 import com.kaishijak.mindlesslyhiragana.data.model.HiraganaCategory
@@ -10,7 +11,8 @@ import kotlinx.coroutines.flow.mapNotNull
 import javax.inject.Inject
 
 class UserRepository @Inject constructor(
-    private val localDataSource: LocalUserDao
+    private val localDataSource: LocalUserDao,
+    private val analytics: Analytics
 ) {
     fun observeUser(): Flow<User> = localDataSource.observeLocalUser().mapNotNull { it.toUserOrNull() }
 
@@ -18,7 +20,10 @@ class UserRepository @Inject constructor(
         localDataSource.updateHighestCategory(category.toRoomEntityCategory())
     suspend fun advanceHighestCategory() {
         getHighestCategoryOrNull()?.let { category ->
-            updateHighestCategory(category.getNextCategoryOrNull() ?: category)
+            val updatedCategory = category.getNextCategoryOrNull() ?: category
+
+            logAdvanceHighestCategoryAnalyticsEvent(updatedCategory)
+            updateHighestCategory(updatedCategory)
         }
     }
 
@@ -40,5 +45,12 @@ class UserRepository @Inject constructor(
     }
     suspend fun unlockTestAllLearned() {
         updateIsTestUnlocked(true)
+    }
+
+    fun logAdvanceHighestCategoryAnalyticsEvent(category: HiraganaCategory) {
+        analytics.logEvent(
+            eventName = "advance_highest_category",
+            params = mapOf("category" to category.id)
+        )
     }
 }
