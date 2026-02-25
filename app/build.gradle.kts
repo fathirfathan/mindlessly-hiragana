@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    id("com.google.android.gms.oss-licenses-plugin")
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.androidx.room)
@@ -42,6 +43,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     testOptions {
@@ -67,6 +69,9 @@ android {
 dependencies {
     testImplementation(project(":shared-test"))
     androidTestImplementation(project(":shared-test"))
+
+    // Google Gms OSS Licenses
+    implementation("com.google.android.gms:play-services-oss-licenses:17.4.0")
 
     // firebase analytics
     implementation(platform(libs.google.firebase.bom))

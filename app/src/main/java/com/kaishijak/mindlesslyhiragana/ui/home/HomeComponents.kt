@@ -1,5 +1,7 @@
 package com.kaishijak.mindlesslyhiragana.ui.home
 
+import android.content.Context
+import android.content.Intent
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Row
@@ -22,9 +24,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.google.android.gms.oss.licenses.v2.OssLicensesMenuActivity
 import com.kaishijak.mindlesslyhiragana.R
 
 @Composable
@@ -35,6 +39,8 @@ fun HomeDrawer(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
+    val context = LocalContext.current
+
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
@@ -52,6 +58,17 @@ fun HomeDrawer(
                     icon = {
                         Icon(
                             painter = painterResource(R.drawable.delete_24px),
+                            contentDescription = null
+                        )
+                    }
+                )
+                NavigationDrawerItem(
+                    label = { Text(stringResource(R.string.license_information)) },
+                    selected = false,
+                    onClick = { startLicensesActivity(context) },
+                    icon = {
+                        Icon(
+                            painter = painterResource(R.drawable.license_24px),
                             contentDescription = null
                         )
                     }
@@ -133,5 +150,13 @@ fun HomeDialog(
         icon = { Icon(painterResource(icon), null) },
         title = { Text(stringResource(title)) },
         text = { Text(stringResource(text)) }
+    )
+}
+
+fun startLicensesActivity(context: Context) {
+    context.startActivity(
+        Intent(
+            context, OssLicensesMenuActivity::class.java
+        )
     )
 }

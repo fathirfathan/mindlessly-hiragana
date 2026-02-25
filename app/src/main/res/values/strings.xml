@@ -25,4 +25,5 @@
     <string name="cancel">Cancel</string>
     <string name="reset_dialog_text">Reset Progress will reset back your progress to かせひみ and lock the other sets back.</string>
     <string name="incorrect_counts">Incorrect Counts</string>
+    <string name="license_information">License information</string>
 </resources>
