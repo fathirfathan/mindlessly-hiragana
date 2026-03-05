@@ -1,10 +1,37 @@
 # Mindlessly Hiragana
 
-Simple overview of use/purpose.
+Android app to learn Japanese Hiragana by repetition
+
+[English](README.md) | [Indonesian](README.id.md)
 
 ## Description
 
-An in-depth paragraph about your project and overview of use.
+This app is made mainly to demonstrate understanding of Official Layered Architecture and Test Driven Development
+
+## Implemented Skills
+
+* Robolectric
+* Gherkin
+* Kotlin Flow Asynchronous
+* Jetpack Navigation 2
+* Hilt
+* Jetpack Compose
+* Material Design 3
+* Git
+* GitHub
+* Firebase Analytics
+* Google Play Services
+
+## Implemented Concepts
+
+* Unidirectional Data Flow
+* Repository Pattern
+* Reactive Programming
+* Dependency Injection
+* State Hoisting
+* Test Coverage
+* Code Readability
+* Magic Value Elimination
 
 ## Getting Started
 
@@ -13,15 +40,19 @@ An in-depth paragraph about your project and overview of use.
 * Describe any prerequisites, libraries, OS version, etc., needed before installing program.
 * ex. Windows 10
 
+## Tested Devices
+
+* Pixel 9 Pro Fold (emulator)
+* Redmi Note 12 (device)
+
 ### Installing
 
-* How/where to download your program
-* Any modifications needed to be made to files/folders
+* Download the apk's build and install it on an Android device
 
 ## Version History
 
 * 1.0
-    * Release with basic features
+    * Release with only basic features
 
 ## About
 Been long enough since I've been learning to code. So I figured it would be a good idea to make a well designed and an aesthetically pleasing portfolio. And here we are, I followed some tutorials on youtube, and then added my own personal touches to it. Overall, it was a good learning experience. My main objective was to learn React JS and if along the way, I get to make an impressive portfolio, why not?
