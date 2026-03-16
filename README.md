@@ -19,6 +19,13 @@ This app is made mainly to demonstrate understanding of Official Layered Archite
 * 1.0
   * Release with only basic features
 
+### Git Branches Details
+* `master` is the only branch intended to be built
+* `readme`, `gplay-licenses-activity`, `firebase-analytics-implementation`, `refactor-applicationid`,
+`refactor-robolectric`, `tdd-refactor-to-bdd`, `main-tdd`, `record-interaction` are the branches 
+for features or refactors merged into main
+* branches other than the one mentioned above exists only for historical reason
+
 ### Tested Devices
 
 * Pixel 9 Pro Fold (emulator)
