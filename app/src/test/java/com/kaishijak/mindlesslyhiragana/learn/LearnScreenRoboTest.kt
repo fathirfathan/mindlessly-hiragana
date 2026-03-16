@@ -10,7 +10,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.kaishijak.mindlesslyhiragana.HiltTestActivity
+import com.kaishijak.mindlesslyhiragana.sharedtest.di.HiltTestActivity
 import com.kaishijak.mindlesslyhiragana.R
 import com.kaishijak.mindlesslyhiragana.data.model.HiraganaCategory
 import com.kaishijak.mindlesslyhiragana.data.repository.UserRepository

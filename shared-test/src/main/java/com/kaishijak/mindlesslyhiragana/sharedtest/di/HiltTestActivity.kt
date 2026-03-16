@@ -1,4 +1,4 @@
-package com.kaishijak.mindlesslyhiragana
+package com.kaishijak.mindlesslyhiragana.sharedtest.di
 
 import androidx.activity.ComponentActivity
 import dagger.hilt.android.AndroidEntryPoint
