@@ -4,9 +4,40 @@ Android app to learn Japanese Hiragana by repetition
 
 [English](README.md) | [Indonesian](README.id.md)
 
+## Index
+* [Description](#description)
+* [Getting Started](#getting-started)
+
 ## Description
 
 This app is made mainly to demonstrate understanding of Official Layered Architecture and Test Driven Development
+
+### Screenshots
+[Home Screen](readme-media/home-screen.jpg)
+
+[Learn Screen](readme-media/learn-screen.jpg)
+
+[Quiz Screen](readme-media/quiz-screen.jpg)
+
+[Result Screen](readme-media/result-screen-all-correct.jpg)
+
+[Test Screen](readme-media/test-screen-locked.jpg)
+
+[Test Quiz Screen](readme-media/test-quiz-screen-keyboard-1.jpg)
+
+[Test Result Screen](readme-media/test-result-screen-all-correct.jpg)
+
+[Licenses Screen](readme-media/licenses-screen.jpg)
+
+### Features
+#### Home Screen
+#### Learn Screen
+#### Quiz Screen
+#### Result Screen
+#### Test Screen
+#### Test Quiz Screen
+#### Test Result Screen
+#### Licenses Screen
 
 ## Getting Started
 
@@ -16,8 +47,7 @@ This app is made mainly to demonstrate understanding of Official Layered Archite
 
 ### Version History
 
-* 1.0
-  * Release with only basic features
+* 1.0 : Minimum viable product with only basic features
 
 ### Git Branches Details
 * `master` is the only branch intended to be built
