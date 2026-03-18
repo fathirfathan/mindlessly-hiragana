@@ -13,31 +13,57 @@ Android app to learn Japanese Hiragana by repetition
 This app is made mainly to demonstrate understanding of Official Layered Architecture and Test Driven Development
 
 ### Screenshots
-[Home Screen](readme-media/home-screen.jpg)
-
-[Learn Screen](readme-media/learn-screen.jpg)
-
-[Quiz Screen](readme-media/quiz-screen.jpg)
-
-[Result Screen](readme-media/result-screen-all-correct.jpg)
-
-[Test Screen](readme-media/test-screen-locked.jpg)
-
-[Test Quiz Screen](readme-media/test-quiz-screen-keyboard-1.jpg)
-
-[Test Result Screen](readme-media/test-result-screen-all-correct.jpg)
-
-[Licenses Screen](readme-media/licenses-screen.jpg)
+* [App Interactions on Device](readme-media/app-interactions.mp4)
+* [Home Screen](readme-media/home-screen.jpg)
+* [Learn Screen](readme-media/learn-screen.jpg)
+* [Quiz Screen](readme-media/quiz-screen.jpg)
+* [Result Screen](readme-media/result-screen-all-correct.jpg)
+* [Test Screen](readme-media/test-screen-locked.jpg)
+* [Test Quiz Screen](readme-media/test-quiz-screen-keyboard-1.jpg)
+* [Test Result Screen](readme-media/test-result-screen-all-correct.jpg)
+* [Licenses Screen](readme-media/licenses-screen.jpg)
 
 ### Features
 #### Home Screen
+User first see this screen when they open the app. 
+
+All 46 hiragana are categorized on this screen. All categories except for the first one are locked 
+by default. User will need to advance sequentially through each category. The categories are 
+ordered from the most distinct to the most similar hiragana.
+
+User can navigate to `Test Screen` from here.
+
+This screen provides left drawer. User can access dialog to reset their category progress or 
+navigate to `Licenses Screen` by clicking on the drawer items. 
+
 #### Learn Screen
+User can set their `Learning Sets` here from `1` to `10` with `5` as the default. `Learning Sets` 
+of `5` on `ひみかせ` category means that the User will be asked five times for each hiragana totaling 
+into 20 questions.  
+
 #### Quiz Screen
+User is expected to not think too hard when selecting the answers.
+
+When User choose incorrect answer, that button will be disabled, eventually 
+guiding user to the right answer.
+
 #### Result Screen
 #### Test Screen
 #### Test Quiz Screen
 #### Test Result Screen
 #### Licenses Screen
+
+### Screen Flow
+Happy Path : Home Screen → Learn Screen → Quiz Screen → Result Screen (All Correct) → Test Screen 
+→ Test Quiz Screen → Test Result Screen (All Correct) → Learn Screen (Next Hiragana Category) → ...
+
+Sad Path 1 : Home Screen → Learn Screen → Quiz Screen → Result Screen (Some Incorrect) 
+→ Quiz Screen → ...
+
+Sad Path 2 : Home Screen → Test Screen → Test Quiz Screen → Test Result Screen (Some Incorrect)
+→ Test Screen → ...
+
+Home Screen → Licenses Screen
 
 ## Getting Started
 
@@ -145,21 +171,3 @@ This final implementation is the version 1.0 release build.
 
 (I also wanted to publish to Google Play Store, but finding private tester for my app is close to 
 impossible for me right now, not to mention the price to make the Play Console Developer Account)
-
-## Things I Learned
-- React JS - I knew React before but was still rusty in it a little bit so this project gave me a lot of confidence in using it and hopefully I'll be able to create more interesting projects with it and increase my proficiency.
-- Framer-Motion - I was familiar with this animation library via Youtube and was just astounded how easy it was to use and integrate inside the code to get some smooth animations!
-- Sanity - Never heard of Sanity before this project came along. A super simple Content Management System so that people who don't know how to write code can easily change things for their website without ever breaking it. The ease of use with which you can customize the content inside it is insane.
-- UI/UX Design Flows - Learning UI/UX design as a developer solidifies your understanding of good design and workflows.
-
-## Problems I Encountered
-Of Course there are always error that may pop up when creating a project. These were some of them:
-- Render problems for some React components due to some names that I misspelled, a silly mistake which happens a lot in programming.
-- Sanity failed to reload when I added something new to the website, after spending some time on the internet, I was able to find a solution.
-- Some styling bugs in various devices which were solved by playing around with them for some time.
-
-## My Takeaways
-This is probably my first "Proper" personal project that I made which is live on the internet. Along with the techy "things" that I learned, I would like to share some general tips that may help others while creating big projects like this one.
-- TAKE BREAKS! It's important to feel fresh when you're working on something and it's not a race so its okay if a bug is taking you a whole day to solve or you just don't have the energy to do anything right now.
-- Don't let your ego get in the way of being efficient. Use whichever tools you like whether other people use them or not. You need to be comfortable with what you work with.
-- Ask for help whenever you can, from wherever you can. The ego part comes again here. You don't know everything and neither does other programmers. We are all in an awesome community and we are here to help each other grow.
