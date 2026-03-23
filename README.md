@@ -1,16 +1,24 @@
 # Mindlessly Hiragana
-
 Android app to learn Japanese Hiragana by repetition
 
 [English](README.md) | [Indonesian](README.id.md)
 
+
+
 ## Index
 * [Description](#description)
 * [Getting Started](#getting-started)
+* [Implemented Skills](#implemented-skills)
+* [Implemented Concepts](#implemented-concepts)
+* [About | Motivation](#about--motivation)
+
+
 
 ## Description
+This app is a hiragana learning app made mainly to demonstrate understanding of Official Layered 
+Architecture and Test Driven Development
 
-This app is made mainly to demonstrate understanding of Official Layered Architecture and Test Driven Development
+
 
 ### Screenshots
 * [App Interactions on Device](readme-media/app-interactions.mp4)
@@ -23,41 +31,13 @@ This app is made mainly to demonstrate understanding of Official Layered Archite
 * [Test Result Screen](readme-media/test-result-screen-all-correct.jpg)
 * [Licenses Screen](readme-media/licenses-screen.jpg)
 
-### Features
-#### Home Screen
-User first see this screen when they open the app. 
 
-All 46 hiragana are categorized on this screen. All categories except for the first one are locked 
-by default. User will need to advance sequentially through each category. The categories are 
-ordered from the most distinct to the most similar hiragana.
-
-User can navigate to `Test Screen` from here.
-
-This screen provides left drawer. User can access dialog to reset their category progress or 
-navigate to `Licenses Screen` by clicking on the drawer items. 
-
-#### Learn Screen
-User can set their `Learning Sets` here from `1` to `10` with `5` as the default. `Learning Sets` 
-of `5` on `ひみかせ` category means that the User will be asked five times for each hiragana totaling 
-into 20 questions.  
-
-#### Quiz Screen
-User is expected to not think too hard when selecting the answers.
-
-When User choose incorrect answer, that button will be disabled, eventually 
-guiding user to the right answer.
-
-#### Result Screen
-#### Test Screen
-#### Test Quiz Screen
-#### Test Result Screen
-#### Licenses Screen
 
 ### Screen Flow
-Happy Path : Home Screen → Learn Screen → Quiz Screen → Result Screen (All Correct) → Test Screen 
+Happy Path : Home Screen → Learn Screen → Quiz Screen → Result Screen (All Correct) → Test Screen
 → Test Quiz Screen → Test Result Screen (All Correct) → Learn Screen (Next Hiragana Category) → ...
 
-Sad Path 1 : Home Screen → Learn Screen → Quiz Screen → Result Screen (Some Incorrect) 
+Sad Path 1 : Home Screen → Learn Screen → Quiz Screen → Result Screen (Some Incorrect)
 → Quiz Screen → ...
 
 Sad Path 2 : Home Screen → Test Screen → Test Quiz Screen → Test Result Screen (Some Incorrect)
@@ -65,15 +45,80 @@ Sad Path 2 : Home Screen → Test Screen → Test Quiz Screen → Test Result Sc
 
 Home Screen → Licenses Screen
 
+
+
+### Features
+#### Home Screen
+User first see this screen when they open the app. 
+
+All 46 hiragana are categorized on this screen. All categories except for the first one are locked 
+by default. User will need to advance sequentially through each category. The categories are 
+ordered from the most distinct to the most similar hiragana. Clicking a category will navigate user 
+to `Learn Screen`
+
+User can navigate to `Test Screen` from here
+
+This screen provides left drawer. User can access dialog to reset their category progress or 
+navigate to `Licenses Screen` by selecting on the corresponding drawer items. 
+
+User is recommended to reset their category progress if they found current `Test Screen` is too 
+hard
+
+#### Learn Screen
+User can set their `Learning Sets` here from `1` to `10` with `5` as the default. `Learning Sets` 
+of `5` on `ひみかせ` category means that the User will be asked five times for each hiragana totaling 
+into 20 questions.  
+
+User is recommended to get all questions correct on with default value at least once
+
+#### Quiz Screen
+User is shown a hiragana and possible romaji as selectable answers.
+
+User is expected to not think too hard when selecting an answer.
+
+When User choose incorrect answer, that button will be disabled, eventually 
+guiding user to the right answer.
+
+#### Result Screen
+User can see what hiragana and how many times they answered incorrectly.
+
+User can try again the `Quiz Screen` or navigate to `Test Screen` by selecting corresponding buttons
+
+Button to navigate to `Test Screen` is only enabled when all questions from `Quiz Screen` 
+are answered correctly
+
+#### Test Screen
+User are shown list of hiragana categories that are being tested based on `Home Screen`'s unlocked
+categories
+
+User need to first challenge getting all questions correct on `Learn Screen` so that the 
+`Test All Learned` button is enabled
+
+#### Test Quiz Screen
+The user flow in this screen is similar to that of `Quiz Screen`, but with all hiragana romaji as 
+selectable answers
+
+Every hiragana question is only shown once in this screen
+
+#### Test Result Screen
+If all questions are answered correctly on `Test Quiz Screen`, then a new hiragana category on 
+`Home Screen` is unlocked and `Continue Learning` button is enabled
+
+#### Licenses Screen
+This screen lists all licenses of open source libraries used by this app
+
+
+
 ## Getting Started
-
 ### Installing
-
 * Download the apk's build and install it on an Android device
 
-### Version History
 
+
+### Version History
 * 1.0 : Minimum viable product with only basic features
+
+
 
 ### Git Branches Details
 * `master` is the only branch intended to be built
@@ -82,42 +127,26 @@ Home Screen → Licenses Screen
 for features or refactors merged into main
 * branches other than the one mentioned above exists only for historical reason
 
-### Tested Devices
 
+
+### Tested Devices
 * Pixel 9 Pro Fold (emulator)
 * Redmi Note 12 (device)
 
 
+
 ## Implemented Skills
+* UI: Jetpack Compose | Material Design 3
+* Dependency Injection: Hilt
+* Testing: Robolectric | Gherkin
+* Asynchronous: Kotlin Flow
+* Navigation: Jetpack Navigation 2
+* Source Control: Git | GitHub
+* Libraries: Firebase Analytics | Google Play Services
 
-### UI
-* Jetpack Compose
-* Material Design 3
-
-### Dependency Injection
-* Hilt
-
-### Testing
-* Robolectric
-* Gherkin
-
-### Asynchronous 
-* Kotlin Flow
-
-### Navigation
-* Jetpack Navigation 2
-
-### Source Control
-* Git
-* GitHub
-
-### Libraries
-* Firebase Analytics
-* Google Play Services
 
 
 ## Implemented Concepts
-
 * Unidirectional Data Flow
 * Repository Pattern
 * Reactive Programming
@@ -126,6 +155,7 @@ for features or refactors merged into main
 * Test Coverage
 * Code Readability
 * Magic Value Elimination
+
 
 
 ## About | Motivation
