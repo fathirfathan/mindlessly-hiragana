@@ -15,11 +15,11 @@ An Android app to learn Japanese Hiragana by pure mindless repetition.
 
 
 ## Description
-Usually, someone who wants to be able to read hiragana will do it by memorizing the table, by
+Usually, someone who wants to be able to read Hiragana will do it by memorizing the table, by
 writing it again and again on paper, etc. Those actions are something that takes a lot of cognitive
 effort and something that cannot be done while watching videos.
 
-This app is made for someone who wants to be able to read hiragana by mindlessly selecting 
+This app is made for someone who wants to be able to read Hiragana by mindlessly selecting 
 buttons, a cognitively low effort action, so that they can learn while watching videos.
 
 One tester who is 60+ years old is actually able to read any Hiragana taught in this app in under a 
@@ -135,7 +135,7 @@ This screen lists all licenses of open source libraries used by this app.
 * `master` is the only branch intended to be built.
 * `readme`, `gplay-licenses-activity`, `firebase-analytics-implementation`, `refactor-applicationid`,
 `refactor-robolectric`, `tdd-refactor-to-bdd`, `main-tdd`, `record-interaction` are the branches 
-for features or refactors merged into main.
+for features or refactors merged into `master`.
 * Branches other than the one mentioned above exist only for historical reasons.
 
 
@@ -199,6 +199,13 @@ tedious to change any test because the test code is all over the place. Hence, I
 every test is contained in a single test function with its test behavior described in Gherkin 
 comments. The tests are also required to have no implementation details in them, by only describing 
 and testing behaviors from the user's perspective.
+
+While doing development, there was a time that I needed to access and develop the project from my 
+laptop. When I ran the integration tests, it took too much time because my laptop's specs were 
+not as good as my PC's. After researching for a while, I found that Google recommends Robolectric
+which is perfect for my use case. The migration was incredibly easy, and the fidelity trade-offs were
+not a problem for my project, so I decided to migrate to Robolectric. By migrating, the tests run 
+fast on my laptop because I don't need to use any emulators.
 
 At this point, I actually consider this project finished, because when I ask my mother to use this 
 app, she, who is 60+ years old, actually able to read any Hiragana taught in this app in under a 
